@@ -19,11 +19,13 @@ import org.openmrs.module.cohort.api.db.CohortMemberAttributeDao;
 import org.openmrs.module.cohort.api.db.CohortMemberAttributeTypeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Component
+@Component("cohortMemberService")
 @Setter(AccessLevel.PACKAGE)
+@Transactional
 public class CohortMemberServiceImpl extends BaseOpenmrsService implements CohortMemberService {
 
     @Autowired
@@ -43,8 +45,14 @@ public class CohortMemberServiceImpl extends BaseOpenmrsService implements Cohor
     }
 
     @Override
+    @Transactional
     public CohortMemberAttributeType saveCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
         return attributeTypeDao.createCohortMemberAttributeType(cohortMemberAttributeType);
+    }
+
+    @Override
+    public CohortMemberAttributeType deleteCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType, String voidReason) {
+        return attributeTypeDao.deleteCohortMemberAttributeType(cohortMemberAttributeType, voidReason);
     }
 
     @Override

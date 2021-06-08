@@ -535,24 +535,28 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="add_cohort_member_attribute_type_20210607" author="corneliouzbett">
+	<changeSet id="add_cohort_member_attribute_type_20210609" author="corneliouzbett">
 		<preConditions onFail="MARK_RAN" onError="WARN">
 			<not>
 				<tableExists tableName="cohort_member_attribute_type" />
 			</not>
 		</preConditions>
 		<createTable tableName="cohort_member_attribute_type">
-			<column name="cohort_member_attribute_type_id" autoIncrement="true" type="int(11)">
+			<column name="attribute_type_id" autoIncrement="true" type="int(11)">
 				<constraints nullable="false" primaryKey="true"/>
 			</column>
 			<column name="name" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="format" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-
 			<column name="description" type="varchar(255)"/>
+			<column name="datatype" type="varchar(255)"/>
+			<column name="datatype_config" type="text"/>
+			<column name="preferred_handler" type="varchar(255)"/>
+			<column name="handler_config" type="text"/>
+			<column name="max_occurs" type="int(11)"/>
+			<column name="min_occurs" type="int(11)">
+				<constraints nullable="false"/>
+			</column>
 			<column name="date_created" type="datetime">
 				<constraints nullable="false" />
 			</column>
@@ -563,15 +567,15 @@
 				<constraints foreignKeyName="cohort_member_attribute_type_changed_by_fk" references="users(user_id)"/>
 			</column>
 			<column name="date_changed" type="datetime" />
-			<column name="voided" type="tinyint(1)" defaultValueBoolean="false">
+			<column name="retired" type="tinyint(1)" defaultValueBoolean="false">
 				<constraints nullable="false" />
 			</column>
-			<column name="voided_by" type="int(11)">
+			<column name="retired_by" type="int(11)">
 				<constraints foreignKeyName="cohort_member_attribute_type_voided_by_fk" references="users(user_id)"/>
 			</column>
-			<column name="date_voided" type="datetime" />
-			<column name="void_reason" type="varchar(255)" />
-			<column name="uuid" type="varchar(255)">
+			<column name="date_retired" type="datetime" />
+			<column name="retire_reason" type="varchar(255)" />
+			<column name="uuid" type="char(38)">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
@@ -588,13 +592,13 @@
 				<constraints nullable="false" primaryKey="true"/>
 			</column>
 			<column name="cohort_member_id" type="int(11)">
-				<constraints nullable="false" foreignKeyName="cohort_member_attribute_cohort_member_fk" references="cohort(cohort_id)"/>
+				<constraints nullable="false" foreignKeyName="cohort_member_attribute_cohort_member_fk" references="cohort_member(cohort_member_id)"/>
 			</column>
-			<column name="value" type="varchar(255)">
+			<column name="value_reference" type="TEXT">
 				<constraints nullable="false" />
 			</column>
-			<column name="cohort_member_attribute_type_id" type="int(11)">
-				<constraints nullable="false" foreignKeyName="cohort_member_attribute_cohort_member_attribute_type_fk" references="cohort_attributes_type(cohort_attribute_type_id)"/>
+			<column name="attribute_type_id" type="int(11)">
+				<constraints nullable="false" foreignKeyName="cohort_member_attribute_type_fk" references="cohort_member_attribute_type(attribute_type_id)"/>
 			</column>
 
 			<column name="date_created" type="datetime">
@@ -615,9 +619,20 @@
 			</column>
 			<column name="date_voided" type="datetime" />
 			<column name="void_reason" type="varchar(255)" />
-			<column name="uuid" type="varchar(255)">
+			<column name="uuid" type="char(38)">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+	</changeSet>
+	<changeSet id="add_cohort_role_id_to_cohort_member_20210610" author="corneliouzbett">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="cohort_member" columnName="cohort_role_id" />
+			</not>
+		</preConditions>
+		<comment>Creating a cohort_role_id column</comment>
+		<addColumn tableName="cohort_member">
+			<column name="cohort_role_id" type="int(11)"/>
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>

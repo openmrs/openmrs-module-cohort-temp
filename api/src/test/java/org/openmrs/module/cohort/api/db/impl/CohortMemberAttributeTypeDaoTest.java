@@ -82,11 +82,11 @@ public class CohortMemberAttributeTypeDaoTest extends BaseModuleContextSensitive
 
     @Test
     public void shouldVoidCohortMemberAttributeType() {
-        CohortMemberAttributeType attributeType = dao.deleteCohortMemberAttributeType(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID);
+        CohortMemberAttributeType attributeType = dao.deleteCohortMemberAttributeType(TestDataUtils.COHORT_MEMBER_ATTRIBUTE_TYPE(), "Voided via cohort rest call");
 
         assertThat(attributeType, notNullValue());
-        assertThat(attributeType.getVoided(), is(true));
-        assertThat(attributeType.getVoidReason(), is("Voided via cohort rest call"));
+        assertThat(attributeType.getRetired(), is(true));
+        assertThat(attributeType.getRetireReason(), is("Voided via cohort rest call"));
     }
 
     @Test

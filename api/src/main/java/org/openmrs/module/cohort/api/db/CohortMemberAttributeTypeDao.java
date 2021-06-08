@@ -28,7 +28,7 @@ public interface CohortMemberAttributeTypeDao {
     CohortMemberAttributeType createCohortMemberAttributeType(@NotNull CohortMemberAttributeType cohortMemberAttributeType);
 
     @Authorized(PrivilegeConstants.DELETE_COHORTS)
-    CohortMemberAttributeType deleteCohortMemberAttributeType (@NotNull String uuid);
+    CohortMemberAttributeType deleteCohortMemberAttributeType (@NotNull CohortMemberAttributeType cohortMemberAttributeType, String voidReason);
 
     @Authorized(PrivilegeConstants.PURGE_COHORTS)
     void purgeCohortMemberAttribute (CohortMemberAttributeType cohortMemberAttributeType);

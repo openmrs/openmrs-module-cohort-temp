@@ -10,27 +10,45 @@
 package org.openmrs.module.cohort.web.resource;
 
 import org.openmrs.api.context.Context;
+import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortMemberAttribute;
+import org.openmrs.module.cohort.CohortMemberAttributeType;
 import org.openmrs.module.cohort.api.CohortMemberService;
-import org.openmrs.module.cohort.rest.v1_0.resource.CohortRest;
 import org.openmrs.module.webservices.rest.web.RequestContext;
-import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.annotation.Resource;
-import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
-import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
-import org.openmrs.module.webservices.rest.web.representation.Representation;
-import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
-import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
-import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
+import org.openmrs.module.webservices.rest.web.annotation.PropertySetter;
+import org.openmrs.module.webservices.rest.web.annotation.SubResource;
+import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
+import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.BaseAttributeCrudResource1_9;
 
-@Resource(name = RestConstants.VERSION_1 + CohortRest.COHORT_NAMESPACE + "/cohort-member-attribute",
-        supportedClass = CohortMemberAttribute.class, supportedOpenmrsVersions = {"2.0.*", "2.1.*", "2.2.*, 2.3.*, 2.4.*"})
-public class CohortMemberAttributeResource extends DataDelegatingCrudResource<CohortMemberAttribute> {
+import java.util.List;
 
-    @Autowired
-    private CohortMemberService cohortMemberService;
+@SuppressWarnings("unused")
+@SubResource( parent = CohortMemberRequestResource.class, path = "attribute",
+        supportedClass = CohortMemberAttribute.class, supportedOpenmrsVersions = {"1.8 - 2.*"})
+public class CohortMemberAttributeResource extends BaseAttributeCrudResource1_9<CohortMemberAttribute, CohortMember, CohortMemberRequestResource> {
+
+    private final CohortMemberService cohortMemberService;
+
+    public CohortMemberAttributeResource() {
+        this.cohortMemberService = Context.getRegisteredComponent("cohortMemberService", CohortMemberService.class);
+    }
+
+    @Override
+    public CohortMember getParent(CohortMemberAttribute cohortMemberAttribute) {
+        return cohortMemberAttribute.getCohortMember();
+    }
+
+    @Override
+    public void setParent(CohortMemberAttribute cohortMemberAttribute, CohortMember cohortMember) {
+        cohortMemberAttribute.setCohortMember(cohortMember);
+    }
+
+    @Override
+    public PageableResult doGetAll(CohortMember cohortMember, RequestContext requestContext) throws ResponseException {
+        return new NeedsPaging<>((List<CohortMemberAttribute>) cohortMember.getActiveAttributes(), requestContext);
+    }
 
     @Override
     public CohortMemberAttribute getByUniqueId(String uuid) {
@@ -38,10 +56,14 @@ public class CohortMemberAttributeResource extends DataDelegatingCrudResource<Co
     }
 
     @Override
-    protected void delete(CohortMemberAttribute cohortMemberAttribute, String s, RequestContext requestContext) throws ResponseException {
+    public CohortMemberAttribute save(CohortMemberAttribute cohortMemberAttribute) {
+        return cohortMemberService.saveCohortMemberAttribute(cohortMemberAttribute);
+    }
+
+    @Override
+    protected void delete(CohortMemberAttribute cohortMemberAttribute, String reason, RequestContext requestContext) throws ResponseException {
         cohortMemberAttribute.setVoided(true);
-        cohortMemberAttribute.setVoidReason(s);
-        cohortMemberAttribute.setVoidedBy(Context.getAuthenticatedUser());
+        cohortMemberAttribute.setVoidReason(reason);
         cohortMemberService.saveCohortMemberAttribute(cohortMemberAttribute);
     }
 
@@ -51,46 +73,12 @@ public class CohortMemberAttributeResource extends DataDelegatingCrudResource<Co
     }
 
     @Override
-    public CohortMemberAttribute save(CohortMemberAttribute cohortMemberAttribute) {
-        return cohortMemberService.saveCohortMemberAttribute(cohortMemberAttribute);
-    }
-
-    @Override
     public void purge(CohortMemberAttribute cohortMemberAttribute, RequestContext requestContext) throws ResponseException {
         cohortMemberService.purgeCohortMemberAttribute(cohortMemberAttribute);
     }
 
-    @Override
-    public DelegatingResourceDescription getCreatableProperties() {
-        DelegatingResourceDescription description = new DelegatingResourceDescription();
-        description.addRequiredProperty("cohortMember");
-        description.addRequiredProperty("value");
-        description.addRequiredProperty("cohortMemberAttributeType");
-        return description;
-    }
-
-    @Override
-    public DelegatingResourceDescription getUpdatableProperties() throws ResourceDoesNotSupportOperationException {
-        return getCreatableProperties();
-    }
-
-    @Override
-    public DelegatingResourceDescription getRepresentationDescription(Representation representation) {
-        DelegatingResourceDescription description = new DelegatingResourceDescription();
-        if (representation instanceof DefaultRepresentation) {
-            description.addProperty("uuid");
-            description.addProperty("value");
-            description.addProperty("cohortMemberAttributeType");
-            description.addProperty("cohortMember", Representation.REF);
-            description.addSelfLink();
-        } else if (representation instanceof FullRepresentation) {
-            description.addProperty("uuid");
-            description.addProperty("value");
-            description.addProperty("cohortMemberAttributeType");
-            description.addProperty("cohortMember", Representation.REF);
-            description.addProperty("auditInfo");
-            description.addSelfLink();
-        }
-        return description;
+    @PropertySetter("attributeType")
+    public static void setAttributeType(CohortMemberAttribute cohortMemberAttribute, CohortMemberAttributeType attributeType) {
+        cohortMemberAttribute.setAttributeType(attributeType);
     }
 }

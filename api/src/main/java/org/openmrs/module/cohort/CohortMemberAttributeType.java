@@ -9,10 +9,12 @@
  */
 package org.openmrs.module.cohort;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
-import org.openmrs.BaseOpenmrsData;
+import org.openmrs.attribute.AttributeType;
+import org.openmrs.attribute.BaseAttributeType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,24 +25,18 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "cohort_member_attribute_type")
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 @ToString
-public class CohortMemberAttributeType extends BaseOpenmrsData {
+@NoArgsConstructor
+public class CohortMemberAttributeType extends BaseAttributeType<CohortMember> implements AttributeType<CohortMember>{
 
     private static final long serialVersionUID = 3L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "cohort_member_attribute_type_id")
+    @Column(name = "attribute_type_id")
     private Integer cohortMemberAttributeTypeId;
-
-    @Column(nullable = false)
-    private String name;
-
-    private String description;
-
-    private String format;
 
     @Override
     public Integer getId() {

@@ -24,6 +24,8 @@ public interface CohortMemberService extends OpenmrsService {
 
     CohortMemberAttributeType saveCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType);
 
+    CohortMemberAttributeType deleteCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType, String voidReason);
+
     void purgeCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType);
 
     CohortMemberAttribute getCohortMemberAttributeByUuid(@NotNull String uuid);

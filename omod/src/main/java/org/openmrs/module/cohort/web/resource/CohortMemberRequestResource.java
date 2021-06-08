@@ -2,16 +2,21 @@ package org.openmrs.module.cohort.web.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortMember;
+import org.openmrs.module.cohort.CohortMemberAttribute;
 import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.cohort.rest.v1_0.resource.CohortRest;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
+import org.openmrs.module.webservices.rest.web.annotation.PropertySetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
@@ -19,6 +24,7 @@ import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
+import org.openmrs.module.webservices.rest.web.resource.impl.MetadataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
@@ -42,7 +48,8 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 				description.addProperty("head");
 				description.addProperty("uuid");
 				description.addProperty("voided");
-				description.addProperty("cohort", Representation.DEFAULT);
+				description.addProperty("attributes", "activeAttributes", Representation.REF);
+				description.addProperty("cohort", Representation.REF);
 				description.addSelfLink();
 			} else if (rep instanceof FullRepresentation) {
 				description.addProperty("patient", Representation.FULL);
@@ -53,6 +60,7 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 				description.addProperty("head");
 				description.addProperty("uuid");
 				description.addProperty("voided");
+				description.addProperty("attributes", "activeAttributes", Representation.DEFAULT);
 				description.addProperty("auditInfo");
 				description.addSelfLink();
 			}
@@ -70,6 +78,7 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 		description.addRequiredProperty("startDate");
 		description.addProperty("head");
 		description.addProperty("voided");
+		description.addProperty("attributes");
 		return description;
 	}
 
@@ -97,7 +106,7 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 			throw new RuntimeException("Cannot add patient to ended group.");
 		}
 		for (CohortMember member : cohort.getCohortMembers()) {
-			if (member.getPatient().getUuid() == new_patient.getUuid() && !cohortMember.getVoided()) {
+			if (member.getPatient().getUuid().equals(new_patient.getUuid()) && !cohortMember.getVoided()) {
 				if (member.getEndDate() == null) {
 					throw new RuntimeException("Patient already exists in group.");
 				} else {
@@ -111,7 +120,7 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 	}
 
 	@Override
-	protected void delete(CohortMember cohortMember, String reason, RequestContext context) throws ResponseException {
+	public void delete(CohortMember cohortMember, String reason, RequestContext context) throws ResponseException {
 		cohortMember.setVoided(true);
 		cohortMember.setVoidReason(reason);
 		Context.getService(CohortService.class).saveCohortMember(cohortMember);
@@ -125,6 +134,25 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 	@Override
 	public void purge(CohortMember cohortMember, RequestContext context) throws ResponseException {
 		throw new UnsupportedOperationException();
+	}
+
+	@PropertySetter("attributes")
+	public static void setAttributes(CohortMember cohortMember, Set<CohortMemberAttribute> attributes) {
+		for (CohortMemberAttribute attribute : attributes) {
+			attribute.setOwner(cohortMember);
+		}
+		cohortMember.setAttributes(attributes);
+	}
+
+	@PropertyGetter("display")
+	public String getDisplayString(CohortMember cohortMember) {
+		Patient patient = cohortMember.getPatient();
+		if (patient != null) {
+			PatientIdentifier identifier = patient.getPatientIdentifier();
+			return identifier + "-" + patient.getPersonName().getFullName();
+		}
+
+		return null;
 	}
 
 	@Override
@@ -159,9 +187,7 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 			throw new IllegalArgumentException("No valid value specified for param cohort and/or patient");
 		}
 
-		return new NeedsPaging<CohortMember>(list, context);
+		return new NeedsPaging<>(list, context);
 
 	}
-
-	;
 }

@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.nullValue;
 @ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
 public class CohortMemberAttributeDaoTest extends BaseModuleContextSensitiveTest {
 
-    //Order is salient
+    //The order is salient
     private static final String[] COHORT_MEMBER_ATTRIBUTE_INITIAL_TEST_DATA_XML = new String[]{
             "org/openmrs/module/cohort/api/hibernate/db/CohortDaoTest_initialTestData.xml",
             "org/openmrs/module/cohort/api/hibernate/db/CohortMemberDaoTest_initialTestData.xml",

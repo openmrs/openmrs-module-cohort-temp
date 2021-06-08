@@ -1,6 +1,6 @@
 package org.openmrs.module.cohort;
 
-import org.openmrs.BaseOpenmrsData;
+import org.openmrs.BaseCustomizableData;
 import org.openmrs.Patient;
 
 import javax.persistence.CascadeType;
@@ -16,7 +16,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "cohort_member")
-public class CohortMember extends BaseOpenmrsData {
+public class CohortMember extends BaseCustomizableData<CohortMemberAttribute> {
 
 	private static final long serialVersionUID = 1L;
 

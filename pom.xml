@@ -45,8 +45,6 @@
     </modules>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <openMRSVersion>2.0.6</openMRSVersion>
         <webservicesRestVersion>2.16</webservicesRestVersion>
         <htmlFormEntryVersion>2.5</htmlFormEntryVersion>
@@ -59,12 +57,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombokVersion}</version>
-                <scope>provided</scope>
-            </dependency>
             <!-- Begin OpenMRS core -->
             <dependency>
                 <groupId>org.openmrs.api</groupId>
@@ -197,6 +189,13 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombokVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
