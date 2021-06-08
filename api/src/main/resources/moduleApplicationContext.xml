@@ -25,26 +25,18 @@
                 <value>${project.parent.groupId}.${project.parent.artifactId}.api.CohortService</value>
                 <bean
                         class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-                    <property name="transactionManager">
-                        <ref bean="transactionManager"/>
-                    </property>
+                    <property name="transactionManager" ref="transactionManager"/>
                     <property name="target">
                         <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.CohortServiceImpl">
                             <property name="dao">
                                 <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateCohortDAO">
-                                    <property name="sessionFactory">
-                                        <ref bean="sessionFactory"/>
-                                    </property>
+                                    <property name="sessionFactory" ref="sessionFactory"/>
                                 </bean>
                             </property>
                         </bean>
                     </property>
-                    <property name="preInterceptors">
-                        <ref bean="serviceInterceptors"/>
-                    </property>
-                    <property name="transactionAttributeSource">
-                        <ref bean="transactionAttributeSource"/>
-                    </property>
+                    <property name="preInterceptors" ref="serviceInterceptors"/>
+                    <property name="transactionAttributeSource" ref="transactionAttributeSource"/>
                 </bean>
             </list>
         </property>

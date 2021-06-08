@@ -23,6 +23,8 @@ import org.openmrs.module.cohort.CohortEncounter;
 import org.openmrs.module.cohort.CohortLeader;
 import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortMember;
+import org.openmrs.module.cohort.CohortMemberAttribute;
+import org.openmrs.module.cohort.CohortMemberAttributeType;
 import org.openmrs.module.cohort.CohortMemberVisit;
 import org.openmrs.module.cohort.CohortObs;
 import org.openmrs.module.cohort.CohortProgram;
@@ -30,6 +32,8 @@ import org.openmrs.module.cohort.CohortRole;
 import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.CohortVisit;
 import org.openmrs.module.cohort.api.CohortService;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Database methods for {@link CohortService}.
