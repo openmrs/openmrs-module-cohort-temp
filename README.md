@@ -72,7 +72,98 @@ We can analyze trends and patterns and this helps in research and policy making.
 
 ***
 
-#### Example GET Requests
+## Resources
+#### CohortMember
+ - Retrieve cohort member
+```http request
+GET /ws/rest/v1/cohortm/cohortmember/<UUID>
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `UUID` | `string` | UUID of cohort member to be retrieved |
+
+ - List cohort member attributes
+```http request
+GET /ws/rest/v1/cohortm/cohortmember/<UUID>/attribute
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `UUID` | `string` | Cohort member UUID |
+
+#### CohortMemberAttributeType
+ - Retrieve cohort member attribute type
+```http request
+GET /ws/rest/v1/cohortm/cohort-member-attribute-type/<UUID>
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `UUID` | `string` | Cohort member attribute type UUID to retrieve |
+
+Response
+```json5
+{
+  "uuid": "a47330c2-6222-423e-9258-ccb186f39749",
+  "display": "test_name",
+  "name": "test_name",
+  "description": "desc",
+  "minOccurs": 1,
+  "maxOccurs": 3,
+  "datatypeClassname": "string",
+  "preferredHandlerClassname": null,
+  "retired": true,
+  "links": [
+    {
+      "rel": "self",
+      "uri": "http://localhost:8086/openmrs/ws/rest/v1/cohortm/cohort-member-attribute-type/a47330c2-6222-423e-9258-ccb186f39749"
+    },
+    {
+      "rel": "full",
+      "uri": "http://localhost:8086/openmrs/ws/rest/v1/cohortm/cohort-member-attribute-type/a47330c2-6222-423e-9258-ccb186f39749?v=full"
+    }
+  ],
+  "resourceVersion": "1.9"
+}
+```
+- Retrieve all cohort member attribute types
+```http request
+GET /ws/rest/v1/cohortm/cohort-member-attribute-type
+```
+ - Create cohort member attribute type
+```http request
+POST /ws/rest/v1/cohortm/cohort-member-attribute-type
+```
+body
+```json
+{
+  "name": "Cohort member attribute type name",
+  "description": "This is the description",
+  "datatypeClassname": "java.lang.String"
+}
+```
+ - Update cohort member attribute type
+```http request
+PUT /ws/rest/v1/cohortm/cohort-member-attribute-type/<UUID>
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `UUID` | `string` | UUID of cohort member attribute type to be updated |
+
+Body
+```json5
+{
+  "name": "Updated test name"
+}
+```
+ - Void/Delete cohort member attribute type
+```http request
+DELETE /ws/rest/v1/cohortm/cohort-member-attribute-type/<UUID>?purge=<true|false>
+```
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `UUID` | `string` | UUID of cohort member attribute type to be voided |
+| `purge` | `boolean` | Cohort member attribute type resource will be voided/retired unless `purge = true`
+
+Example GET Requests
 ---
 ##### list the related cohort
 
