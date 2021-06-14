@@ -18,6 +18,7 @@ import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.cohort.rest.v1_0.resource.CohortRest;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
 import org.openmrs.module.webservices.rest.web.annotation.PropertySetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
@@ -50,7 +51,9 @@ public class CohortRequestResource extends DataDelegatingCrudResource<CohortM> {
 				description.addProperty("uuid");
 				description.addProperty("voided");
 				description.addProperty("voidReason");
+				description.addProperty("display");
 				description.addSelfLink();
+				return description;
 			} else if (rep instanceof FullRepresentation) {
 				description.addProperty("name");
 				description.addProperty("description");
@@ -68,7 +71,11 @@ public class CohortRequestResource extends DataDelegatingCrudResource<CohortM> {
 				description.addProperty("cohortVisits");
 				description.addProperty("uuid");
 				description.addProperty("auditInfo");
+				description.addProperty("display");
+
 				description.addSelfLink();
+
+				return description;
 			}
 
 			return description;
@@ -237,4 +244,8 @@ public class CohortRequestResource extends DataDelegatingCrudResource<CohortM> {
 		}
 	}
 
+	@PropertyGetter("display")
+	public static String getDisplay(CohortM cohort) {
+		return cohort.getName();
+	}
 }
