@@ -216,7 +216,7 @@ public class HibernateCohortDAO implements CohortDAO {
 			Disjunction dis = Restrictions.disjunction();
 			for (String k : attributes.keySet()) {
 				dis.add(Restrictions.conjunction(
-						Restrictions.eq("attrType.name", k), Restrictions.eq("value", attributes.get(k))));
+						Restrictions.eq("attrType.name", k), Restrictions.like("value", attributes.get(k), MatchMode.ANYWHERE)));
 			}
 
 			cri.add(dis);

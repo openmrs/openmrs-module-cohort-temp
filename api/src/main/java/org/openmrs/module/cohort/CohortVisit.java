@@ -50,7 +50,7 @@ public class CohortVisit extends BaseOpenmrsData {
 	@Column(name = "end_Date")
 	private Date endDate;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cohortVisit")
 	@OrderBy("cohort_visit_id")
 	@DisableHandlers(handlerTypes = { VoidHandler.class })
 	private List<CohortMemberVisit> cohortMemberVisits = new ArrayList<CohortMemberVisit>();
