@@ -48,6 +48,10 @@ public class CohortRequestResource extends DataDelegatingCrudResource<CohortM> {
 				description.addProperty("location");
 				description.addProperty("startDate");
 				description.addProperty("endDate");
+				description.addProperty("cohortType");
+				description.addProperty("cohortProgram");
+				description.addProperty("cohortLeaders");
+				description.addProperty("cohortVisits");
 				description.addProperty("attributes");
 				description.addProperty("groupCohort");
 				description.addProperty("uuid");
