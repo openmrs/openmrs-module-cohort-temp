@@ -1,9 +1,5 @@
 package org.openmrs.module.cohort.web.resource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -24,10 +20,13 @@ import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
-import org.openmrs.module.webservices.rest.web.resource.impl.MetadataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Resource(name = RestConstants.VERSION_1 + CohortRest.COHORT_NAMESPACE
 		+ "/cohortmember", supportedClass = CohortMember.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
@@ -39,8 +38,8 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 		DelegatingResourceDescription description = null;
 
 		if (Context.isAuthenticated()) {
-			description = new DelegatingResourceDescription();
 			if (rep instanceof DefaultRepresentation) {
+				description = new DelegatingResourceDescription();
 				description.addProperty("patient", Representation.REF);
 				description.addProperty("role");
 				description.addProperty("startDate");
@@ -51,7 +50,9 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 				description.addProperty("attributes", "activeAttributes", Representation.REF);
 				description.addProperty("cohort", Representation.REF);
 				description.addSelfLink();
+				return description;
 			} else if (rep instanceof FullRepresentation) {
+				description = new DelegatingResourceDescription();
 				description.addProperty("patient", Representation.FULL);
 				description.addProperty("cohort", Representation.DEFAULT);
 				description.addProperty("role");
@@ -63,7 +64,9 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 				description.addProperty("attributes", "activeAttributes", Representation.DEFAULT);
 				description.addProperty("auditInfo");
 				description.addSelfLink();
+				return description;
 			}
+
 		}
 		return description;
 	}

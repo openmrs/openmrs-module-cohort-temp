@@ -676,7 +676,7 @@ public class HibernateCohortDAO implements CohortDAO {
 
 	@Override
 	public List<CohortMember> findCohortMembersByCohortId(Integer cohortId) {
-		return getCurrentSession().createQuery("from CohortMember where cohort = :cohortId")
+		return getCurrentSession().createQuery("from CohortMember where cohort.cohortId = :cohortId")
 				.setParameter("cohortId", cohortId).list();
 	}
 

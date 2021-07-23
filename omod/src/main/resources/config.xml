@@ -9,7 +9,7 @@
     <name>${project.parent.name}</name>
     <version>${project.parent.version}</version>
     <package>${project.parent.groupId}.${project.parent.artifactId}</package>
-    <author>Sharon</author>
+    <author>Ampath devs </author>
     <description>
         ${project.parent.description}
     </description>
