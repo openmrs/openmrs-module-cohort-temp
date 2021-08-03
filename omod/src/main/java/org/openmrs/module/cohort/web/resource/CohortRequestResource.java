@@ -30,6 +30,7 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Resource(name = RestConstants.VERSION_1 + CohortRest.COHORT_NAMESPACE
 		+ "/cohort", supportedClass = CohortM.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
@@ -39,10 +40,8 @@ public class CohortRequestResource extends DataDelegatingCrudResource<CohortM> {
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
 		if (Context.isAuthenticated()) {
 
-			DelegatingResourceDescription description = null;
-
 			if (rep instanceof DefaultRepresentation) {
-				description = new DelegatingResourceDescription();
+				DelegatingResourceDescription description = new DelegatingResourceDescription();
 				description.addProperty("name");
 				description.addProperty("description");
 				description.addProperty("location");
@@ -52,8 +51,7 @@ public class CohortRequestResource extends DataDelegatingCrudResource<CohortM> {
 				description.addProperty("cohortProgram");
 				description.addProperty("cohortLeaders");
 				description.addProperty("cohortVisits");
-				description.addProperty("attributes");
-				description.addProperty("groupCohort");
+				description.addProperty("attributes", "activeAttributes", Representation.REF);				description.addProperty("groupCohort");
 				description.addProperty("uuid");
 				description.addProperty("voided");
 				description.addProperty("voidReason");
@@ -62,7 +60,7 @@ public class CohortRequestResource extends DataDelegatingCrudResource<CohortM> {
 				return description;
 			} else if (rep instanceof FullRepresentation) {
 
-				description = new DelegatingResourceDescription();
+				DelegatingResourceDescription description = new DelegatingResourceDescription();
 
 				description.addProperty("name");
 				description.addProperty("description");
@@ -72,7 +70,7 @@ public class CohortRequestResource extends DataDelegatingCrudResource<CohortM> {
 				description.addProperty("cohortType");
 				description.addProperty("cohortProgram");
 				description.addProperty("cohortLeaders");
-				description.addProperty("attributes");
+				description.addProperty("attributes", "activeAttributes", Representation.DEFAULT);
 				description.addProperty("groupCohort");
 				description.addProperty("cohortMembers", Representation.FULL);
 				description.addProperty("voided");
@@ -87,7 +85,7 @@ public class CohortRequestResource extends DataDelegatingCrudResource<CohortM> {
 				return description;
 			}
 
-			return description;
+			return null;
 		}
 		return null;
 	}
@@ -166,14 +164,7 @@ public class CohortRequestResource extends DataDelegatingCrudResource<CohortM> {
 
 	@Override
 	public CohortM getByUniqueId(String id) {
-		CohortM obj = Context.getService(CohortService.class).getCohortByUuid(id);
-
-		if (obj == null) {
-			// TODO add to API
-			// obj = Context.getService(CohortService.class).getCohortByName(id);
-		}
-
-		return obj;
+		return Context.getService(CohortService.class).getCohortByUuid(id);
 	}
 
 	@Override
@@ -237,20 +228,11 @@ public class CohortRequestResource extends DataDelegatingCrudResource<CohortM> {
 	 * @param attrs
 	 */
 	@PropertySetter("attributes")
-	public static void setAttributes(CohortM cohort, List<CohortAttribute> attrs) {
+	public static void setAttributes(CohortM cohort, Set<CohortAttribute> attrs) {
 		for (CohortAttribute attr : attrs) {
-			CohortAttribute existingAttribute = cohort.getAttribute(Context.getService(CohortService.class)
-					.getCohortAttributeTypeByUuid(attr.getCohortAttributeType().getUuid()));
-			if (existingAttribute != null) {
-				if (attr.getValue() == null) {
-					cohort.removeAttribute(existingAttribute);
-				} else {
-					existingAttribute.setValue(attr.getValue());
-				}
-			} else {
-				cohort.addAttribute(attr);
-			}
+			attr.setCohort(cohort);
 		}
+		cohort.setAttributes(attrs);
 	}
 
 	@PropertyGetter("display")

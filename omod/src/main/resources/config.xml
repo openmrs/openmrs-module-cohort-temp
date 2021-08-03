@@ -47,6 +47,8 @@
     <mappingFiles>
         CohortMemberAttribute.hbm.xml
         CohortMemberAttributeType.hbm.xml
+        CohortAttribute.hbm.xml
+        CohortAttributeType.hbm.xml
     </mappingFiles>
 
     <!-- Internationalization -->

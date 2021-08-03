@@ -9,10 +9,6 @@
  */
 package org.openmrs.module.cohort.api.db;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-
 import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +20,10 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 @ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
 public class CohortAttributeTypeDaoTest extends BaseModuleContextSensitiveTest {
@@ -83,7 +83,7 @@ public class CohortAttributeTypeDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(result, notNullValue());
 		assertThat(result.getCohortAttributeTypeId(), notNullValue());
 		assertThat(result.getUuid(), equalTo(cohortAttributeType.getUuid()));
-		assertThat(result.getFormat(), equalTo(cohortAttributeType.getFormat()));
+		assertThat(result.getDatatypeConfig(), equalTo(cohortAttributeType.getDatatypeConfig()));
 		assertThat(result.getCohortAttributeTypeId(), equalTo(cohortAttributeType.getCohortAttributeTypeId()));
 	}
 }

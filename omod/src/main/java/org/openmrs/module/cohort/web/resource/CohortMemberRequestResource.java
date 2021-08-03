@@ -35,12 +35,10 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
 
-		DelegatingResourceDescription description = null;
-
 		if (Context.isAuthenticated()) {
 			if (rep instanceof DefaultRepresentation) {
-				description = new DelegatingResourceDescription();
-				description.addProperty("patient", Representation.REF);
+				DelegatingResourceDescription description = new DelegatingResourceDescription();
+				description.addProperty("patient", Representation.FULL);
 				description.addProperty("role");
 				description.addProperty("startDate");
 				description.addProperty("endDate");
@@ -52,7 +50,7 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 				description.addSelfLink();
 				return description;
 			} else if (rep instanceof FullRepresentation) {
-				description = new DelegatingResourceDescription();
+				DelegatingResourceDescription description = new DelegatingResourceDescription();
 				description.addProperty("patient", Representation.FULL);
 				description.addProperty("cohort", Representation.DEFAULT);
 				description.addProperty("role");
@@ -68,7 +66,7 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 			}
 
 		}
-		return description;
+		return null;
 	}
 
 	@Override

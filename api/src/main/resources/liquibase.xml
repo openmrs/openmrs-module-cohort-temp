@@ -680,4 +680,41 @@
             <column name="void_reason" type="varchar(255)"/>
         </addColumn>
     </changeSet>
+    <!--changeSet id="update_cohort_attribute_type_table_structure_20200730" author="jecihjoy">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="cohort_attributes_type"/>
+        </preConditions>
+        <comment>Updating existing columns(voided,voided_by,date_voided,void_reason) fro table cohort_attributes_type</comment>
+        <dropForeignKeyConstraint baseTableName="cohort_attributes_type" constraintName="cohortattributetypevoider_fk"/>
+        <sql>
+            ALTER TABLE cohort_attributes_type CHANGE voided retired tinyint(1), CHANGE voided_by retired_by int(11),
+            CHANGE  date_voided date_retired datetime, CHANGE void_reason retire_reason varchar(255),
+            CHANGE format datatype varchar(255);
+        </sql>
+        <addColumn tableName="cohort_attributes_type">
+            <column name="datatype_config" type="text"/>
+            <column name="preferred_handler" type="varchar(255)"/>
+            <column name="handler_config" type="text"/>
+            <column name="max_occurs" type="int(11)"/>
+            <column name="min_occurs" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint constraintName="cohort_attributes_type_retired_by_fk"
+                                 baseTableName="cohort_attributes_type" baseColumnNames="retired_by"
+                                 referencedTableName="users" referencedColumnNames="user_id"/>
+    </changeSet>
+    <changeSet id="update_cohort_attribute_table_structure_20200730" author="jecihjoy">
+        <preConditions>
+            <tableExists tableName="cohort_attribute"/>
+        </preConditions>
+        <comment>Updating existing columns(value,cohort_attribute_type_id) fro table cohort_attributes</comment>
+        <dropForeignKeyConstraint baseTableName="cohort_attribute" constraintName="cohortattcohortattributetype_fk"/>
+        <sql>
+            ALTER TABLE cohort_attribute CHANGE value value_reference text, CHANGE cohort_attribute_type_id attribute_type_id int(11);
+        </sql>
+        <addForeignKeyConstraint constraintName="cohort_attribute_cohort_attribute_type_id_fk"
+                                 baseTableName="cohort_attribute" baseColumnNames="attribute_type_id"
+                                 referencedTableName="cohort_attributes_type" referencedColumnNames="cohort_attribute_type_id"/>
+    </changeSet-->
 </databaseChangeLog>
