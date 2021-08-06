@@ -8,21 +8,30 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>cohort-api</artifactId>
+    <artifactId>${project.parent.artifactId}-api-htmlformentry</artifactId>
     <packaging>jar</packaging>
-    <name>Cohort Module API</name>
-    <description>API project to support Cohort-level encounters and observations and to create these encounters via a
-        REST interface
+    <name>Cohort Module HTMLFormEntry Extensions</name>
+    <description>
+        Adds support to HTMLFormEntry for the Cohort module
     </description>
 
     <dependencies>
-        <!-- 
+        <!--
         Add other dependencies from parent's pom:
         <dependency>
-            <groupId>org.other.library</groupId> 
+            <groupId>org.other.library</groupId>
             <artifactId>library-name</artifactId>
-        </dependency> 
+        </dependency>
         -->
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>${project.parent.artifactId}-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>htmlformentry-api</artifactId>
+        </dependency>
 
         <!-- Begin OpenMRS core -->
         <dependency>
