@@ -20,14 +20,14 @@ import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOp
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 @Resource(name = RestConstants.VERSION_1 + CohortRest.COHORT_NAMESPACE
-		+ "/cohortprogram", supportedClass = CohortProgram.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
+        + "/cohortprogram", supportedClass = CohortProgram.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
 public class CohortProgramRequestResource extends DataDelegatingCrudResource<CohortProgram> {
-
+	
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
-
+		
 		DelegatingResourceDescription description = null;
-
+		
 		if (Context.isAuthenticated()) {
 			description = new DelegatingResourceDescription();
 			if (rep instanceof DefaultRepresentation) {
@@ -45,7 +45,7 @@ public class CohortProgramRequestResource extends DataDelegatingCrudResource<Coh
 		}
 		return description;
 	}
-
+	
 	@Override
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
@@ -53,34 +53,34 @@ public class CohortProgramRequestResource extends DataDelegatingCrudResource<Coh
 		description.addProperty("description");
 		return description;
 	}
-
+	
 	@Override
 	public DelegatingResourceDescription getUpdatableProperties() throws ResourceDoesNotSupportOperationException {
 		return getCreatableProperties();
 	}
-
+	
 	@Override
 	public CohortProgram save(CohortProgram cohortProgram) {
 		return Context.getService(CohortService.class).saveCohortProgram(cohortProgram);
 	}
-
+	
 	@Override
 	protected void delete(CohortProgram cohortProgram, String reason, RequestContext context) throws ResponseException {
 		cohortProgram.setVoided(true);
 		cohortProgram.setVoidReason(reason);
 		Context.getService(CohortService.class).saveCohortProgram(cohortProgram);
 	}
-
+	
 	@Override
 	public void purge(CohortProgram cohortProgram, RequestContext context) throws ResponseException {
 		Context.getService(CohortService.class).purgeCohortProgram(cohortProgram);
 	}
-
+	
 	@Override
 	public CohortProgram newDelegate() {
 		return new CohortProgram();
 	}
-
+	
 	@Override
 	public CohortProgram getByUniqueId(String uuid) {
 		CohortProgram obj = Context.getService(CohortService.class).getCohortProgramByUuid(uuid);
@@ -89,7 +89,7 @@ public class CohortProgramRequestResource extends DataDelegatingCrudResource<Coh
 		}
 		return obj;
 	}
-
+	
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
 		List<CohortProgram> list = Context.getService(CohortService.class).getAllCohortPrograms();

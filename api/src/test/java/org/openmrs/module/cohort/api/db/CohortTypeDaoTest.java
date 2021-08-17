@@ -26,51 +26,51 @@ import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
 public class CohortTypeDaoTest extends BaseModuleContextSensitiveTest {
-
+	
 	private static final String COHORT_TYPE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortTypeDaoTest_initialTestData.xml";
-
+	
 	private static final String COHORT_TYPE_UUID = "94517bf9-d8d7-4726-b4f1-a2dff6b36e2d";
-
+	
 	private static final int COHORT_TYPE_ID = 101;
-
+	
 	private static final String COHORT_TYPE_NAME = "cohort type name";
-
+	
 	private HibernateCohortDAO dao;
-
+	
 	@Autowired
 	@Qualifier("sessionFactory")
 	private SessionFactory sessionFactory;
-
+	
 	@Before
 	public void setup() throws Exception {
 		dao = new HibernateCohortDAO();
 		dao.setSessionFactory(sessionFactory);
 		executeDataSet(COHORT_TYPE_INITIAL_TEST_DATA_XML);
 	}
-
+	
 	@Test
 	public void shouldFindCohortTypeByID() {
 		CohortType cohortType = dao.getCohortTypeById(COHORT_TYPE_ID);
 		assertThat(cohortType, notNullValue());
 		assertThat(cohortType.getCohortTypeId(), equalTo(COHORT_TYPE_ID));
-
+		
 	}
-
+	
 	@Test
 	public void shouldFindCohortTypeByUuid() {
 		CohortType cohortType = dao.getCohortTypeByUuid(COHORT_TYPE_UUID);
 		assertThat(cohortType, notNullValue());
 		assertThat(cohortType.getUuid(), equalTo(COHORT_TYPE_UUID));
-
+		
 	}
-
+	
 	@Test
 	public void shouldFindCohortTypeByName() {
 		CohortType cohortType = dao.getCohortTypeByName(COHORT_TYPE_NAME);
 		assertThat(cohortType, notNullValue());
 		assertThat(cohortType.getUuid(), equalTo(COHORT_TYPE_UUID));
 		assertThat(cohortType.getName(), equalTo(COHORT_TYPE_NAME));
-
+		
 	}
-
+	
 }

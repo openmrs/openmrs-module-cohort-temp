@@ -9,6 +9,10 @@
  */
 package org.openmrs.module.cohort.api.db.impl;
 
+import javax.validation.constraints.NotNull;
+
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,52 +26,50 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
 @Slf4j
 @Component
 @Setter(AccessLevel.PACKAGE)
 @Getter(AccessLevel.PACKAGE)
 public class CohortMemberAttributeTypeDaoImpl implements CohortMemberAttributeTypeDao {
-
-    @Autowired
-    @Qualifier("sessionFactory")
-    private SessionFactory sessionFactory;
-
-    protected org.hibernate.Session getSession() {
-        return sessionFactory.getCurrentSession();
-    }
-
-    @Override
-    public CohortMemberAttributeType getCohortMemberAttributeTypeByUuid(String uuid) {
-        return (CohortMemberAttributeType) getSession().createCriteria(CohortMemberAttributeType.class).add(
-                Restrictions.eq("uuid", uuid)).uniqueResult();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<CohortMemberAttributeType> getCohortMemberAttributeTypes() {
-        return getSession().createCriteria(CohortMemberAttributeType.class).list();
-    }
-
-    @Override
-    public CohortMemberAttributeType createCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
-        getSession().saveOrUpdate(cohortMemberAttributeType);
-        return cohortMemberAttributeType;
-    }
-
-    @Override
-    public CohortMemberAttributeType deleteCohortMemberAttributeType(@NotNull CohortMemberAttributeType cohortMemberAttributeType, String voidReason) {
-        cohortMemberAttributeType.setRetired(true);
-        cohortMemberAttributeType.setRetireReason(voidReason);
-        cohortMemberAttributeType.setRetiredBy(Context.getAuthenticatedUser());
-        getSession().saveOrUpdate(cohortMemberAttributeType);
-        return cohortMemberAttributeType;
-    }
-
-    @Override
-    public void purgeCohortMemberAttribute(CohortMemberAttributeType cohortMemberAttributeType) {
-        getSession().delete(cohortMemberAttributeType);
-    }
+	
+	@Autowired
+	@Qualifier("sessionFactory")
+	private SessionFactory sessionFactory;
+	
+	protected org.hibernate.Session getSession() {
+		return sessionFactory.getCurrentSession();
+	}
+	
+	@Override
+	public CohortMemberAttributeType getCohortMemberAttributeTypeByUuid(String uuid) {
+		return (CohortMemberAttributeType) getSession().createCriteria(CohortMemberAttributeType.class)
+		        .add(Restrictions.eq("uuid", uuid)).uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CohortMemberAttributeType> getCohortMemberAttributeTypes() {
+		return getSession().createCriteria(CohortMemberAttributeType.class).list();
+	}
+	
+	@Override
+	public CohortMemberAttributeType createCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
+		getSession().saveOrUpdate(cohortMemberAttributeType);
+		return cohortMemberAttributeType;
+	}
+	
+	@Override
+	public CohortMemberAttributeType deleteCohortMemberAttributeType(
+	        @NotNull CohortMemberAttributeType cohortMemberAttributeType, String voidReason) {
+		cohortMemberAttributeType.setRetired(true);
+		cohortMemberAttributeType.setRetireReason(voidReason);
+		cohortMemberAttributeType.setRetiredBy(Context.getAuthenticatedUser());
+		getSession().saveOrUpdate(cohortMemberAttributeType);
+		return cohortMemberAttributeType;
+	}
+	
+	@Override
+	public void purgeCohortMemberAttribute(CohortMemberAttributeType cohortMemberAttributeType) {
+		getSession().delete(cohortMemberAttributeType);
+	}
 }

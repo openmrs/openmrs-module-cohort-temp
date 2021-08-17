@@ -9,30 +9,32 @@
  */
 package org.openmrs.module.cohort.api;
 
+import javax.validation.constraints.NotNull;
+
+import java.util.List;
+
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.cohort.CohortMemberAttribute;
 import org.openmrs.module.cohort.CohortMemberAttributeType;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
 public interface CohortMemberService extends OpenmrsService {
-
-    CohortMemberAttributeType getCohortMemberAttributeTypeByUuid(@NotNull String uuid);
-
-    List<CohortMemberAttributeType> getAllCohortMemberAttributeTypes();
-
-    CohortMemberAttributeType saveCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType);
-
-    CohortMemberAttributeType deleteCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType, String voidReason);
-
-    void purgeCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType);
-
-    CohortMemberAttribute getCohortMemberAttributeByUuid(@NotNull String uuid);
-
-    List<CohortMemberAttribute> getCohortMemberAttributeByTypeUuid(@NotNull String attributeTypeUuid);
-
-    CohortMemberAttribute saveCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute);
-
-    void purgeCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute);
+	
+	CohortMemberAttributeType getCohortMemberAttributeTypeByUuid(@NotNull String uuid);
+	
+	List<CohortMemberAttributeType> getAllCohortMemberAttributeTypes();
+	
+	CohortMemberAttributeType saveCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType);
+	
+	CohortMemberAttributeType deleteCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType,
+	        String voidReason);
+	
+	void purgeCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType);
+	
+	CohortMemberAttribute getCohortMemberAttributeByUuid(@NotNull String uuid);
+	
+	List<CohortMemberAttribute> getCohortMemberAttributeByTypeUuid(@NotNull String attributeTypeUuid);
+	
+	CohortMemberAttribute saveCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute);
+	
+	void purgeCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute);
 }

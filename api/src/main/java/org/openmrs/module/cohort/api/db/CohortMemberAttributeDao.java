@@ -9,27 +9,28 @@
  */
 package org.openmrs.module.cohort.api.db;
 
+import javax.validation.constraints.NotNull;
+
+import java.util.List;
+
 import org.openmrs.annotation.Authorized;
 import org.openmrs.module.cohort.CohortMemberAttribute;
 import org.openmrs.util.PrivilegeConstants;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
-
 public interface CohortMemberAttributeDao {
-
-    @Authorized(PrivilegeConstants.GET_PATIENT_COHORTS)
-    CohortMemberAttribute getCohortMemberAttributeByUuid(@NotNull String uuid);
-
-    @Authorized(PrivilegeConstants.GET_PATIENT_COHORTS)
-    List<CohortMemberAttribute> getCohortMemberAttributesByTypeUuid(@NotNull String attributeTypeUuid);
-
-    @Authorized(PrivilegeConstants.ADD_COHORTS)
-    CohortMemberAttribute saveCohortMemberAttribute(@NotNull CohortMemberAttribute cohortMemberAttribute);
-
-    @Authorized(PrivilegeConstants.DELETE_COHORTS)
-    CohortMemberAttribute deleteCohortMemberAttribute (@NotNull String uuid);
-
-    @Authorized(PrivilegeConstants.PURGE_COHORTS)
-    void purgeCohortMemberAttribute (CohortMemberAttribute cohortMemberAttribute);
+	
+	@Authorized(PrivilegeConstants.GET_PATIENT_COHORTS)
+	CohortMemberAttribute getCohortMemberAttributeByUuid(@NotNull String uuid);
+	
+	@Authorized(PrivilegeConstants.GET_PATIENT_COHORTS)
+	List<CohortMemberAttribute> getCohortMemberAttributesByTypeUuid(@NotNull String attributeTypeUuid);
+	
+	@Authorized(PrivilegeConstants.ADD_COHORTS)
+	CohortMemberAttribute saveCohortMemberAttribute(@NotNull CohortMemberAttribute cohortMemberAttribute);
+	
+	@Authorized(PrivilegeConstants.DELETE_COHORTS)
+	CohortMemberAttribute deleteCohortMemberAttribute(@NotNull String uuid);
+	
+	@Authorized(PrivilegeConstants.PURGE_COHORTS)
+	void purgeCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute);
 }

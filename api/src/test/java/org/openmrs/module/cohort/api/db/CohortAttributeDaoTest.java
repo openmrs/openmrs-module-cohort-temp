@@ -31,39 +31,39 @@ import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
 public class CohortAttributeDaoTest extends BaseModuleContextSensitiveTest {
-
+	
 	private static final String COHORT_ATTRIBUTE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortAttributeDaoTest_initialTestData.xml";
-
+	
 	private static final String COHORT_ATTRIBUTE_UUID = "ddadadd8-8034-4a28-9441-2eb2e7679e10";
-
+	
 	private static final int COHORT_ATTRIBUTE_ID = 1;
-
+	
 	private static final String TEST_COHORT_ATTRIBUTE = "Test cohort attribute";
-
+	
 	private static final int TEST_COHORT_ATTRIBUTE_ID = 200;
-
+	
 	private static final String COHORT_ATTRIBUTE_VALUE = "cohortAttribute";
-
+	
 	private HibernateCohortDAO dao;
-
+	
 	@Autowired
 	@Qualifier("sessionFactory")
 	private SessionFactory sessionFactory;
-
+	
 	@Before
 	public void setup() throws Exception {
 		dao = new HibernateCohortDAO();
 		dao.setSessionFactory(sessionFactory);
 		executeDataSet(COHORT_ATTRIBUTE_INITIAL_TEST_DATA_XML);
 	}
-
+	
 	@Test
 	public void getCohortAttributeById_shouldGetCohortAttributeById() {
 		CohortAttribute cohortAttribute = dao.getCohortAttributeById(COHORT_ATTRIBUTE_ID);
 		assertThat(cohortAttribute, notNullValue());
 		assertThat(cohortAttribute.getCohortAttributeId(), equalTo(COHORT_ATTRIBUTE_ID));
 	}
-
+	
 	@Test
 	public void getCohortAttributeByUuid_shouldGetCohortAttributeByUuid() {
 		CohortAttribute cohortAttribute = dao.getCohortAttributeByUuid(COHORT_ATTRIBUTE_UUID);
@@ -71,7 +71,7 @@ public class CohortAttributeDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohortAttribute.getCohortAttributeId(), equalTo(COHORT_ATTRIBUTE_ID));
 		assertThat(cohortAttribute.getUuid(), equalTo(COHORT_ATTRIBUTE_UUID));
 	}
-
+	
 	@Test
 	public void saveCohortAttributes_shouldCreateNewCohortAttribute() {
 		CohortAttribute cohortAttribute = dao.saveCohortAttributes(TestDataUtils.COHORT_ATTRIBUTE());
@@ -80,12 +80,12 @@ public class CohortAttributeDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohortAttribute.getCohortAttributeId(), equalTo(TEST_COHORT_ATTRIBUTE_ID));
 		assertThat(cohortAttribute.getValue(), equalTo(COHORT_ATTRIBUTE_VALUE));
 	}
-
+	
 	@Test
 	public void findCohortAttributes_shouldFindMatchingCohortAttributes() {
 		List<CohortAttribute> results = dao.findCohortAttribute(TEST_COHORT_ATTRIBUTE);
 		assertThat(results, notNullValue());
-		assertThat(results, not(Matchers.<CohortAttribute>empty()));
-		assertThat(results, Matchers.<CohortAttribute>hasSize(equalTo(1)));
+		assertThat(results, not(Matchers.<CohortAttribute> empty()));
+		assertThat(results, Matchers.<CohortAttribute> hasSize(equalTo(1)));
 	}
 }

@@ -9,6 +9,8 @@
  */
 package org.openmrs.module.cohort.api.impl;
 
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Setter;
 import org.openmrs.api.impl.BaseOpenmrsService;
@@ -21,62 +23,61 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Component("cohortMemberService")
 @Setter(AccessLevel.PACKAGE)
 @Transactional
 public class CohortMemberServiceImpl extends BaseOpenmrsService implements CohortMemberService {
-
-    @Autowired
-    private CohortMemberAttributeTypeDao attributeTypeDao;
-
-    @Autowired
-    private CohortMemberAttributeDao attributeDao;
-
-    @Override
-    public CohortMemberAttributeType getCohortMemberAttributeTypeByUuid(String uuid) {
-        return attributeTypeDao.getCohortMemberAttributeTypeByUuid(uuid);
-    }
-
-    @Override
-    public List<CohortMemberAttributeType> getAllCohortMemberAttributeTypes() {
-        return attributeTypeDao.getCohortMemberAttributeTypes();
-    }
-
-    @Override
-    @Transactional
-    public CohortMemberAttributeType saveCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
-        return attributeTypeDao.createCohortMemberAttributeType(cohortMemberAttributeType);
-    }
-
-    @Override
-    public CohortMemberAttributeType deleteCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType, String voidReason) {
-        return attributeTypeDao.deleteCohortMemberAttributeType(cohortMemberAttributeType, voidReason);
-    }
-
-    @Override
-    public void purgeCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
-        attributeTypeDao.purgeCohortMemberAttribute(cohortMemberAttributeType);
-    }
-
-    @Override
-    public CohortMemberAttribute getCohortMemberAttributeByUuid(String uuid) {
-        return attributeDao.getCohortMemberAttributeByUuid(uuid);
-    }
-
-    @Override
-    public List<CohortMemberAttribute> getCohortMemberAttributeByTypeUuid(String attributeTypeUuid) {
-        return attributeDao.getCohortMemberAttributesByTypeUuid(attributeTypeUuid);
-    }
-
-    @Override
-    public CohortMemberAttribute saveCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute) {
-        return attributeDao.saveCohortMemberAttribute(cohortMemberAttribute);
-    }
-
-    @Override
-    public void purgeCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute) {
-        attributeDao.purgeCohortMemberAttribute(cohortMemberAttribute);
-    }
+	
+	@Autowired
+	private CohortMemberAttributeTypeDao attributeTypeDao;
+	
+	@Autowired
+	private CohortMemberAttributeDao attributeDao;
+	
+	@Override
+	public CohortMemberAttributeType getCohortMemberAttributeTypeByUuid(String uuid) {
+		return attributeTypeDao.getCohortMemberAttributeTypeByUuid(uuid);
+	}
+	
+	@Override
+	public List<CohortMemberAttributeType> getAllCohortMemberAttributeTypes() {
+		return attributeTypeDao.getCohortMemberAttributeTypes();
+	}
+	
+	@Override
+	@Transactional
+	public CohortMemberAttributeType saveCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
+		return attributeTypeDao.createCohortMemberAttributeType(cohortMemberAttributeType);
+	}
+	
+	@Override
+	public CohortMemberAttributeType deleteCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType,
+	        String voidReason) {
+		return attributeTypeDao.deleteCohortMemberAttributeType(cohortMemberAttributeType, voidReason);
+	}
+	
+	@Override
+	public void purgeCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
+		attributeTypeDao.purgeCohortMemberAttribute(cohortMemberAttributeType);
+	}
+	
+	@Override
+	public CohortMemberAttribute getCohortMemberAttributeByUuid(String uuid) {
+		return attributeDao.getCohortMemberAttributeByUuid(uuid);
+	}
+	
+	@Override
+	public List<CohortMemberAttribute> getCohortMemberAttributeByTypeUuid(String attributeTypeUuid) {
+		return attributeDao.getCohortMemberAttributesByTypeUuid(attributeTypeUuid);
+	}
+	
+	@Override
+	public CohortMemberAttribute saveCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute) {
+		return attributeDao.saveCohortMemberAttribute(cohortMemberAttribute);
+	}
+	
+	@Override
+	public void purgeCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute) {
+		attributeDao.purgeCohortMemberAttribute(cohortMemberAttribute);
+	}
 }

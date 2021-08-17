@@ -7,14 +7,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.lang.reflect.Method;
+
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -45,196 +43,196 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(name = "cohort_obs")
 public class CohortObs extends BaseOpenmrsData {
-
+	
 	private static final long serialVersionUID = 1L;
-
+	
 	private static final Logger log = LoggerFactory.getLogger(CohortObs.class);
-
+	
 	private static DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
-
+	
 	private static DateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
+	
 	private static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "obs_id")
 	private Integer cohortObsId;
-
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "concept_id")
 	protected Concept concept;
-
-	@ManyToOne(optional=false, cascade = CascadeType.ALL)
+	
+	@ManyToOne(optional = false, cascade = CascadeType.ALL)
 	@JoinColumn(name = "encounter_id")
 	private CohortEncounter encounter;
-
+	
 	@ManyToOne
 	@JoinColumn(name = "obs_group_id")
 	protected CohortObs obsGroup;
-
+	
 	@Column(name = "obs_datetime")
 	private Date obsDateTime;
-
+	
 	@OneToMany(cascade = CascadeType.ALL)
 	@BatchSize(size = 25)
 	@OrderBy("cohort_obs_id")
 	protected Set<CohortObs> groupMembers;
-
+	
 	@ManyToOne
 	@JoinColumn(name = "value_coded")
 	protected Concept valueCoded;
-
+	
 	@Transient
 	protected transient ConceptName valueCodedName;
-
+	
 	@Column(name = "value_group_id")
 	protected Integer valueGroupId;
-
+	
 	@Column(name = "value_datetime")
 	protected Date valueDatetime;
-
+	
 	@Column(name = "value_numeric")
 	protected Double valueNumeric;
-
+	
 	@Column(name = "value_modifier", length = 2)
 	protected String valueModifier;
-
+	
 	@Column(name = "value_text", length = 65535)
 	protected String valueText;
-
+	
 	@Column(name = "value_complex")
 	protected String valueComplex;
-
+	
 	@Column(name = "accession_number")
 	protected String accessionNumber;
-
+	
 	protected String comment;
-
+	
 	@Transient
 	protected transient ComplexData complexData;
-
+	
 	public Integer getCohortObsId() {
 		return cohortObsId;
 	}
-
+	
 	public void setCohortObsId(Integer cohortObsId) {
 		this.cohortObsId = cohortObsId;
 	}
-
+	
 	public Concept getConcept() {
 		return concept;
 	}
-
+	
 	public void setConcept(Concept concept) {
 		this.concept = concept;
 	}
-
+	
 	public CohortEncounter getEncounterId() {
 		return encounter;
 	}
-
+	
 	public void setEncounterId(CohortEncounter encounterId) {
 		this.encounter = encounterId;
 	}
-
+	
 	public Date getObsDateTime() {
 		return obsDateTime;
 	}
-
+	
 	public void setObsDateTime(Date obsDateTime) {
 		this.obsDateTime = obsDateTime;
 	}
-
+	
 	public CohortObs getObsGroup() {
 		return obsGroup;
 	}
-
+	
 	public void setObsGroup(CohortObs obsGroup) {
 		this.obsGroup = obsGroup;
 	}
-
+	
 	public String getComment() {
 		return comment;
 	}
-
+	
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-
+	
 	public Concept getValueCoded() {
 		return valueCoded;
 	}
-
+	
 	public void setValueCoded(Concept valueCoded) {
 		this.valueCoded = valueCoded;
 	}
-
+	
 	public ConceptName getValueCodedName() {
 		return valueCodedName;
 	}
-
+	
 	public void setValueCodedName(ConceptName valueCodedName) {
 		this.valueCodedName = valueCodedName;
 	}
-
+	
 	public Integer getValueGroupId() {
 		return valueGroupId;
 	}
-
+	
 	public void setValueGroupId(Integer valueGroupId) {
 		this.valueGroupId = valueGroupId;
 	}
-
+	
 	public Date getValueDatetime() {
 		return valueDatetime;
 	}
-
+	
 	public void setValueDatetime(Date valueDatetime) {
 		this.valueDatetime = valueDatetime;
 	}
-
+	
 	public Double getValueNumeric() {
 		return valueNumeric;
 	}
-
+	
 	public void setValueNumeric(Double valueNumeric) {
 		this.valueNumeric = valueNumeric;
 	}
-
+	
 	public String getValueModifier() {
 		return valueModifier;
 	}
-
+	
 	public void setValueModifier(String valueModifier) {
 		this.valueModifier = valueModifier;
 	}
-
+	
 	public String getValueText() {
 		return valueText;
 	}
-
+	
 	public void setValueText(String valueText) {
 		this.valueText = valueText;
 	}
-
+	
 	public ComplexData getComplexData() {
 		return complexData;
 	}
-
+	
 	public void setComplexData(ComplexData complexData) {
 		this.complexData = complexData;
 	}
-
+	
 	public String getValueComplex() {
 		return this.valueComplex;
 	}
-
+	
 	/**
-	 * Set the value for the ComplexData. This method is used by the ComplexObsHandler. The
-	 * valueComplex has two parts separated by a bar '|' character: part A) the title; and part B)
-	 * the URI. The title is the readable description of the valueComplex that is returned by
-	 * Obs.getValueAsString(). The URI is the location where the ComplexData is stored.
+	 * Set the value for the ComplexData. This method is used by the ComplexObsHandler. The valueComplex
+	 * has two parts separated by a bar '|' character: part A) the title; and part B) the URI. The title
+	 * is the readable description of the valueComplex that is returned by Obs.getValueAsString(). The
+	 * URI is the location where the ComplexData is stored.
 	 *
 	 * @param valueComplex readable title and URI for the location of the ComplexData binary object.
 	 * @since 1.5
@@ -242,46 +240,46 @@ public class CohortObs extends BaseOpenmrsData {
 	public void setValueComplex(String valueComplex) {
 		this.valueComplex = valueComplex;
 	}
-
+	
 	public String getAccessionNumber() {
 		return accessionNumber;
 	}
-
+	
 	public void setAccessionNumber(String accessionNumber) {
 		this.accessionNumber = accessionNumber;
 	}
-
+	
 	public void setGroupMembers(Set<CohortObs> groupMembers) {
 		this.groupMembers = groupMembers;
 	}
-
+	
 	@Override
 	public Integer getId() {
 		return getCohortObsId();
 	}
-
+	
 	@Override
 	public void setId(Integer id) {
 		setCohortObsId(id);
 	}
-
+	
 	public boolean hasGroupMembers(boolean includeVoided) {
 		// ! symbol used because if it's not empty, we want true
 		return !org.springframework.util.CollectionUtils.isEmpty(getGroupMembers(includeVoided));
 	}
-
+	
 	public boolean hasGroupMembers() {
 		return hasGroupMembers(false);
 	}
-
+	
 	public Set<CohortObs> getGroupMembers() {
 		return getGroupMembers(false); //same as just returning groupMembers
 	}
-
+	
 	public boolean isObsGrouping() {
 		return hasGroupMembers(true);
 	}
-
+	
 	public Set<CohortObs> getGroupMembers(boolean includeVoided) {
 		if (includeVoided) {
 			//just return all group members
@@ -301,7 +299,7 @@ public class CohortObs extends BaseOpenmrsData {
 		}
 		return nonVoided;
 	}
-
+	
 	public String getValueAsString(Locale locale) {
 		// formatting for the return of numbers of type double
 		NumberFormat nf = NumberFormat.getNumberInstance(locale);
@@ -326,7 +324,7 @@ public class CohortObs extends BaseOpenmrsData {
 						} else {
 							return "";
 						}
-
+						
 					}
 				}
 			} else if ("NM".equals(abbrev) || "SN".equals(abbrev)) {
@@ -361,7 +359,7 @@ public class CohortObs extends BaseOpenmrsData {
 				}
 			}
 		}
-
+		
 		// if the datatype is 'unknown', default to just returning what is not null
 		if (getValueNumeric() != null) {
 			return df.format(getValueNumeric());
@@ -390,7 +388,7 @@ public class CohortObs extends BaseOpenmrsData {
 			}
 			return sb.toString();
 		}
-
+		
 		// returns the title portion of the valueComplex
 		// which is everything before the first bar '|' character.
 		if (getValueComplex() != null) {
@@ -401,12 +399,12 @@ public class CohortObs extends BaseOpenmrsData {
 				}
 			}
 		}
-
+		
 		return "";
 	}
-
+	
 	public Boolean getValueAsBoolean() {
-
+		
 		if (getValueCoded() != null) {
 			if (getValueCoded().equals(Context.getConceptService().getTrueConcept())) {
 				return Boolean.TRUE;
@@ -423,7 +421,7 @@ public class CohortObs extends BaseOpenmrsData {
 		//returning null is preferred to defaulting to false to support validation of user input is from a form
 		return null;
 	}
-
+	
 	/**
 	 * Returns the boolean value if the concept of this obs is of boolean datatype
 	 *
@@ -436,15 +434,15 @@ public class CohortObs extends BaseOpenmrsData {
 			Concept trueConcept = Context.getConceptService().getTrueConcept();
 			return trueConcept != null && valueCoded.getId().equals(trueConcept.getId());
 		}
-
+		
 		return null;
 	}
-
+	
 	public void setValueAsString(String s) throws ParseException {
 		if (log.isDebugEnabled()) {
 			log.debug("getConcept() == " + getConcept());
 		}
-
+		
 		if (getConcept() != null && !StringUtils.isBlank(s)) {
 			String abbrev = getConcept().getDatatype().getHl7Abbreviation();
 			if ("BIT".equals(abbrev)) {
@@ -464,12 +462,12 @@ public class CohortObs extends BaseOpenmrsData {
 			} else {
 				throw new RuntimeException("Don't know how to handle " + abbrev);
 			}
-
+			
 		} else {
 			throw new RuntimeException("concept is null for " + this);
 		}
 	}
-
+	
 	@Deprecated
 	public Map<Locale, String> getValueAsString() {
 		Map<Locale, String> localeMap = new HashMap<Locale, String>();
@@ -479,18 +477,13 @@ public class CohortObs extends BaseOpenmrsData {
 		}
 		return localeMap;
 	}
-
+	
 	public void setValueBoolean(Boolean valueBoolean) {
 		if (valueBoolean != null && getConcept() != null && getConcept().getDatatype().isBoolean()) {
-			setValueCoded(valueBoolean.booleanValue() ? Context.getConceptService().getTrueConcept() : Context
-					.getConceptService().getFalseConcept());
+			setValueCoded(valueBoolean.booleanValue() ? Context.getConceptService().getTrueConcept()
+			        : Context.getConceptService().getFalseConcept());
 		} else if (valueBoolean == null) {
 			setValueCoded(null);
 		}
 	}
 }
-	
-	
-	
-	
-	

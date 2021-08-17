@@ -13,5 +13,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 @Configuration
-@ImportResource({ "classpath:applicationContext-service.xml", "classpath:moduleApplicationContext.xml", "classpath:TestApplicationContext.xml" })
+@ImportResource({ "classpath:applicationContext-service.xml", "classpath:moduleApplicationContext.xml",
+        "classpath:TestApplicationContext.xml" })
 public class TestSpringConfiguration {}

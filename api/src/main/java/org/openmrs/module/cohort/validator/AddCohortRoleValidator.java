@@ -12,23 +12,23 @@ import org.springframework.validation.Validator;
 @Component
 @Qualifier("addCohortRoleValidator")
 public class AddCohortRoleValidator implements Validator {
-
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return clazz.equals(CohortRole.class);
-    }
-
-    @Override
-    public void validate(Object command, Errors errors) {
-        CohortService cohortService = Context.getService(CohortService.class);
-        
-        CohortRole currentRole = (CohortRole) command;
-        CohortRole role = cohortService.getCohortRoleByName(currentRole.getName());
-        
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "required");
-
-        if (role != null) {
-        	errors.rejectValue("name", "An entry with this name already exists");
-        }
-    }
+	
+	@Override
+	public boolean supports(Class<?> clazz) {
+		return clazz.equals(CohortRole.class);
+	}
+	
+	@Override
+	public void validate(Object command, Errors errors) {
+		CohortService cohortService = Context.getService(CohortService.class);
+		
+		CohortRole currentRole = (CohortRole) command;
+		CohortRole role = cohortService.getCohortRoleByName(currentRole.getName());
+		
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "required");
+		
+		if (role != null) {
+			errors.rejectValue("name", "An entry with this name already exists");
+		}
+	}
 }

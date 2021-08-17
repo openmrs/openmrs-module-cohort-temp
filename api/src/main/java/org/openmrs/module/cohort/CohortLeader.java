@@ -20,40 +20,40 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import java.util.Date;
+
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.Person;
-
-import java.util.Date;
 
 @Entity
 @Table(name = "cohort_leader")
 public class CohortLeader extends BaseOpenmrsData {
-
+	
 	private static final long serialVersionUID = 1L;
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "cohort_leader_id")
 	private Integer cohortLeaderId;
-
+	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "person_id")
 	private Person person;
-
+	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cohort_id")
 	private CohortM cohort;
-
+	
 	@Column(name = "start_date")
 	private Date startDate;
-
+	
 	@Column(name = "end_date")
 	private Date endDate;
-
+	
 	public CohortLeader() {
-
+		
 	}
-
+	
 	public CohortLeader(Person person) {
 		if (person != null) {
 			this.person = person;
@@ -62,53 +62,53 @@ public class CohortLeader extends BaseOpenmrsData {
 			}
 		}
 	}
-
+	
 	@Override
 	public Integer getId() {
 		return cohortLeaderId;
 	}
-
+	
 	@Override
 	public void setId(Integer id) {
 		this.cohortLeaderId = id;
 	}
-
+	
 	public int getCohortLeaderId() {
 		return cohortLeaderId;
 	}
-
+	
 	public void setCohortLeaderId(int cohortLeaderId) {
 		this.cohortLeaderId = cohortLeaderId;
 	}
-
+	
 	public Person getPerson() {
 		return person;
 	}
-
+	
 	public void setPerson(Person person) {
 		this.person = person;
 	}
-
+	
 	public CohortM getCohort() {
 		return cohort;
 	}
-
+	
 	public void setCohort(CohortM cohort) {
 		this.cohort = cohort;
 	}
-
+	
 	public Date getStartDate() {
 		return startDate;
 	}
-
+	
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
-
+	
 	public Date getEndDate() {
 		return endDate;
 	}
-
+	
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}

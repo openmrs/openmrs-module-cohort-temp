@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.cohort;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.BaseModuleActivator;
@@ -24,7 +23,6 @@ import org.openmrs.module.BaseModuleActivator;
 public class CohortModuleActivator extends BaseModuleActivator {
 	
 	protected Log log = LogFactory.getLog(getClass());
-	
 	
 	@Override
 	public void willStart() {

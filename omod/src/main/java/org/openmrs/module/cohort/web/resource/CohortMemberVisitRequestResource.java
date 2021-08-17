@@ -16,14 +16,14 @@ import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOp
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 @Resource(name = RestConstants.VERSION_1 + CohortRest.COHORT_NAMESPACE
-		+ "/cohortmembervisit", supportedClass = CohortMemberVisit.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
+        + "/cohortmembervisit", supportedClass = CohortMemberVisit.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
 public class CohortMemberVisitRequestResource extends DataDelegatingCrudResource<CohortMemberVisit> {
-
+	
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
-
+		
 		DelegatingResourceDescription description = null;
-
+		
 		if (Context.isAuthenticated()) {
 			description = new DelegatingResourceDescription();
 			if (rep instanceof DefaultRepresentation) {
@@ -40,33 +40,33 @@ public class CohortMemberVisitRequestResource extends DataDelegatingCrudResource
 		}
 		return description;
 	}
-
+	
 	@Override
 	public CohortMemberVisit getByUniqueId(String s) {
 		return Context.getService(CohortService.class).getCohortMemberVisitByUuid(s);
 	}
-
+	
 	@Override
 	protected void delete(CohortMemberVisit cohortMemberVisit, String s, RequestContext requestContext)
-			throws ResponseException {
-
+	        throws ResponseException {
+		
 	}
-
+	
 	@Override
 	public CohortMemberVisit newDelegate() {
 		return new CohortMemberVisit();
 	}
-
+	
 	@Override
 	public CohortMemberVisit save(CohortMemberVisit cohortMemberVisit) {
 		return Context.getService(CohortService.class).saveCohortMemberVisit(cohortMemberVisit);
 	}
-
+	
 	@Override
 	public void purge(CohortMemberVisit cohortMemberVisit, RequestContext requestContext) throws ResponseException {
-
+		
 	}
-
+	
 	@Override
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
@@ -74,12 +74,12 @@ public class CohortMemberVisitRequestResource extends DataDelegatingCrudResource
 		description.addProperty("cohortVisit");
 		return description;
 	}
-
+	
 	@Override
 	public DelegatingResourceDescription getUpdatableProperties() throws ResourceDoesNotSupportOperationException {
 		return getCreatableProperties();
 	}
-
+	
 	//    @Override
 	//    protected PageableResult doSearch(RequestContext context) {
 	//        String cohort = context.getParameter("cohort_visit");
@@ -96,5 +96,5 @@ public class CohortMemberVisitRequestResource extends DataDelegatingCrudResource
 	//        List<CohortMember> list = Context.getService(CohortService.class).findCohortMembersByCohort(cohorto.getCohortId());
 	//        return new NeedsPaging<CohortMember>(list, context);
 	//    }
-
+	
 }

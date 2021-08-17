@@ -27,26 +27,26 @@ import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
 public class CohortAttributeTypeDaoTest extends BaseModuleContextSensitiveTest {
-
+	
 	private static final String COHORT_ATTRIBUTE_TYPE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortAttributeTypeDaoTest_initialTestData.xml";
-
+	
 	private static final String COHORT_ATTRIBUTE_TYPE_UUID = "9eb7fe43-2813-4ebc-80dc-2e5d30251bb7";
-
+	
 	private static final int COHORT_ATTRIBUTE_TYPE_ID = 1;
-
+	
 	private HibernateCohortDAO dao;
-
+	
 	@Autowired
 	@Qualifier("sessionFactory")
 	private SessionFactory sessionFactory;
-
+	
 	@Before
 	public void setup() throws Exception {
 		dao = new HibernateCohortDAO();
 		dao.setSessionFactory(sessionFactory);
 		executeDataSet(COHORT_ATTRIBUTE_TYPE_INITIAL_TEST_DATA_XML);
 	}
-
+	
 	@Test
 	public void shouldGetCohortAttributeTypeById() {
 		CohortAttributeType cohortAttributeType = dao.getCohortAttributeTypeById(COHORT_ATTRIBUTE_TYPE_ID);
@@ -54,7 +54,7 @@ public class CohortAttributeTypeDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohortAttributeType.getCohortAttributeTypeId(), notNullValue());
 		assertThat(cohortAttributeType.getCohortAttributeTypeId(), equalTo(COHORT_ATTRIBUTE_TYPE_ID));
 	}
-
+	
 	@Test
 	public void shouldGetCohortAttributeTypeByUuid() {
 		CohortAttributeType cohortAttributeType = dao.getCohortAttributeTypeByUuid(COHORT_ATTRIBUTE_TYPE_UUID);
@@ -63,7 +63,7 @@ public class CohortAttributeTypeDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohortAttributeType.getCohortAttributeTypeId(), equalTo(COHORT_ATTRIBUTE_TYPE_ID));
 		assertThat(cohortAttributeType.getUuid(), equalTo(COHORT_ATTRIBUTE_TYPE_UUID));
 	}
-
+	
 	@Test
 	public void shouldGetCohortAttributes() {
 		CohortAttributeType cohortAttributeType = dao.getCohortAttributes(COHORT_ATTRIBUTE_TYPE_ID);
@@ -71,14 +71,15 @@ public class CohortAttributeTypeDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohortAttributeType.getCohortAttributeTypeId(), notNullValue());
 		assertThat(cohortAttributeType.getCohortAttributeTypeId(), equalTo(COHORT_ATTRIBUTE_TYPE_ID));
 	}
-
+	
 	@Test
 	public void saveCohortAttributes() {
 		CohortAttributeType cohortAttributeType = dao.saveCohortAttributes(TestDataUtils.COHORT_ATTRIBUTE_TYPE());
 		assertThat(cohortAttributeType, notNullValue());
 		assertThat(cohortAttributeType.getCohortAttributeTypeId(), notNullValue());
-		assertThat(cohortAttributeType.getCohortAttributeTypeId(), equalTo(TestDataUtils.COHORT_ATTRIBUTE_TYPE().getCohortAttributeTypeId()));
-
+		assertThat(cohortAttributeType.getCohortAttributeTypeId(),
+		    equalTo(TestDataUtils.COHORT_ATTRIBUTE_TYPE().getCohortAttributeTypeId()));
+		
 		CohortAttributeType result = dao.getCohortAttributeTypeById(cohortAttributeType.getId());
 		assertThat(result, notNullValue());
 		assertThat(result.getCohortAttributeTypeId(), notNullValue());

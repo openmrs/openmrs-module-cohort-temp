@@ -1,4 +1,5 @@
 package org.openmrs.module.cohort.api.db;
+
 /**
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
@@ -8,7 +9,6 @@ package org.openmrs.module.cohort.api.db;
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-
 import java.util.Collection;
 import java.util.Date;
 
@@ -21,8 +21,8 @@ import org.openmrs.VisitType;
 import org.openmrs.module.cohort.CohortM;
 
 /**
- * The search parameter object for encounters. A convenience interface for building
- * instances is provided by {@link EncounterSearchCriteriaBuilder}.
+ * The search parameter object for encounters. A convenience interface for building instances is
+ * provided by {@link EncounterSearchCriteriaBuilder}.
  *
  * @see EncounterSearchCriteriaBuilder
  * @since 1.12
@@ -52,23 +52,23 @@ public class EncounterSearchCriteria {
 	private boolean includeVoided;
 	
 	/**
-	 * Instead of calling this constructor directly, it is recommended to use {@link EncounterSearchCriteriaBuilder}.
+	 * Instead of calling this constructor directly, it is recommended to use
+	 * {@link EncounterSearchCriteriaBuilder}.
 	 *
-	 * @param location        the location this encounter took place
-	 * @param fromDate        the minimum date (inclusive) the encounter took place
-	 * @param toDate          the maximum date (exclusive) the encounter took place
-	 * @param dateChanged     the minimum date the encounter was changed
+	 * @param location the location this encounter took place
+	 * @param fromDate the minimum date (inclusive) the encounter took place
+	 * @param toDate the maximum date (exclusive) the encounter took place
+	 * @param dateChanged the minimum date the encounter was changed
 	 * @param enteredViaForms the form that entered this encounter must be in this collection
-	 * @param encounterTypes  the type of the encounter must be in this collection
-	 * @param providers       the provider of the encounter must be in this collection
-	 * @param visitTypes      the visit types of the encounter must be in this collection
-	 * @param visits          the visits of the encounter must be in this collection
-	 * @param includeVoided   whether to include the voided encounters or not
+	 * @param encounterTypes the type of the encounter must be in this collection
+	 * @param providers the provider of the encounter must be in this collection
+	 * @param visitTypes the visit types of the encounter must be in this collection
+	 * @param visits the visits of the encounter must be in this collection
+	 * @param includeVoided whether to include the voided encounters or not
 	 */
 	public EncounterSearchCriteria(CohortM cohort, Location location, Date fromDate, Date toDate, Date dateChanged,
-			Collection<Form> enteredViaForms, Collection<EncounterType> encounterTypes,
-			Collection<Provider> providers, Collection<VisitType> visitTypes,
-			Collection<Visit> visits, boolean includeVoided) {
+	    Collection<Form> enteredViaForms, Collection<EncounterType> encounterTypes, Collection<Provider> providers,
+	    Collection<VisitType> visitTypes, Collection<Visit> visits, boolean includeVoided) {
 		this.setCohort(cohort);
 		this.location = location;
 		this.fromDate = fromDate;
@@ -85,7 +85,6 @@ public class EncounterSearchCriteria {
 	/**
 	 * @return the patient the encounter is for
 	 */
-	
 	
 	/**
 	 * @return the location this encounter took place

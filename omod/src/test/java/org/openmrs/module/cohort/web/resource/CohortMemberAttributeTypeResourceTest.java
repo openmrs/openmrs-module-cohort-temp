@@ -9,4 +9,4 @@
  */
 package org.openmrs.module.cohort.web.resource;
 
-public class CohortMemberAttributeTypeResourceTest{}
+public class CohortMemberAttributeTypeResourceTest {}

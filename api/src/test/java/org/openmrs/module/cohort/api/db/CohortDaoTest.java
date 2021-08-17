@@ -28,32 +28,32 @@ import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
 public class CohortDaoTest extends BaseModuleContextSensitiveTest {
-
+	
 	private static final String COHORT_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortDaoTest_initialTestData.xml";
-
+	
 	private static final String COHORT_UUID = "7f9a2479-c14a-4bfc-bcaa-632860258519";
-
+	
 	private static final String COHORT_NAME = "COVID-19 patients";
-
+	
 	private static final int COHORT_ID = 12;
-
+	
 	private static final String COHORT_NAME1 = "cohort name";
-
+	
 	private static final String COHORT_DESCRIPTION = "Cohort description";
-
+	
 	private HibernateCohortDAO dao;
-
+	
 	@Autowired
 	@Qualifier("sessionFactory")
 	private SessionFactory sessionFactory;
-
+	
 	@Before
 	public void setup() throws Exception {
 		dao = new HibernateCohortDAO();
 		dao.setSessionFactory(sessionFactory);
 		executeDataSet(COHORT_INITIAL_TEST_DATA_XML);
 	}
-
+	
 	@Test
 	public void shouldGetCohortByName() {
 		CohortM cohort = dao.getCohortByName(COHORT_NAME);
@@ -61,7 +61,7 @@ public class CohortDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohort.getName(), notNullValue());
 		assertThat(cohort.getName(), equalTo(COHORT_NAME));
 	}
-
+	
 	@Test
 	public void shouldGetCohortMById() {
 		CohortM cohort = dao.getCohortMById(COHORT_ID);
@@ -69,7 +69,7 @@ public class CohortDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohort.getCohortId(), notNullValue());
 		assertThat(cohort.getCohortId(), equalTo(COHORT_ID));
 	}
-
+	
 	@Test
 	public void shouldGetCohortMByUuid() {
 		CohortM cohort = dao.getCohortMByUuid(COHORT_UUID);
@@ -79,7 +79,7 @@ public class CohortDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohort.getUuid(), notNullValue());
 		assertThat(cohort.getUuid(), equalTo(COHORT_UUID));
 	}
-
+	
 	@Test
 	public void shouldGetCohortUuid() {
 		CohortM cohort = dao.getCohortUuid(COHORT_UUID);
@@ -87,7 +87,7 @@ public class CohortDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohort.getUuid(), notNullValue());
 		assertThat(cohort.getUuid(), equalTo(COHORT_UUID));
 	}
-
+	
 	@Test
 	public void shouldCreateNewCohort() {
 		CohortM cohortM = new CohortM();
@@ -97,13 +97,13 @@ public class CohortDaoTest extends BaseModuleContextSensitiveTest {
 		cohortM.setDescription(COHORT_DESCRIPTION);
 		CohortM cohort = dao.saveCohort(cohortM);
 		assertThat(cohort, notNullValue());
-
+		
 		CohortM savedCohort = dao.getCohortMById(cohort.getCohortId());
 		assertThat(savedCohort, notNullValue());
 		assertThat(savedCohort, equalTo(cohort));
-
+		
 	}
-
+	
 	@Test
 	public void shouldGetCohortWhereLocationProgramAndTypeAreNull() {
 		CohortM cohort = dao.getCohort(null, null, null);

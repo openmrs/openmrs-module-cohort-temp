@@ -31,28 +31,28 @@ import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
 public class CohortLeaderDaoTest extends BaseModuleContextSensitiveTest {
-
+	
 	private static final String COHORT_LEADER_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortLeaderDaoTest_initialTestData.xml";
-
+	
 	private static final String COHORT_LEADER_UUID = "3f9a2479-c14a-4bfc-bcaa-632860258518";
-
+	
 	private static final int COHORT_LEADER_ID = 123;
-
+	
 	private static final int COHORT_ID = 1;
-
+	
 	private HibernateCohortDAO dao;
-
+	
 	@Autowired
 	@Qualifier("sessionFactory")
 	private SessionFactory sessionFactory;
-
+	
 	@Before
 	public void setup() throws Exception {
 		dao = new HibernateCohortDAO();
 		dao.setSessionFactory(sessionFactory);
 		executeDataSet(COHORT_LEADER_INITIAL_TEST_DATA_XML);
 	}
-
+	
 	@Test
 	public void shouldGetCohortLeaderByUuid() {
 		CohortLeader cohortLeader = dao.getCohortLeaderByUuid(COHORT_LEADER_UUID);
@@ -60,7 +60,7 @@ public class CohortLeaderDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohortLeader.getUuid(), notNullValue());
 		assertThat(cohortLeader.getUuid(), equalTo(COHORT_LEADER_UUID));
 	}
-
+	
 	@Test
 	public void shouldGetCohortLeaderById() {
 		CohortLeader cohortLeader = dao.getCohortLeaderById(COHORT_LEADER_ID);
@@ -68,15 +68,15 @@ public class CohortLeaderDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohortLeader.getCohortLeaderId(), notNullValue());
 		assertThat(cohortLeader.getCohortLeaderId(), equalTo(COHORT_LEADER_ID));
 	}
-
+	
 	@Test
 	public void shouldGetCohortLeadersByCohortId() {
 		List<CohortLeader> cohortLeader = dao.getCohortLeadersByCohortId(COHORT_ID);
 		assertThat(cohortLeader, notNullValue());
-		assertThat(cohortLeader, Matchers.<CohortLeader>hasSize(greaterThanOrEqualTo(1)));
+		assertThat(cohortLeader, Matchers.<CohortLeader> hasSize(greaterThanOrEqualTo(1)));
 		assertThat(cohortLeader.get(0).getCohort().getCohortId(), equalTo(COHORT_ID));
 	}
-
+	
 	@Test
 	public void shouldCreateCohortLeader() {
 		CohortLeader cohortLeader = new CohortLeader();
@@ -86,7 +86,7 @@ public class CohortLeaderDaoTest extends BaseModuleContextSensitiveTest {
 		CohortLeader result = dao.saveCohortLeader(cohortLeader);
 		assertThat(result, notNullValue());
 		assertThat(result.getId(), equalTo(321));
-
+		
 		CohortLeader savedCohortLeader = dao.getCohortLeaderById(321);
 		assertThat(savedCohortLeader, notNullValue());
 		assertThat(savedCohortLeader, equalTo(cohortLeader));

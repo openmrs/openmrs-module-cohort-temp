@@ -24,20 +24,19 @@ import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
-import org.openmrs.module.webservices.rest.web.resource.impl.MetadataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 @Resource(name = RestConstants.VERSION_1 + CohortRest.COHORT_NAMESPACE
-		+ "/cohortmember", supportedClass = CohortMember.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
+        + "/cohortmember", supportedClass = CohortMember.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
 public class CohortMemberRequestResource extends DataDelegatingCrudResource<CohortMember> {
-
+	
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
-
+		
 		DelegatingResourceDescription description = null;
-
+		
 		if (Context.isAuthenticated()) {
 			description = new DelegatingResourceDescription();
 			if (rep instanceof DefaultRepresentation) {
@@ -67,7 +66,7 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 		}
 		return description;
 	}
-
+	
 	@Override
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
@@ -81,7 +80,7 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 		description.addProperty("attributes");
 		return description;
 	}
-
+	
 	@Override
 	public DelegatingResourceDescription getUpdatableProperties() throws ResourceDoesNotSupportOperationException {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
@@ -92,12 +91,12 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 		description.addProperty("voided");
 		return description;
 	}
-
+	
 	@Override
 	public CohortMember newDelegate() {
 		return new CohortMember();
 	}
-
+	
 	@Override
 	public CohortMember save(CohortMember cohortMember) throws ResponseException {
 		CohortM cohort = cohortMember.getCohort();
@@ -118,24 +117,24 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 		}
 		return Context.getService(CohortService.class).saveCohortMember(cohortMember);
 	}
-
+	
 	@Override
 	public void delete(CohortMember cohortMember, String reason, RequestContext context) throws ResponseException {
 		cohortMember.setVoided(true);
 		cohortMember.setVoidReason(reason);
 		Context.getService(CohortService.class).saveCohortMember(cohortMember);
 	}
-
+	
 	@Override
 	public CohortMember getByUniqueId(String uuid) {
 		return Context.getService(CohortService.class).getCohortMemberByUuid(uuid);
 	}
-
+	
 	@Override
 	public void purge(CohortMember cohortMember, RequestContext context) throws ResponseException {
 		throw new UnsupportedOperationException();
 	}
-
+	
 	@PropertySetter("attributes")
 	public static void setAttributes(CohortMember cohortMember, Set<CohortMemberAttribute> attributes) {
 		for (CohortMemberAttribute attribute : attributes) {
@@ -143,7 +142,7 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 		}
 		cohortMember.setAttributes(attributes);
 	}
-
+	
 	@PropertyGetter("display")
 	public String getDisplayString(CohortMember cohortMember) {
 		Patient patient = cohortMember.getPatient();
@@ -151,20 +150,20 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 			PatientIdentifier identifier = patient.getPatientIdentifier();
 			return identifier + "-" + patient.getPersonName().getFullName();
 		}
-
+		
 		return null;
 	}
-
+	
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
 		String cohort = context.getParameter("cohort");
 		String patientUuid = context.getParameter("patient");
 		List<CohortMember> list = new ArrayList<CohortMember>();
-
+		
 		if (StringUtils.isNotBlank(cohort) && StringUtils.isNotBlank(patientUuid)) {
 			throw new IllegalArgumentException(
-					"Patient and Cohort Parameters can't both be declared in the url, search by either cohort or patient, not both");
-
+			        "Patient and Cohort Parameters can't both be declared in the url, search by either cohort or patient, not both");
+			
 		} else if (StringUtils.isNotBlank(cohort)) {
 			CohortM cohorto = Context.getService(CohortService.class).getCohortByName(cohort);
 			if (cohorto == null) {
@@ -175,19 +174,19 @@ public class CohortMemberRequestResource extends DataDelegatingCrudResource<Coho
 				throw new IllegalArgumentException("No match found in cohort");
 			}
 			list = Context.getService(CohortService.class).findCohortMembersByCohort(cohorto.getCohortId());
-
+			
 		} else if (StringUtils.isNotBlank(patientUuid)) {
 			Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
 			if (patient == null) {
 				throw new IllegalArgumentException("No patient with uuid " + patientUuid);
 			}
 			list = Context.getService(CohortService.class).findCohortMembersByPatient(patient.getId());
-
+			
 		} else {
 			throw new IllegalArgumentException("No valid value specified for param cohort and/or patient");
 		}
-
+		
 		return new NeedsPaging<>(list, context);
-
+		
 	}
 }

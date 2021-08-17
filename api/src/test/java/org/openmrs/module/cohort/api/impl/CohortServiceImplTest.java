@@ -39,50 +39,50 @@ import org.openmrs.module.cohort.api.db.CohortDAO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CohortServiceImplTest {
-
+	
 	private static final int COHORT_TYPE_ID = 123;
-
+	
 	private static final String TEST_COHORT = "test cohort";
-
+	
 	private static final String TEST_ATTRIBUTE_TYPE = "Test attribute type";
-
+	
 	private static final String COHORT_ENCOUNTER_UUID = "e4102924-1a73-4b34-9c74-0278975ffab5";
-
+	
 	private static final String AGE = "Age";
-
+	
 	private static final String TEST_ATT = "test-att";
-
+	
 	private static final String TEST_ATTRIBUTES = "Test attributes";
-
+	
 	private static final int COHORT_VISIT_ID = 100;
-
+	
 	private static final int COHORT_ID = 203;
-
+	
 	private static final int VISIT_TYPE_ID = 340;
-
+	
 	private static final String COHORT_UUID = "5c28c01f-199a-48c7-8693-2a504dd1f4ab";
-
+	
 	private static final String COHORT_ATTRIBUTE_UUID = "06036a52-cf51-4182-9283-dedb15fea65a";
-
+	
 	private static final String COHORT_MEMBER_UUID = "4944bff6-cba2-472e-8b55-3a6c64b9002f";
-
+	
 	private static final String COHORT_TYPE_UUID = "96eebbd7-18c1-4328-9d3d-a5fafd17b186";
-
+	
 	private static final String COHORT_VISIT_UUID = "93ab8fd4-22ce-43dc-8256-f659ed64cbcc";
-
+	
 	@Mock
 	private CohortDAO dao;
-
+	
 	private CohortType cohortType;
-
+	
 	private CohortServiceImpl cohortService;
-
+	
 	@Before
 	public void setup() {
 		cohortService = new CohortServiceImpl();
 		cohortService.setDao(dao);
 	}
-
+	
 	@Before
 	public void initData() {
 		cohortType = new CohortType();
@@ -90,7 +90,7 @@ public class CohortServiceImplTest {
 		cohortType.setCohortTypeId(COHORT_TYPE_ID);
 		cohortType.setName(TEST_COHORT);
 	}
-
+	
 	@Test
 	public void saveCohortMember_shouldSaveCohortMember() {
 		CohortMember member = new CohortMember();
@@ -100,7 +100,7 @@ public class CohortServiceImplTest {
 		assertThat(result, notNullValue());
 		assertThat(result.getId(), equalTo(1));
 	}
-
+	
 	@Test
 	public void saveCohort_shouldSaveCohort() {
 		CohortM cohortM = new CohortM();
@@ -111,25 +111,25 @@ public class CohortServiceImplTest {
 		assertThat(result, notNullValue());
 		assertThat(result.getId(), equalTo(12));
 	}
-
+	
 	@Test
 	public void getCohortTypeById_shouldGetCohortType() {
 		when(dao.getCohortType(COHORT_TYPE_ID)).thenReturn(cohortType);
-
+		
 		CohortType result = cohortService.getCohortTypeById(COHORT_TYPE_ID);
-		assertThat(result , notNullValue());
+		assertThat(result, notNullValue());
 		assertThat(result.getCohortTypeId(), equalTo(COHORT_TYPE_ID));
 		assertThat(result.getName(), equalTo(TEST_COHORT));
 	}
-
+	
 	@Test
 	public void getAllCohortTypes_shouldGetAllCohortTypes() {
 		when(dao.getAllCohortTypes()).thenReturn(Collections.singletonList(cohortType));
 		List<CohortType> resultList = cohortService.getAllCohortTypes();
 		assertThat(resultList, notNullValue());
-		assertThat(resultList, Matchers.<CohortType>hasSize(greaterThanOrEqualTo(1)));
+		assertThat(resultList, Matchers.<CohortType> hasSize(greaterThanOrEqualTo(1)));
 	}
-
+	
 	@Test
 	public void getAllCohortAttributeTypes_shouldGetAllCohortAttributeTypes() {
 		CohortAttributeType attributeType = mock(CohortAttributeType.class);
@@ -140,7 +140,7 @@ public class CohortServiceImplTest {
 		assertThat(resultList.size(), equalTo(1));
 		assertThat(resultList.get(0).getCohortAttributeTypeId(), equalTo(123));
 	}
-
+	
 	@Test
 	public void getCohortAttributeTypeByName_shouldGetCohortAttributeTypeByName() {
 		CohortAttributeType attributeType = mock(CohortAttributeType.class);
@@ -152,7 +152,7 @@ public class CohortServiceImplTest {
 		assertThat(result.getName(), equalTo(TEST_ATTRIBUTE_TYPE));
 		assertThat(result.getCohortAttributeTypeId(), equalTo(123));
 	}
-
+	
 	@Test
 	public void saveCohortEncounter_shouldCreateCohortEncounter() {
 		CohortEncounter cohortEncounter = mock(CohortEncounter.class);
@@ -162,7 +162,7 @@ public class CohortServiceImplTest {
 		assertThat(result, notNullValue());
 		assertThat(result.getUuid(), equalTo(COHORT_ENCOUNTER_UUID));
 	}
-
+	
 	@Test
 	public void getAllCohorts_shouldGetAllCohorts() {
 		CohortM cohort = mock(CohortM.class);
@@ -174,7 +174,7 @@ public class CohortServiceImplTest {
 		assertThat(resultList.get(0).getCohortId(), equalTo(12));
 		assertThat(resultList.get(0).getCohortType(), equalTo(cohortType));
 	}
-
+	
 	@Test
 	public void findCohortsMatching_shouldFindMatchingCohort() {
 		CohortM cohort = mock(CohortM.class);
@@ -188,7 +188,7 @@ public class CohortServiceImplTest {
 		assertThat(resultList.get(0).getCohortId(), equalTo(12));
 		assertThat(resultList.get(0).getCohortType(), equalTo(cohortType));
 	}
-
+	
 	@Test
 	public void saveCohortAttribute_shouldCreateCohortAttribute() {
 		CohortAttribute cohortAttribute = mock(CohortAttribute.class);
@@ -198,7 +198,7 @@ public class CohortServiceImplTest {
 		assertThat(attribute, notNullValue());
 		assertThat(attribute.getCohortAttributeId(), equalTo(345));
 	}
-
+	
 	@Test
 	public void saveCohortVisit_shouldCreateCohortVisit() {
 		CohortVisit cohortVisit = mock(CohortVisit.class);
@@ -208,7 +208,7 @@ public class CohortServiceImplTest {
 		assertThat(result, notNullValue());
 		assertThat(result.getCohortVisitId(), equalTo(COHORT_VISIT_ID));
 	}
-
+	
 	@Test
 	public void getCohortById_shouldGetCohortById() {
 		CohortM cohortM = mock(CohortM.class);
@@ -218,7 +218,7 @@ public class CohortServiceImplTest {
 		assertThat(result, notNullValue());
 		assertThat(result.getCohortId(), equalTo(COHORT_ID));
 	}
-
+	
 	@Test
 	public void getCohortByUuid_shouldGetCohortByUuid() {
 		CohortM cohortM = mock(CohortM.class);
@@ -228,7 +228,7 @@ public class CohortServiceImplTest {
 		assertThat(result, notNullValue());
 		assertThat(result.getUuid(), equalTo(COHORT_UUID));
 	}
-
+	
 	@Test
 	public void getCohortVisitByType_shouldReturnCohortVisit() {
 		CohortVisit cohortVisit = mock(CohortVisit.class);
@@ -240,7 +240,7 @@ public class CohortServiceImplTest {
 		assertThat(resultList, notNullValue());
 		assertThat(resultList.get(0).getVisitType().getVisitTypeId(), equalTo(VISIT_TYPE_ID));
 	}
-
+	
 	@Test
 	public void getCohortAttributeByUuid_shouldGetCohortAttributeByUuid() {
 		CohortAttribute cohortAttribute = mock(CohortAttribute.class);
@@ -252,7 +252,7 @@ public class CohortServiceImplTest {
 		assertThat(result.getCohortAttributeId(), equalTo(12));
 		assertThat(result.getUuid(), equalTo(COHORT_ATTRIBUTE_UUID));
 	}
-
+	
 	@Test
 	public void getCohortEncounterByUuid_shouldGetCohortEncounterByUuid() {
 		CohortEncounter cohortEncounter = mock(CohortEncounter.class);
@@ -262,7 +262,7 @@ public class CohortServiceImplTest {
 		assertThat(result, notNullValue());
 		assertThat(result.getUuid(), equalTo(COHORT_ENCOUNTER_UUID));
 	}
-
+	
 	@Test
 	public void getCohortMemberByUuid_shouldGetCohortMemberByUuid() {
 		CohortMember cohortMember = mock(CohortMember.class);
@@ -272,7 +272,7 @@ public class CohortServiceImplTest {
 		assertThat(result, notNullValue());
 		assertThat(result.getUuid(), equalTo(COHORT_MEMBER_UUID));
 	}
-
+	
 	@Test
 	public void getCohortTypeByUuid_shouldGetCohortTypeByUuid() {
 		CohortType cohortType = mock(CohortType.class);
@@ -282,7 +282,7 @@ public class CohortServiceImplTest {
 		assertThat(result, notNullValue());
 		assertThat(result.getUuid(), equalTo(COHORT_TYPE_UUID));
 	}
-
+	
 	@Test
 	public void getCohortVisitByUuid_shouldGetCohortVisitByUuid() {
 		CohortVisit cohortVisit = mock(CohortVisit.class);
@@ -292,7 +292,7 @@ public class CohortServiceImplTest {
 		assertThat(result, notNullValue());
 		assertThat(result.getUuid(), equalTo(COHORT_VISIT_UUID));
 	}
-
+	
 	@Test
 	public void getCohortsByLocationId_shouldGetCohortsByLocationId() {
 		CohortM cohort = mock(CohortM.class);

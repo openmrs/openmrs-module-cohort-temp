@@ -9,6 +9,9 @@
  */
 package org.openmrs.module.cohort.api.db.impl;
 
+import java.util.Date;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Setter;
 import org.hibernate.SessionFactory;
@@ -20,54 +23,50 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.List;
-
 @Component
 public class CohortMemberAttributeDaoImpl implements CohortMemberAttributeDao {
-
-    @Autowired
-    @Setter(AccessLevel.PACKAGE)
-    @Qualifier("sessionFactory")
-    private SessionFactory sessionFactory;
-
-    protected org.hibernate.Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
-    }
-
-    @Override
-    public CohortMemberAttribute getCohortMemberAttributeByUuid(String uuid) {
-        return (CohortMemberAttribute) getCurrentSession().createCriteria(CohortMemberAttribute.class).add(
-                Restrictions.eq("uuid", uuid)).uniqueResult();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<CohortMemberAttribute> getCohortMemberAttributesByTypeUuid(String attributeTypeUuid) {
-        return getCurrentSession().createCriteria(CohortMemberAttribute.class)
-                .createAlias("attributeType", "cm").add(
-                Restrictions.eq("cm.uuid", attributeTypeUuid)).list();
-    }
-
-    @Override
-    public CohortMemberAttribute saveCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute) {
-        getCurrentSession().saveOrUpdate(cohortMemberAttribute);
-        return cohortMemberAttribute;
-    }
-
-    @Override
-    public CohortMemberAttribute deleteCohortMemberAttribute(String uuid) {
-        CohortMemberAttribute cohortMemberAttribute = getCohortMemberAttributeByUuid(uuid);
-        cohortMemberAttribute.setVoided(true);
-        cohortMemberAttribute.setDateVoided(new Date());
-        cohortMemberAttribute.setVoidReason("Voided via cohort rest call");
-        cohortMemberAttribute.setVoidedBy(Context.getAuthenticatedUser());
-        getCurrentSession().saveOrUpdate(cohortMemberAttribute);
-        return cohortMemberAttribute;
-    }
-
-    @Override
-    public void purgeCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute) {
-        getCurrentSession().delete(cohortMemberAttribute);
-    }
+	
+	@Autowired
+	@Setter(AccessLevel.PACKAGE)
+	@Qualifier("sessionFactory")
+	private SessionFactory sessionFactory;
+	
+	protected org.hibernate.Session getCurrentSession() {
+		return sessionFactory.getCurrentSession();
+	}
+	
+	@Override
+	public CohortMemberAttribute getCohortMemberAttributeByUuid(String uuid) {
+		return (CohortMemberAttribute) getCurrentSession().createCriteria(CohortMemberAttribute.class)
+		        .add(Restrictions.eq("uuid", uuid)).uniqueResult();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<CohortMemberAttribute> getCohortMemberAttributesByTypeUuid(String attributeTypeUuid) {
+		return getCurrentSession().createCriteria(CohortMemberAttribute.class).createAlias("attributeType", "cm")
+		        .add(Restrictions.eq("cm.uuid", attributeTypeUuid)).list();
+	}
+	
+	@Override
+	public CohortMemberAttribute saveCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute) {
+		getCurrentSession().saveOrUpdate(cohortMemberAttribute);
+		return cohortMemberAttribute;
+	}
+	
+	@Override
+	public CohortMemberAttribute deleteCohortMemberAttribute(String uuid) {
+		CohortMemberAttribute cohortMemberAttribute = getCohortMemberAttributeByUuid(uuid);
+		cohortMemberAttribute.setVoided(true);
+		cohortMemberAttribute.setDateVoided(new Date());
+		cohortMemberAttribute.setVoidReason("Voided via cohort rest call");
+		cohortMemberAttribute.setVoidedBy(Context.getAuthenticatedUser());
+		getCurrentSession().saveOrUpdate(cohortMemberAttribute);
+		return cohortMemberAttribute;
+	}
+	
+	@Override
+	public void purgeCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute) {
+		getCurrentSession().delete(cohortMemberAttribute);
+	}
 }

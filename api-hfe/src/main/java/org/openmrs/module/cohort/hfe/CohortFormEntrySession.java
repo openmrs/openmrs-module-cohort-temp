@@ -1,11 +1,11 @@
 package org.openmrs.module.cohort.hfe;
 
+import javax.servlet.http.HttpSession;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +32,7 @@ public class CohortFormEntrySession extends FormEntrySession {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
-	public final static String[] COHORT_TAGS = {"cohort"};
+	public final static String[] COHORT_TAGS = { "cohort" };
 	
 	private CohortM cohort;
 	
@@ -58,24 +58,23 @@ public class CohortFormEntrySession extends FormEntrySession {
 		this(cohort, htmlForm, Mode.ENTER, httpSession);
 	}
 	
-	
 	public CohortFormEntrySession(CohortM cohort, HtmlForm htmlForm, Mode mode, HttpSession httpSession) throws Exception {
 		this(cohort, null, htmlForm, mode, null, httpSession, true, false);
 	}
 	
 	public CohortFormEntrySession(CohortM cohort, CohortEncounter encounter, HtmlForm htmlForm, Mode mode,
-			Location defaultLocation, HttpSession httpSession,
-			boolean automaticClientSideValidation,
-			boolean clientSideValidationHints) throws Exception {
-		super(null, null/*convertToEncounter(encounter)*/, mode, htmlForm, defaultLocation, httpSession, automaticClientSideValidation, clientSideValidationHints);
+	    Location defaultLocation, HttpSession httpSession, boolean automaticClientSideValidation,
+	    boolean clientSideValidationHints) throws Exception {
+		super(null, null/*convertToEncounter(encounter)*/, mode, htmlForm, defaultLocation, httpSession,
+		        automaticClientSideValidation, clientSideValidationHints);
 		this.htmlForm = htmlForm;
 		this.encounter = convertToEncounter(encounter);
 		this.cohortEncounter = encounter;
 		this.cohort = cohort;
 	}
 	
-	public CohortFormEntrySession(CohortM cohort, CohortEncounter encounter,
-			Mode mode, HtmlForm htmlForm, HttpSession session) throws Exception {
+	public CohortFormEntrySession(CohortM cohort, CohortEncounter encounter, Mode mode, HtmlForm htmlForm,
+	    HttpSession session) throws Exception {
 		this(cohort, encounter, htmlForm, mode, null, session, true, false);
 	}
 	
@@ -117,7 +116,8 @@ public class CohortFormEntrySession extends FormEntrySession {
 		{
 			for (Encounter e : getSubmissionActions().getEncountersToCreate()) {
 				if (!HtmlFormEntryUtil.hasProvider(e) || e.getEncounterDatetime() == null || e.getLocation() == null) {
-					throw new BadFormDesignException("Please check the design of your form to make sure it has all three tags: <b>&lt;encounterDate/&gt</b>;, <b>&lt;encounterLocation/&gt</b>;, and <b>&lt;encounterProvider/&gt;</b>");
+					throw new BadFormDesignException(
+					        "Please check the design of your form to make sure it has all three tags: <b>&lt;encounterDate/&gt</b>;, <b>&lt;encounterLocation/&gt</b>;, and <b>&lt;encounterProvider/&gt;</b>");
 				}
 			}
 		}
@@ -135,7 +135,7 @@ public class CohortFormEntrySession extends FormEntrySession {
 					o.setObsDatetime(o.getEncounter().getEncounterDatetime());
 					if (log.isDebugEnabled()) {
 						log.debug("Set obsDatetime to " + o.getObsDatetime() + " for "
-								+ o.getConcept().getName(Context.getLocale(), false));
+						        + o.getConcept().getName(Context.getLocale(), false));
 					}
 				}
 				if (o.getLocation() == null && o.getEncounter() != null) {
@@ -153,9 +153,9 @@ public class CohortFormEntrySession extends FormEntrySession {
 				if (p instanceof CohortM) {
 					CohortM cohort = p;
 					if (!StringUtils.hasText(cohort.getName()) || !StringUtils.hasText(cohort.getDescription())
-							|| cohort.getStartDate() == null || cohort.getEndDate() == null) {
+					        || cohort.getStartDate() == null || cohort.getEndDate() == null) {
 						throw new BadFormDesignException(
-								"Please check the design of your form to make sure the following fields are mandatory to create a patient: <br/><b>&lt;personName/&gt;</b>, <b>&lt;birthDateOrAge/&gt;</b>, <b>&lt;gender/&gt;</b>, <b>&lt;identifierType/&gt;</b>, <b>&lt;identifier/&gt;</b>, and <b>&lt;identifierLocation/&gt;</b>");
+						        "Please check the design of your form to make sure the following fields are mandatory to create a patient: <br/><b>&lt;personName/&gt;</b>, <b>&lt;birthDateOrAge/&gt;</b>, <b>&lt;gender/&gt;</b>, <b>&lt;identifierType/&gt;</b>, <b>&lt;identifier/&gt;</b>, and <b>&lt;identifierLocation/&gt;</b>");
 					}
 				}
 				Context.getService(CohortService.class).saveCohort(cohort);
@@ -216,7 +216,7 @@ public class CohortFormEntrySession extends FormEntrySession {
 			
 			//Context.getObsService().saveObs(o, null);
 		}
-//TODO Add Obs Creation line from FormENtrySession 
+		//TODO Add Obs Creation line from FormENtrySession 
 		// If we're in EDIT mode, we have to save the encounter so that any new obs are created.
 		// This feels a bit like a hack, but actually it's a good thing to update the encounter's dateChanged in this case. (PS- turns out there's no dateChanged on encounter up to 1.5.)
 		// If there is no encounter (impossible at the time of writing this comment) we save the obs manually
@@ -241,7 +241,8 @@ public class CohortFormEntrySession extends FormEntrySession {
 		
 		// handle any custom actions (for an example of a custom action, see: https://github.com/PIH/openmrs-module-appointmentschedulingui/commit/e2cda8de1caa8a45d319ae4fbf7714c90c9adb8b)
 		if (getSubmissionActions().getCustomFormSubmissionActions() != null) {
-			for (CustomFormSubmissionAction customFormSubmissionAction : getSubmissionActions().getCustomFormSubmissionActions()) {
+			for (CustomFormSubmissionAction customFormSubmissionAction : getSubmissionActions()
+			        .getCustomFormSubmissionActions()) {
 				customFormSubmissionAction.applyAction(this);
 			}
 		}
@@ -256,7 +257,8 @@ public class CohortFormEntrySession extends FormEntrySession {
 		if (hasCohortTag() && !hasEncouterTag()) {
 			try {
 				submissionActions.beginCohort(cohort);
-			} catch (InvalidActionException e) {
+			}
+			catch (InvalidActionException e) {
 				log.error("Programming error: should be no errors starting a patient", e);
 			}
 		} else {
@@ -271,7 +273,8 @@ public class CohortFormEntrySession extends FormEntrySession {
 				// TODO cohort specific submissionActions.beginPerson(patient);
 				submissionActions.beginCohort(cohort);
 				submissionActions.beginEncounter(encounter);
-			} catch (InvalidActionException e) {
+			}
+			catch (InvalidActionException e) {
 				log.error("Programming error: should be no errors starting a patient and encounter", e);
 			}
 		}

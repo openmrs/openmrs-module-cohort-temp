@@ -30,44 +30,44 @@ import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
 public class CohortRoleDaoTest extends BaseModuleContextSensitiveTest {
-
+	
 	private static final String COHORT_ROLE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortRoleDaoTest_initialTestData.xml";
-
+	
 	private static final String COHORT_ROLE_UUID = "3f9a2479-c14a-4bfc-bcaa-632860258518";
-
+	
 	private static final int COHORT_ROLE_ID = 1;
-
+	
 	private static final String COHORT_ROLE_NAME = "test cohort role";
-
+	
 	private HibernateCohortDAO dao;
-
+	
 	@Autowired
 	@Qualifier("sessionFactory")
 	private SessionFactory sessionFactory;
-
+	
 	@Before
 	public void setup() throws Exception {
 		dao = new HibernateCohortDAO();
 		dao.setSessionFactory(sessionFactory);
 		executeDataSet(COHORT_ROLE_INITIAL_TEST_DATA_XML);
 	}
-
+	
 	@Test
 	public void shouldFindCohortRoleByID() {
 		CohortRole cohortRole = dao.getCohortRoleById(COHORT_ROLE_ID);
 		assertThat(cohortRole, notNullValue());
 		assertThat(cohortRole.getCohortRoleId(), equalTo(COHORT_ROLE_ID));
-
+		
 	}
-
+	
 	@Test
 	public void shouldFindCohortRoleByUuid() {
 		CohortRole cohortRole = dao.getCohortRoleByUuid(COHORT_ROLE_UUID);
 		assertThat(cohortRole, notNullValue());
 		assertThat(cohortRole.getUuid(), equalTo(COHORT_ROLE_UUID));
-
+		
 	}
-
+	
 	@Test
 	public void shouldFindCohortRoleByName() {
 		CohortRole cohortRole = dao.getCohortRoleByName(COHORT_ROLE_NAME);
@@ -75,12 +75,12 @@ public class CohortRoleDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohortRole.getName(), notNullValue());
 		assertThat(cohortRole.getName(), equalTo(COHORT_ROLE_NAME));
 	}
-
+	
 	@Test
 	public void shouldFindAllCohortRoles() {
 		List<CohortRole> cohortRoles = dao.findCohortRoles(COHORT_ROLE_NAME);
 		assertThat(cohortRoles, notNullValue());
-		assertThat(cohortRoles, Matchers.<CohortRole>hasSize(greaterThanOrEqualTo(1)));
+		assertThat(cohortRoles, Matchers.<CohortRole> hasSize(greaterThanOrEqualTo(1)));
 		assertThat(cohortRoles.get(0).getName(), equalTo(COHORT_ROLE_NAME));
 		assertThat(cohortRoles.get(0).getUuid(), equalTo(COHORT_ROLE_UUID));
 	}

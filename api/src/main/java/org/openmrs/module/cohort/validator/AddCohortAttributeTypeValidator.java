@@ -10,18 +10,18 @@ import org.springframework.validation.Validator;
 @Component
 @Qualifier("addCohortAttributeTypeValidator")
 public class AddCohortAttributeTypeValidator implements Validator {
-
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return clazz.equals(CohortAttributeType.class);
-    }
-
-    @Override
-    public void validate(Object command, Errors errors) {
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "format", "required");
-        
-        //TODO reject if duplicate is created
-    }
+	
+	@Override
+	public boolean supports(Class<?> clazz) {
+		return clazz.equals(CohortAttributeType.class);
+	}
+	
+	@Override
+	public void validate(Object command, Errors errors) {
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "required");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "required");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "format", "required");
+		
+		//TODO reject if duplicate is created
+	}
 }

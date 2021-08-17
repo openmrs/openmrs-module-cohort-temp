@@ -15,18 +15,18 @@ import org.openmrs.attribute.Attribute;
 import org.openmrs.attribute.BaseAttribute;
 
 public class CohortMemberAttribute extends BaseAttribute<CohortMemberAttributeType, CohortMember> implements Attribute<CohortMemberAttributeType, CohortMember> {
-
-    private static final long serialVersionUID = 1L;
-
-    @Getter
-    @Setter
-    private Integer id;
-
+	
+	private static final long serialVersionUID = 1L;
+	
+	@Getter
+	@Setter
+	private Integer id;
+	
 	public CohortMember getCohortMember() {
 		return this.getOwner();
 	}
-
-    public void setCohortMember(CohortMember cohortMember) {
-        this.setOwner(cohortMember);
-    }
+	
+	public void setCohortMember(CohortMember cohortMember) {
+		this.setOwner(cohortMember);
+	}
 }
