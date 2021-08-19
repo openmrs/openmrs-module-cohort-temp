@@ -49,9 +49,9 @@ public class CohortFormSubmissionActions extends FormSubmissionActions {
 	
 	private List<Encounter> encountersToEdit = new Vector<Encounter>();
 	
-	private List<Obs> obsToCreate = new Vector<Obs>();
+	private List<Obs> obsToCreate = new Vector<>();
 	
-	private List<Obs> obsToVoid = new Vector<Obs>();
+	private List<Obs> obsToVoid = new Vector<>();
 	
 	/**
 	 * The stack where state is stored

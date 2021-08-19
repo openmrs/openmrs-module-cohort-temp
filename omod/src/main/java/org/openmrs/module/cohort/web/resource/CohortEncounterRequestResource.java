@@ -129,6 +129,6 @@ public class CohortEncounterRequestResource extends DataDelegatingCrudResource<C
 		}
 		List<CohortEncounter> list = Context.getService(CohortService.class).getEncountersByCohort(q, cohorto.getCohortId(),
 		    true);
-		return new NeedsPaging<CohortEncounter>(list, context);
+		return new NeedsPaging<>(list, context);
 	}
 }

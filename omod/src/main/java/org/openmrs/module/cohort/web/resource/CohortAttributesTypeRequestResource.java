@@ -100,6 +100,6 @@ public class CohortAttributesTypeRequestResource extends DataDelegatingCrudResou
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
 		List<CohortAttributeType> list = Context.getService(CohortService.class).getAllCohortAttributeTypes();
-		return new NeedsPaging<CohortAttributeType>(list, context);
+		return new NeedsPaging<>(list, context);
 	}
 }
