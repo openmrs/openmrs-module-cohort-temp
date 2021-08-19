@@ -115,17 +115,17 @@ public class CohortAttributesRequestResource extends DataDelegatingCrudResource<
 		}
 		
 		Integer attributeId = null;
-		CohortAttributeType attTypeo = null;
+		CohortAttributeType cohortAttributeType = null;
 		
 		if (org.apache.commons.lang3.StringUtils.isNotBlank(attr)) {
-			attTypeo = Context.getService(CohortService.class).getCohortAttributeTypeByName(attr);
+			cohortAttributeType = Context.getService(CohortService.class).getCohortAttributeTypeByName(attr);
 			
-			if (attTypeo == null) {
-				attTypeo = Context.getService(CohortService.class).getCohortAttributeTypeByUuid(attr);
+			if (cohortAttributeType == null) {
+				cohortAttributeType = Context.getService(CohortService.class).getCohortAttributeTypeByUuid(attr);
 			}
 			
-			if (attTypeo != null) {
-				attributeId = attTypeo.getCohortAttributeTypeId();
+			if (cohortAttributeType != null) {
+				attributeId = cohortAttributeType.getCohortAttributeTypeId();
 			}
 		}
 		
