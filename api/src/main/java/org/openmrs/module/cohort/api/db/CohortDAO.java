@@ -9,22 +9,14 @@
  */
 package org.openmrs.module.cohort.api.db;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.openmrs.module.cohort.CohortAttribute;
 import org.openmrs.module.cohort.CohortAttributeType;
-import org.openmrs.module.cohort.CohortEncounter;
-import org.openmrs.module.cohort.CohortLeader;
 import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortMember;
-import org.openmrs.module.cohort.CohortMemberVisit;
-import org.openmrs.module.cohort.CohortObs;
-import org.openmrs.module.cohort.CohortProgram;
-import org.openmrs.module.cohort.CohortRole;
 import org.openmrs.module.cohort.CohortType;
-import org.openmrs.module.cohort.CohortVisit;
 import org.openmrs.module.cohort.api.CohortService;
 
 /**
@@ -50,16 +42,6 @@ public interface CohortDAO {
 	
 	CohortAttributeType saveCohortAttributes(CohortAttributeType attributes);
 	
-	CohortEncounter getCohortEncounter(Integer id);
-	
-	CohortEncounter getCohortEncounterById(Integer id);
-	
-	CohortEncounter getCohortEncounterByUuid(String uuid);
-	
-	CohortEncounter getCohortEncounterUuid(String uuid);
-	
-	CohortEncounter saveCohortEncounters(CohortEncounter cencounters);
-	
 	CohortM getCohortByName(String name);
 	
 	CohortM getCohortMById(Integer id);
@@ -74,45 +56,7 @@ public interface CohortDAO {
 	
 	CohortMember getCohortMemUuid(String uuid);
 	
-	CohortMember getCohortMemberById(Integer id);
-	
-	CohortMember getCohortMemberByUuid(String uuid);
-	
 	CohortMember saveCPatient(CohortMember cohort);
-	
-	CohortObs getCohortObsById(Integer id);
-	
-	CohortObs getCohortObsByUuid(String uuid);
-	
-	CohortObs getCohortObsUuid(String uuid);
-	
-	CohortObs saveCohortObs(CohortObs cobs);
-	
-	List<CohortObs> getCohortObsByEncounterId(Integer id);
-	
-	CohortObs saveObs(CohortObs obs);
-	
-	CohortProgram getCohortProgramById(Integer id);
-	
-	CohortProgram getCohortProgramByUuid(String uuid);
-	
-	CohortProgram getCohortProgramUuid(String uuid);
-	
-	CohortProgram saveCohortProgram(CohortProgram cohort);
-	
-	CohortRole getCohortRoleById(Integer id);
-	
-	CohortRole getCohortRoleByUuid(String uuid);
-	
-	CohortRole getCohortRoleUuid(String uuid);
-	
-	CohortRole saveCohortRole(CohortRole cohort);
-	
-	List<CohortRole> getAllCohortRoles();
-	
-	CohortRole getCohortRoleByName(String name);
-	
-	void deleteCohortRoleById(Integer id);
 	
 	CohortType getCohortType(Integer id);
 	
@@ -123,16 +67,6 @@ public interface CohortDAO {
 	CohortType getCohortTypeByName(String name);
 	
 	CohortType saveCohortType(CohortType cohorttype);
-	
-	CohortVisit getCohortVisitById(Integer id);
-	
-	CohortVisit getCohortVisitByUuid(String uuid);
-	
-	List<CohortVisit> getCohortVisitsByLocationId(Integer id);
-	
-	List<CohortVisit> getCohortVisitsByDate(Date startDate, Date endDate);
-	
-	CohortVisit saveCohortVisit(CohortVisit cvisit);
 	
 	CohortAttribute getCohortAttribute(Integer id);
 	
@@ -146,19 +80,6 @@ public interface CohortDAO {
 	
 	CohortAttributeType findCohortAttributes(String attribute_type_name);
 	
-	CohortEncounter findCohortEncounter(Integer id);
-	
-	List<CohortEncounter> findCohortEncounter(String cohort, String location);
-	
-	List<CohortEncounter> findCohortEncounters();
-	
-	List<CohortEncounter> findCohortEncounters(String name);
-	
-	List<CohortEncounter> getEncounters(EncounterSearchCriteria searchCriteria);
-	
-	List<CohortEncounter> getEncounters(String query, Integer cohortId, Integer start, Integer length,
-	        boolean includeVoided);
-	
 	List<CohortM> findCohorts();
 	
 	List<CohortM> findCohorts(String nameMatching, Map<String, String> attributes, CohortType type);
@@ -166,12 +87,6 @@ public interface CohortDAO {
 	CohortM getCohort(Integer id);
 	
 	List<CohortM> getCohortsByLocationId(Integer id);
-	
-	List<CohortM> getCohortByCohortTypeId(Integer id);
-	
-	List<CohortM> getCohortByCohortProgramId(Integer id);
-	
-	List<CohortMember> findCohortMember();
 	
 	List<CohortMember> findCohortMember(String name);
 	
@@ -181,55 +96,11 @@ public interface CohortDAO {
 	
 	CohortMember getCohortMember(Integer id);
 	
-	List<CohortMember> getAllHeadCohortMembers();
-	
 	List<CohortMember> getCohortMembersByCohortRoleId(Integer id);
 	
 	List<CohortMember> getCohortMembersByPatientId(int patientId);
 	
-	List<CohortObs> findCohortObs();
-	
-	CohortObs findCohortObs(Integer id);
-	
-	List<CohortProgram> findCohortProg();
-	
-	CohortProgram findCohortProgram(Integer id);
-	
-	CohortProgram findCohortProgram(String name);
-	
-	CohortRole findCohortRole(Integer id);
-	
-	List<CohortRole> findCohortRole(String cohort_name);
-	
-	List<CohortRole> findCohortRoles(String name);
-	
-	List<CohortRole> findRoles(String name);
-	
-	List<CohortType> findCohortType();
-	
-	CohortType findCohortType(Integer id);
-	
-	List<CohortType> findCohortType(String cohort_name);
-	
 	List<CohortType> getAllCohortTypes();
-	
-	List<CohortVisit> findCohortVisitByVisitType(Integer visitType);
-	
-	CohortVisit findCohortVisit(Integer id);
-	
-	List<CohortVisit> findCohortVisit(String name);
-	
-	CohortLeader getCohortLeaderByUuid(String uuid);
-	
-	CohortLeader getCohortLeaderById(Integer id);
-	
-	List<CohortLeader> getCohortLeadersByCohortId(Integer id);
-	
-	CohortLeader saveCohortLeader(CohortLeader cohortLeader);
-	
-	CohortMemberVisit getCohortMemberVisitByUuid(String uuid);
-	
-	CohortMemberVisit saveCohortMemberVisit(CohortMemberVisit cohortMemberVisit);
 	
 	Long getCount(String name);
 	
@@ -239,17 +110,5 @@ public interface CohortDAO {
 	
 	void purgeCohortAttributes(CohortAttributeType attributes);
 	
-	void purgeCohortEncounters(CohortEncounter cencounters);
-	
-	void purgeCohortObs(CohortObs cobs);
-	
-	void purgeCohortProgram(CohortProgram cvisit);
-	
-	void purgeCohortRole(CohortRole crole);
-	
 	void purgeCohortType(CohortType cohort);
-	
-	void purgeCohortVisit(CohortVisit cvisit);
-	
-	void purgeCohortLeader(CohortLeader cohortLeader);
 }

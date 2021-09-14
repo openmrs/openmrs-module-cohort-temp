@@ -19,7 +19,6 @@ import org.openmrs.Location;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortAttribute;
-import org.openmrs.module.cohort.CohortLeader;
 import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortType;
@@ -141,11 +140,6 @@ public class CohortRequestResource extends DataDelegatingCrudResource<CohortM> {
 	@Override
 	public CohortM save(CohortM cohort) {
 		if (cohort.getVoided()) {
-			for (CohortLeader cohortLeader : cohort.getActiveCohortLeaders()) {
-				cohortLeader.setVoided(true);
-				cohortLeader.setVoidReason("Cohort Ended");
-				cohortLeader.setEndDate(cohort.getEndDate());
-			}
 			//end memberships if cohort is voided.
 			for (CohortMember cohortMember : cohort.getCohortMembers()) {
 				cohortMember.setVoided(true);

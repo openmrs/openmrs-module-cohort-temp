@@ -43,10 +43,6 @@ public class CohortMember extends BaseCustomizableData<CohortMemberAttribute> {
 	@JoinColumn(name = "cohort_id")
 	private CohortM cohort;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "cohort_role_id")
-	private CohortRole role;
-	
 	@Column(name = "start_date")
 	private Date startDate;
 	
@@ -57,7 +53,6 @@ public class CohortMember extends BaseCustomizableData<CohortMemberAttribute> {
 	private Boolean head;
 	
 	public CohortMember() {
-		
 	}
 	
 	public CohortMember(Patient patient) {
@@ -117,14 +112,6 @@ public class CohortMember extends BaseCustomizableData<CohortMemberAttribute> {
 	
 	public void setCohort(CohortM cohort) {
 		this.cohort = cohort;
-	}
-	
-	public CohortRole getRole() {
-		return role;
-	}
-	
-	public void setRole(CohortRole role) {
-		this.role = role;
 	}
 	
 	@Deprecated

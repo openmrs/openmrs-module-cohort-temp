@@ -97,7 +97,6 @@ public class CohortAttribute extends BaseOpenmrsData {
 	@Override
 	public void setId(Integer arg0) {
 		setCohortAttributeId(arg0);
-		
 	}
 	
 }

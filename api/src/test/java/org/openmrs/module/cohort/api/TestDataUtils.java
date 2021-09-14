@@ -9,13 +9,8 @@
  */
 package org.openmrs.module.cohort.api;
 
-import java.util.Collections;
-import java.util.Date;
-
 import org.openmrs.module.cohort.CohortAttribute;
 import org.openmrs.module.cohort.CohortAttributeType;
-import org.openmrs.module.cohort.CohortLeader;
-import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortMemberAttribute;
 import org.openmrs.module.cohort.CohortMemberAttributeType;
 import org.openmrs.module.cohort.CohortType;
@@ -70,26 +65,4 @@ public class TestDataUtils {
 		cohortMemberAttribute.setId(100);
 		return cohortMemberAttribute;
 	}
-	
-	public static CohortM COHORT() {
-		CohortM cohort = new CohortM();
-		cohort.setCohortId(1);
-		cohort.setUuid("");
-		cohort.setCohortType(COHORT_TYPE());
-		cohort.setAttributes(Collections.singletonList(COHORT_ATTRIBUTE()));
-		cohort.setCohortLeaders(Collections.singletonList(COHORT_LEADER()));
-		return cohort;
-	}
-	
-	public static CohortLeader COHORT_LEADER() {
-		CohortLeader leader = new CohortLeader();
-		leader.setId(1);
-		leader.setUuid("");
-		leader.setCohortLeaderId(300);
-		leader.setCohort(COHORT());
-		leader.setStartDate(new Date());
-		leader.setEndDate(new Date());
-		return leader;
-	}
-	
 }

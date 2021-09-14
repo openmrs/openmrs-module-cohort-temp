@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortMemberAttribute;
 import org.openmrs.module.cohort.api.TestDataUtils;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 
+@Ignore
 @ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
 public class CohortMemberAttributeDaoTest extends BaseModuleContextSensitiveTest {
 	
