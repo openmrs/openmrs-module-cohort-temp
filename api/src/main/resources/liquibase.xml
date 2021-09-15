@@ -55,84 +55,6 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet id="cohortrole1065" author="sharon">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="cohort_role"/>
-            </not>
-        </preConditions>
-        <createTable tableName="cohort_role">
-            <column name="cohort_role_id" autoIncrement="true" type="int(11)">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="name" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="cohort_type_id" type="int(11)">
-                <constraints foreignKeyName="cohortrolecohorttype1_fk" references="cohort_type(cohort_type_id)"/>
-            </column>
-
-            <column name="date_created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="creator" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortrolecreator_fk" references="users(user_id)"/>
-            </column>
-            <column name="changed_by" type="int(11)">
-                <constraints foreignKeyName="cohortroleeditor_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_changed" type="datetime"/>
-            <column name="voided" type="tinyint(1)" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-            <column name="voided_by" type="int(11)">
-                <constraints foreignKeyName="cohortrolevoider_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_voided" type="datetime"/>
-            <column name="void_reason" type="varchar(255)"/>
-            <column name="uuid" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet id="cohortprgm1065" author="sharon">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="cohort_program"/>
-            </not>
-        </preConditions>
-        <createTable tableName="cohort_program">
-            <column name="cohort_program_id" autoIncrement="true" type="int(11)">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="name" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="description" type="varchar(255)"/>
-            <column name="date_created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="creator" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortprogramcreator_fk" references="users(user_id)"/>
-            </column>
-            <column name="changed_by" type="int(11)">
-                <constraints foreignKeyName="cohortprogramditor_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_changed" type="datetime"/>
-            <column name="voided" type="tinyint(1)" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-            <column name="voided_by" type="int(11)">
-                <constraints foreignKeyName="cohortprogramvoider_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_voided" type="datetime"/>
-            <column name="void_reason" type="varchar(255)"/>
-            <column name="uuid" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
     <changeSet id="cohortattritype1065" author="sharon">
         <preConditions onFail="MARK_RAN">
             <not>
@@ -229,17 +151,6 @@
             <column name="cohort_type_id" type="int(11)" defaultValue="null"/>
         </addColumn>
     </changeSet>
-    <changeSet id="cohortmodul1065_cohort_program_id" author="sharon">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <columnExists tableName="cohort" columnName="cohort_program_id"/>
-            </not>
-        </preConditions>
-        <comment>Creating a cohort_program_id column</comment>
-        <addColumn tableName="cohort">
-            <column name="cohort_program_id" type="int(11)" defaultValue="null"/>
-        </addColumn>
-    </changeSet>
     <changeSet id="cohortattribute1065" author="sharon">
         <preConditions onFail="MARK_RAN">
             <not>
@@ -284,106 +195,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet id="cohort_visit1065" author="sharon">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="cohort_visit"/>
-            </not>
-        </preConditions>
-        <createTable tableName="cohort_visit">
-            <column name="cohort_visit_id" autoIncrement="true" type="int(11)">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="cohort_id" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortvisitcohort_fk" references="cohort(cohort_id)"/>
-            </column>
-            <column name="visit_type_id" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohort_visitvisittype_fk"
-                             references="visit_type(visit_type_id)"/>
-            </column>
-            <column name="location_id" type="int(11)">
-                <constraints foreignKeyName="cohortvisit_location_fk" references="location(location_id)"/>
-            </column>
-            <column name="start_date" type="datetime"/>
-            <column name="end_date" type="datetime"/>
 
-            <column name="date_created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="creator" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortvisitcreator_fk" references="users(user_id)"/>
-            </column>
-            <column name="changed_by" type="int(11)">
-                <constraints foreignKeyName="cohortvisiteditor_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_changed" type="datetime"/>
-            <column name="voided" type="tinyint(1)" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-            <column name="voided_by" type="int(11)">
-                <constraints foreignKeyName="cohortvisitvoider_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_voided" type="datetime"/>
-            <column name="void_reason" type="varchar(255)"/>
-            <column name="uuid" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet id="cohortenco1065" author="sharon">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="cohort_encounter"/>
-            </not>
-        </preConditions>
-        <createTable tableName="cohort_encounter">
-            <column name="encounter_id" autoIncrement="true" type="int(11)">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="cohort_id" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortencountercohortfk_module"
-                             references="cohort(cohort_id)"/>
-            </column>
-            <column name="encounter_type_id" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortencounterencountertype_fk"
-                             references="encounter_type(encounter_type_id)"/>
-            </column>
-            <column name="location_id" type="int(11)">
-                <constraints foreignKeyName="cohortencounterlocation1_fk" references="location(location_id)"/>
-            </column>
-            <column name="form_id" type="int(11)">
-                <constraints foreignKeyName="cohortencounterform_fk" references="form(form_id)"/>
-            </column>
-            <column name="cohort_visit_id" type="int(11)">
-                <constraints foreignKeyName="cohortencountervisit1_fk" references="cohort_visit(cohort_visit_id)"/>
-            </column>
-            <column name="encounter_datetime" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="date_created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="creator" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortencountercreator_fk" references="users(user_id)"/>
-            </column>
-            <column name="changed_by" type="int(11)">
-                <constraints foreignKeyName="cohortencountereditor_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_changed" type="datetime"/>
-            <column name="voided" type="tinyint(1)" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-            <column name="voided_by" type="int(11)">
-                <constraints foreignKeyName="cohortencountervoider_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_voided" type="datetime"/>
-            <column name="void_reason" type="varchar(255)"/>
-            <column name="uuid" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
     <changeSet id="cohort_member1065_date_changed" author="fali">
         <preConditions onFail="MARK_RAN">
             <not>
@@ -419,63 +231,6 @@
         <addColumn tableName="cohort_member">
             <column name="is_head" type="boolean" defaultValue="null"/>
         </addColumn>
-    </changeSet>
-    <changeSet id="cohortobs1065" author="sharon">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="cohort_obs"/>
-            </not>
-        </preConditions>
-        <createTable tableName="cohort_obs">
-            <column name="obs_id" autoIncrement="true" type="int(11)">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column defaultValueNumeric="0" name="concept_id" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortobsconcept1_fk" references="concept(concept_id)"/>
-            </column>
-            <column name="encounter_id" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortobsencounterid_fk"
-                             references="cohort_encounter(encounter_id)"/>
-            </column>
-            <column name="obs_datetime" type="datetime"/>
-            <column name="obs_group_id" type="int(11)">
-                <constraints foreignKeyName="cohortobsgrp_fk" references="cohort_obs(obs_id)"/>
-            </column>
-            <column name="accession_number" type="varchar(255)"/>
-            <column name="value_group_id" type="int(11)"/>
-            <column name="value_boolean" type="BOOLEAN"/>
-            <column name="value_coded" type="int(11)">
-                <constraints foreignKeyName="cohortobsvaluecoded_fk" references="concept(concept_id)"/>
-            </column>
-            <column name="value_datetime" type="DATETIME"/>
-            <column name="value_numeric" type="double precision"/>
-            <column name="value_modifier" type="varchar(2)"/>
-            <column name="value_text" type="text"/>
-            <column name="value_complex" type="varchar(255)"/>
-            <column name="comment" type="varchar(255)"/>
-
-            <column name="date_created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="creator" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortobscreator_fk" references="users(user_id)"/>
-            </column>
-            <column name="changed_by" type="int(11)">
-                <constraints foreignKeyName="cohortobseditor_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_changed" type="datetime"/>
-            <column name="voided" type="tinyint(1)" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-            <column name="voided_by" type="int(11)">
-                <constraints foreignKeyName="cohortobsvoider_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_voided" type="datetime"/>
-            <column name="void_reason" type="varchar(255)"/>
-            <column name="uuid" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
     </changeSet>
     <changeSet id="cohort_leader1065" author="fali">
         <preConditions onFail="MARK_RAN">
@@ -519,34 +274,7 @@
 
         </createTable>
     </changeSet>
-    <changeSet id="cohort_member_visit1065" author="fali">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="cohort_member_visit"/>
-            </not>
-        </preConditions>
-        <createTable tableName="cohort_member_visit">
-            <column name="cohort_member_visit_id" autoIncrement="true" type="int(11)">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="visit_id" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortvisitmembervisit_fk" references="visit(visit_id)"/>
-            </column>
-            <column name="cohort_visit_id" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortvisitvisit_fk"
-                             references="cohort_visit(cohort_visit_id)"/>
-            </column>
-            <column name="date_created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="creator" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortmembervisitcreator_fk" references="users(user_id)"/>
-            </column>
-            <column name="uuid" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
+
     <changeSet id="add_cohort_member_attribute_type_20210609" author="corneliouzbett">
         <preConditions onFail="MARK_RAN" onError="WARN">
             <not>
@@ -639,17 +367,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet id="add_cohort_role_id_to_cohort_member_20210610" author="corneliouzbett">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <columnExists tableName="cohort_member" columnName="cohort_role_id"/>
-            </not>
-        </preConditions>
-        <comment>Creating a cohort_role_id column</comment>
-        <addColumn tableName="cohort_member">
-            <column name="cohort_role_id" type="int(11)"/>
-        </addColumn>
-    </changeSet>
+
     <changeSet id="location_id_to_int" author="ibacher">
         <preConditions>
             <columnExists tableName="cohort" columnName="location_id"/>
@@ -670,23 +388,6 @@
             <column name="cohort_type_id"/>
         </createIndex>
     </changeSet>
-    <changeSet id="add_cohort_member_visit_columns_20210705" author="jecihjoy">
-        <preConditions onFail="MARK_RAN">
-                <tableExists tableName="cohort_member_visit" />
-        </preConditions>
-        <addColumn tableName="cohort_member_visit">
-            <column name="changed_by" type="int(11)">
-                <constraints foreignKeyName="cohort_member_visit_changed_by_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_changed" type="datetime"/>
-            <column name="voided" type="tinyint(1)" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-            <column name="voided_by" type="int(11)">
-                <constraints foreignKeyName="cohort_member_visit_voided_by_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_voided" type="datetime"/>
-            <column name="void_reason" type="varchar(255)"/>
-        </addColumn>
-    </changeSet>
+
+    <include file="liquibase/3.x-liquibase-changeSet.xml"/>
 </databaseChangeLog>

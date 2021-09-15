@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+-->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <!--Cohort Module Liquibase cleanup: Drop foreign key constraints & delete unused tables-->
+    <changeSet id="drop_foreign_key_cohort_member_role_fk_20210914" author="corneliouzbett">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyName="cohortmemberrole_fk"/>
+        </preConditions>
+        <dropForeignKeyConstraint baseTableName="cohort_member" constraintName="cohortmemberrole_fk"/>
+    </changeSet>
+    <changeSet id="drop_table_cohort_role_20210914" author="corneliouzbett">
+        <preConditions>
+            <tableExists tableName="cohort_role"/>
+        </preConditions>
+        <dropTable tableName="cohort_role" cascadeConstraints="true" />
+        <comment>Deleting cohort_role table</comment>
+    </changeSet>
+    
+    <changeSet id="drop_table_cohort_obs_20210914" author="corneliouzbett">
+        <preConditions>
+            <tableExists tableName="cohort_obs" />
+        </preConditions>
+        <dropTable tableName="cohort_obs" cascadeConstraints="true" />
+        <comment>Deleting cohort_obs table</comment>
+    </changeSet>
+    <changeSet id="drop_table_cohort_encounter_20210914" author="corneliouzbett">
+        <preConditions>
+            <tableExists tableName="cohort_encounter" />
+        </preConditions>
+        <dropTable tableName="cohort_encounter" cascadeConstraints="true" />
+        <comment>Deleting cohort_encounter table</comment>
+    </changeSet>
+    <changeSet id="drop_table_cohort_program_20210914" author="corneliouzbett">
+        <preConditions>
+            <tableExists tableName="cohort_program" />
+        </preConditions>
+        <dropTable tableName="cohort_program" cascadeConstraints="true" />
+        <comment>Deleting cohort_program table</comment>
+    </changeSet>
+
+    <!-- Migrate cohort leaders to attributes -->
+
+</databaseChangeLog>
