@@ -49,9 +49,6 @@ public class CohortMember extends BaseCustomizableData<CohortMemberAttribute> {
 	@Column(name = "end_date")
 	private Date endDate;
 	
-	@Column(name = "is_head")
-	private Boolean head;
-	
 	public CohortMember() {
 	}
 	
@@ -113,17 +110,5 @@ public class CohortMember extends BaseCustomizableData<CohortMemberAttribute> {
 	public void setCohort(CohortM cohort) {
 		this.cohort = cohort;
 	}
-	
-	@Deprecated
-	public Boolean isHead() {
-		return head;
-	}
-	
-	public void setHead(Boolean head) {
-		this.head = head;
-	}
-	
-	public Boolean getHead() {
-		return head;
-	}
+
 }
