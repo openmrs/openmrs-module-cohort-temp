@@ -39,22 +39,7 @@
 
     <aware_of_modules>
         <aware_of_module>org.openmrs.module.legacyui</aware_of_module>
-        <aware_of_module version="${htmlFormEntryVersion}">
-            org.openmrs.module.htmlformentry
-        </aware_of_module>
     </aware_of_modules>
-
-    <conditionalResources>
-        <conditionalResource>
-            <path>/lib/${project.parent.artifactId}-api-htmlformentry-${project.parent.version}.jar</path>
-            <loadIfModulesPresent>
-                <openmrsModule>
-                    <moduleId>org.openmrs.module.htmlformentry</moduleId>
-                    <version>${htmlFormEntryVersion}</version>
-                </openmrsModule>
-            </loadIfModulesPresent>
-        </conditionalResource>
-    </conditionalResources>
 
     <!-- Adds link to admin page -->
     <extension>
