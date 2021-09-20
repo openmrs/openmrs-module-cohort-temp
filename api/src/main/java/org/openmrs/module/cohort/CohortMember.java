@@ -110,5 +110,5 @@ public class CohortMember extends BaseCustomizableData<CohortMemberAttribute> {
 	public void setCohort(CohortM cohort) {
 		this.cohort = cohort;
 	}
-
+	
 }
