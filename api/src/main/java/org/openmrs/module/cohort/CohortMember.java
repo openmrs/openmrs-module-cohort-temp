@@ -83,8 +83,8 @@ public class CohortMember extends BaseCustomizableData<CohortMemberAttribute> {
 	}
 	
 	@Override
-	public void setId(Integer arg0) {
-		setCohortMemberId(arg0);
+	public void setId(Integer cohortMemberId) {
+		setCohortMemberId(cohortMemberId);
 	}
 	
 	public Integer getCohortMemberId() {

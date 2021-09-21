@@ -252,17 +252,17 @@ public class CohortM extends BaseOpenmrsData {
 	 * {@link CohortAttributeType}, the given {@link CohortAttributeType} is null, or this cohort has no
 	 * attributes.
 	 *
-	 * @param pat the CohortAttributeType to look for (can be a stub, see
+	 * @param cohortAttributeType the CohortAttributeType to look for (can be a stub, see
 	 *            {@link CohortAttributeType#equals(Object)} for how its compared)
 	 * @return CohortAttribute that matches the given type
 	 * @should not fail when attribute type is null
 	 * @should not return voided attribute
 	 * @should return null when existing CohortAttributeType is voided
 	 */
-	public CohortAttribute getAttribute(CohortAttributeType pat) {
-		if (pat != null) {
+	public CohortAttribute getAttribute(CohortAttributeType cohortAttributeType) {
+		if (cohortAttributeType != null) {
 			for (CohortAttribute attribute : getAttributes()) {
-				if (pat.equals(attribute.getCohortAttributeType()) && !attribute.getVoided()) {
+				if (cohortAttributeType.equals(attribute.getCohortAttributeType()) && !attribute.getVoided()) {
 					return attribute;
 				}
 			}
@@ -326,16 +326,16 @@ public class CohortM extends BaseOpenmrsData {
 	 * @should return all CohortAttributes with matching attributeType names
 	 */
 	public List<CohortAttribute> getAttributes(String attributeName) {
-		List<CohortAttribute> ret = new ArrayList<>();
+		List<CohortAttribute> cohortAttributes = new ArrayList<>();
 		
 		for (CohortAttribute attribute : getActiveAttributes()) {
 			CohortAttributeType type = attribute.getCohortAttributeType();
 			if (type != null && attributeName.equals(type.getName())) {
-				ret.add(attribute);
+				cohortAttributes.add(attribute);
 			}
 		}
 		
-		return ret;
+		return cohortAttributes;
 	}
 	
 	/**
@@ -362,7 +362,7 @@ public class CohortM extends BaseOpenmrsData {
 	 * Convenience method to get all of this cohort's attributes that have a CohortAttributeType equal
 	 * to <code>CohortAttributeType</code>.
 	 *
-	 * @param CohortAttributeType
+	 * @param CohortAttributeType Cohort attribute type
 	 */
 	public List<CohortAttribute> getAttributes(CohortAttributeType CohortAttributeType) {
 		List<CohortAttribute> ret = new ArrayList<>();
@@ -415,8 +415,8 @@ public class CohortM extends BaseOpenmrsData {
 	}
 	
 	@Override
-	public void setId(Integer id) {
-		setCohortId(id);
+	public void setId(Integer cohortId) {
+		setCohortId(cohortId);
 	}
 	
 	@Override

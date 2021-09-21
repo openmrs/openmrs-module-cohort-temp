@@ -9,16 +9,14 @@
  */
 package org.openmrs.module.cohort;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.openmrs.module.BaseModuleActivator;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
  */
+@Slf4j
 public class CohortModuleActivator extends BaseModuleActivator {
-	
-	protected Log log = LogFactory.getLog(getClass());
 	
 	@Override
 	public void willStart() {

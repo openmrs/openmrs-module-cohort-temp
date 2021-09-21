@@ -169,11 +169,11 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 			return null;
 		}
 		ProviderService providerService = Context.getProviderService();
-		Collection<Provider> ret = new HashSet<>();
-		for (User u : users) {
-			ret.addAll(providerService.getProvidersByPerson(u.getPerson()));
+		Collection<Provider> providers = new HashSet<>();
+		for (User user : users) {
+			providers.addAll(providerService.getProvidersByPerson(user.getPerson()));
 		}
-		return ret;
+		return providers;
 	}
 	
 	@Override
