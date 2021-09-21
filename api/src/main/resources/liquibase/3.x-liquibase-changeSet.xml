@@ -13,79 +13,9 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-    <!--Cohort Module Liquibase cleanup: Drop foreign key constraints & delete unused tables-->
-    <changeSet id="drop_foreign_key_cohort_member_role_fk_20210914" author="corneliouzbett">
-        <preConditions onFail="MARK_RAN">
-            <foreignKeyConstraintExists foreignKeyName="cohortmemberrole_fk"/>
-        </preConditions>
-        <dropForeignKeyConstraint baseTableName="cohort_member" constraintName="cohortmemberrole_fk"/>
-    </changeSet>
-
-    <changeSet id="drop_table_cohort_role_20210914" author="corneliouzbett">
-        <preConditions onFail="MARK_RAN">
-            <tableExists tableName="cohort_role"/>
-            <and>
-                <sqlCheck expectedResult="0">select count(*) from cohort_role</sqlCheck>
-            </and>
-        </preConditions>
-        <dropTable tableName="cohort_role" cascadeConstraints="true"/>
-        <comment>Deleting cohort_role table</comment>
-    </changeSet>
-
-    <changeSet id="drop_table_cohort_obs_20210914" author="corneliouzbett">
-        <preConditions onFail="MARK_RAN">
-            <tableExists tableName="cohort_obs"/>
-            <and>
-                <sqlCheck expectedResult="0">select count(*) from cohort_obs</sqlCheck>
-            </and>
-        </preConditions>
-        <dropTable tableName="cohort_obs" cascadeConstraints="true"/>
-        <comment>Deleting cohort_obs table</comment>
-    </changeSet>
-
-    <changeSet id="drop_table_cohort_encounter_20210914" author="corneliouzbett">
-        <preConditions onFail="MARK_RAN">
-            <tableExists tableName="cohort_encounter"/>
-            <and>
-                <sqlCheck expectedResult="0">select count(*) from cohort_encounter</sqlCheck>
-            </and>
-        </preConditions>
-        <dropTable tableName="cohort_encounter" cascadeConstraints="true"/>
-        <comment>Deleting cohort_encounter table</comment>
-    </changeSet>
-
-    <changeSet id="drop_column_cohort_program_from_cohort_table_20210920" author="corneliouzbett">
-        <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">SELECT count(*) FROM cohort where cohort_program_id is not null</sqlCheck>
-        </preConditions>
-        <comment>Drop cohort_program_id column from cohort table</comment>
-        <dropColumn tableName="cohort" columnName="cohort_program_id"/>
-    </changeSet>
-
-    <changeSet id="drop_table_cohort_program_20210914" author="corneliouzbett">
-        <preConditions>
-            <tableExists tableName="cohort_program"/>
-            <and>
-                <sqlCheck expectedResult="0">select count(*) from cohort_program</sqlCheck>
-            </and>
-        </preConditions>
-        <comment>Deleting cohort_program table</comment>
-        <dropTable tableName="cohort_program" cascadeConstraints="true"/>
-    </changeSet>
-
-    <changeSet id="drop_column_is_head_from_cohort_member_20210916" author="corneliouzbett">
-        <preConditions onFail="MARK_RAN">
-            <columnExists tableName="cohort_member" columnName="is_head"/>
-            <and>
-                <sqlCheck expectedResult="0">select count(*) from cohort_member where is_head is not null</sqlCheck>
-            </and>
-        </preConditions>
-        <dropColumn tableName="cohort_member" columnName="is_head"/>
-    </changeSet>
-
     <!-- Migrate cohort leaders to attributes -->
     <changeSet id="create_leader_cohort_member_attribute_type_20210920" author="corneliouzbett">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">select count(*) from cohort_member_attribute_type where uuid =
                 'fac24350-c855-4c32-bdcf-36c4c439f538'
             </sqlCheck>
@@ -101,7 +31,7 @@
         </sql>
     </changeSet>
     <changeSet id="copy_over_cohort_leaders_to_attributes_20210916" author="corneliouzbett">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <tableExists tableName="cohort_leader"/>
             <and>
                 <sqlCheck expectedResult="1">select count(*) from cohort_member_attribute_type where uuid =
@@ -113,14 +43,6 @@
             Migrate data from cohort leader table into cohort member attributes
         </comment>
         <sqlFile path="sql/copy-over-cohort-leaders.sql"/>
-    </changeSet>
-    <changeSet id="drop_cohort_leader_table_20210918" author="corneliouzbett">
-        <preConditions onFail="MARK_RAN">
-            <tableExists tableName="cohort_leader"/>
-        </preConditions>
-        <!-- Don't keep the data as backup -->
-        <!--        <dropAllForeignKeyConstraints baseTableName="cohort_leader"/>-->
-        <!--        <dropTable tableName="cohort_leader"/>-->
     </changeSet>
 
 </databaseChangeLog>

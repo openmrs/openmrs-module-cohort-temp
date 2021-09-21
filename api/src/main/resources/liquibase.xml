@@ -221,48 +221,6 @@
             </column>
         </addColumn>
     </changeSet>
-    <changeSet id="cohort_leader1065" author="fali">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="cohort_leader"/>
-            </not>
-        </preConditions>
-        <createTable tableName="cohort_leader">
-            <column name="cohort_leader_id" autoIncrement="true" type="int(11)">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="person_id" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortleaderperson_fk" references="person(person_id)"/>
-            </column>
-            <column name="cohort_id" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortleadercohort_fk" references="cohort(cohort_id)"/>
-            </column>
-            <column name="start_date" type="datetime"/>
-            <column name="end_date" type="datetime"/>
-            <column name="date_created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="creator" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortleadercreator_fk" references="users(user_id)"/>
-            </column>
-            <column name="changed_by" type="int(11)">
-                <constraints foreignKeyName="cohortleadereditor_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_changed" type="datetime"/>
-            <column name="voided" type="tinyint(1)" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
-            <column name="voided_by" type="int(11)">
-                <constraints foreignKeyName="cohortleadervoider_fk" references="users(user_id)"/>
-            </column>
-            <column name="date_voided" type="datetime"/>
-            <column name="void_reason" type="varchar(255)"/>
-            <column name="uuid" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-
-        </createTable>
-    </changeSet>
 
     <changeSet id="add_cohort_member_attribute_type_20210609" author="corneliouzbett">
         <preConditions onFail="MARK_RAN" onError="WARN">
