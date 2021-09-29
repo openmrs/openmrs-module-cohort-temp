@@ -7,25 +7,23 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.cohort.api.db;
+package org.openmrs.module.cohort.api.dao;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortType;
-import org.openmrs.module.cohort.api.TestSpringConfiguration;
-import org.openmrs.module.cohort.api.db.hibernate.HibernateCohortDAO;
+import org.openmrs.module.cohort.api.SpringTestConfiguration;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
-public class CohortTypeDaoTest extends BaseModuleContextSensitiveTest {
+@ContextConfiguration(classes = SpringTestConfiguration.class, inheritLocations = false)
+public class CohortTypeGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String COHORT_TYPE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortTypeDaoTest_initialTestData.xml";
 	
@@ -35,22 +33,20 @@ public class CohortTypeDaoTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String COHORT_TYPE_NAME = "cohort type name";
 	
-	private HibernateCohortDAO dao;
-	
 	@Autowired
-	@Qualifier("sessionFactory")
-	private SessionFactory sessionFactory;
+	@Qualifier("cohort.genericDao")
+	private IGenericDao<CohortType> dao;
 	
 	@Before
 	public void setup() throws Exception {
-		dao = new HibernateCohortDAO();
-		dao.setSessionFactory(sessionFactory);
+		dao.setClazz(CohortType.class);
 		executeDataSet(COHORT_TYPE_INITIAL_TEST_DATA_XML);
 	}
 	
 	@Test
 	public void shouldFindCohortTypeByID() {
-		CohortType cohortType = dao.getCohortTypeById(COHORT_TYPE_ID);
+		CohortType cohortType = dao
+		        .findByUniqueProp(PropValue.builder().property("cohortTypeId").value(COHORT_TYPE_ID).build());
 		assertThat(cohortType, notNullValue());
 		assertThat(cohortType.getCohortTypeId(), equalTo(COHORT_TYPE_ID));
 		
@@ -58,7 +54,7 @@ public class CohortTypeDaoTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void shouldFindCohortTypeByUuid() {
-		CohortType cohortType = dao.getCohortTypeByUuid(COHORT_TYPE_UUID);
+		CohortType cohortType = dao.get(COHORT_TYPE_UUID);
 		assertThat(cohortType, notNullValue());
 		assertThat(cohortType.getUuid(), equalTo(COHORT_TYPE_UUID));
 		
@@ -66,7 +62,7 @@ public class CohortTypeDaoTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void shouldFindCohortTypeByName() {
-		CohortType cohortType = dao.getCohortTypeByName(COHORT_TYPE_NAME);
+		CohortType cohortType = dao.findByUniqueProp(PropValue.builder().property("name").value(COHORT_TYPE_NAME).build());
 		assertThat(cohortType, notNullValue());
 		assertThat(cohortType.getUuid(), equalTo(COHORT_TYPE_UUID));
 		assertThat(cohortType.getName(), equalTo(COHORT_TYPE_NAME));

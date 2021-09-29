@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.cohort.api.db.impl;
+package org.openmrs.module.cohort.api.dao;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -16,23 +16,23 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Optional;
 
-import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortMemberAttribute;
+import org.openmrs.module.cohort.api.SpringTestConfiguration;
 import org.openmrs.module.cohort.api.TestDataUtils;
-import org.openmrs.module.cohort.api.TestSpringConfiguration;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 
 @Ignore
-@ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
-public class CohortMemberAttributeDaoTest extends BaseModuleContextSensitiveTest {
+@ContextConfiguration(classes = SpringTestConfiguration.class, inheritLocations = false)
+public class CohortMemberAttributeGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	//The order is salient
 	private static final String[] COHORT_MEMBER_ATTRIBUTE_INITIAL_TEST_DATA_XML = new String[] {
@@ -51,16 +51,14 @@ public class CohortMemberAttributeDaoTest extends BaseModuleContextSensitiveTest
 	
 	private static final String COHORT_MEMBER_ATTRIBUTE_VALUE = "cohortMemberAttribute";
 	
-	private CohortMemberAttributeDaoImpl dao;
-	
 	@Autowired
-	@Qualifier("sessionFactory")
-	private SessionFactory sessionFactory;
+	@Qualifier("cohort.genericDao")
+	private IGenericDao<CohortMemberAttribute> dao;
 	
 	@Before
 	public void setup() throws Exception {
-		dao = new CohortMemberAttributeDaoImpl();
-		dao.setSessionFactory(sessionFactory);
+		dao.setClazz(CohortMemberAttribute.class);
+		
 		for (String dataset : COHORT_MEMBER_ATTRIBUTE_INITIAL_TEST_DATA_XML) {
 			executeDataSet(dataset);
 		}
@@ -68,7 +66,7 @@ public class CohortMemberAttributeDaoTest extends BaseModuleContextSensitiveTest
 	
 	@Test
 	public void shouldGetCohortMemberAttributeByUuid() {
-		CohortMemberAttribute cohortMemberAttribute = dao.getCohortMemberAttributeByUuid(COHORT_MEMBER_ATTRIBUTE_UUID);
+		CohortMemberAttribute cohortMemberAttribute = dao.get(COHORT_MEMBER_ATTRIBUTE_UUID);
 		assertThat(cohortMemberAttribute, notNullValue());
 		assertThat(cohortMemberAttribute.getId(), notNullValue());
 		assertThat(cohortMemberAttribute.getId(), is(COHORT_MEMBER_ATTRIBUTE_ID));
@@ -77,8 +75,8 @@ public class CohortMemberAttributeDaoTest extends BaseModuleContextSensitiveTest
 	
 	@Test
 	public void shouldGetCohortMemberAttributesByTypeUuid() {
-		List<CohortMemberAttribute> memberAttributes = dao
-		        .getCohortMemberAttributesByTypeUuid(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID);
+		Collection<CohortMemberAttribute> memberAttributes = dao.findBy(PropValue.builder().property("uuid")
+		        .associationPath(Optional.of("attributeType")).value(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID).build());
 		
 		assertThat(memberAttributes, notNullValue());
 		assertThat(memberAttributes, hasSize(1));
@@ -86,7 +84,7 @@ public class CohortMemberAttributeDaoTest extends BaseModuleContextSensitiveTest
 	
 	@Test
 	public void shouldCreateNewCohortMemberAttribute() {
-		CohortMemberAttribute cohortAttribute = dao.saveCohortMemberAttribute(TestDataUtils.COHORT_MEMBER_ATTRIBUTE());
+		CohortMemberAttribute cohortAttribute = dao.createOrUpdate(TestDataUtils.COHORT_MEMBER_ATTRIBUTE());
 		assertThat(cohortAttribute, notNullValue());
 		assertThat(cohortAttribute.getId(), notNullValue());
 		assertThat(cohortAttribute.getId(), equalTo(TEST_COHORT_MEMBER_ATTRIBUTE_ID));
@@ -95,7 +93,12 @@ public class CohortMemberAttributeDaoTest extends BaseModuleContextSensitiveTest
 	
 	@Test
 	public void shouldVoidCohortMemberAttribute() {
-		CohortMemberAttribute attribute = dao.deleteCohortMemberAttribute(COHORT_MEMBER_ATTRIBUTE_UUID);
+		CohortMemberAttribute attributeToVoid = dao.get(COHORT_MEMBER_ATTRIBUTE_UUID);
+		attributeToVoid.setVoided(true);
+		attributeToVoid.setVoidReason("Voided via cohort rest call");
+		dao.createOrUpdate(attributeToVoid);
+		
+		CohortMemberAttribute attribute = dao.get(COHORT_MEMBER_ATTRIBUTE_UUID);
 		
 		assertThat(attribute, notNullValue());
 		assertThat(attribute.getVoided(), is(true));
@@ -104,8 +107,8 @@ public class CohortMemberAttributeDaoTest extends BaseModuleContextSensitiveTest
 	
 	@Test
 	public void shouldPurgeCohortMemberAttribute() {
-		dao.purgeCohortMemberAttribute(dao.getCohortMemberAttributeByUuid(COHORT_MEMBER_ATTRIBUTE_UUID));
+		dao.delete(dao.get(COHORT_MEMBER_ATTRIBUTE_UUID));
 		
-		assertThat(dao.getCohortMemberAttributeByUuid(COHORT_MEMBER_ATTRIBUTE_UUID), nullValue());
+		assertThat(dao.get(COHORT_MEMBER_ATTRIBUTE_UUID), nullValue());
 	}
 }

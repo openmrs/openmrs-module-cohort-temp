@@ -9,6 +9,9 @@
  */
 package org.openmrs.module.cohort.api;
 
+import javax.validation.constraints.NotNull;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -16,85 +19,52 @@ import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.cohort.CohortAttribute;
 import org.openmrs.module.cohort.CohortAttributeType;
 import org.openmrs.module.cohort.CohortM;
-import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortType;
-import org.springframework.transaction.annotation.Transactional;
 
-/**
- * This service exposes module's core functionality. It is a Spring managed bean which is configured
- * in moduleApplicationContext.xml. It can be accessed only via Context:<br>
- * <code>
- * Context.getService(cohortService.class).someMethod();
- * </code>
- *
- * @see org.openmrs.api.context.Context
- */
-@Transactional
 public interface CohortService extends OpenmrsService {
 	
-	CohortM getCohortById(Integer id);
+	CohortM getByUuid(@NotNull String uuid);
 	
-	CohortM getCohortByUuid(String uuid);
+	CohortM findByName(@NotNull String name);
 	
-	CohortM getCohortByName(String name);
+	Collection<CohortM> findByLocationUuid(@NotNull String locationUuid);
 	
-	List<CohortM> getAllCohorts();
+	Collection<CohortM> findByPatientUuid(@NotNull String patientUuid);
 	
-	List<CohortM> findCohortsMatching(String nameMatching, Map<String, String> attributes, CohortType cohortType);
+	Collection<CohortM> findAll();
 	
-	CohortM saveCohort(CohortM cohort);
+	CohortM createOrUpdate(@NotNull CohortM cohortType);
 	
-	void purgeCohort(CohortM cohort);
+	CohortM delete(@NotNull CohortM cohort, String reason);
 	
-	CohortM getCohort(Integer locationId, Integer programId, Integer typeId);
+	void purge(@NotNull CohortM cohortType);
 	
-	CohortMember getCohortMemberByUuid(String uuid);
+	CohortAttribute getAttributeByUuid(@NotNull String uuid);
 	
-	List<CohortMember> findCohortMemberByName(String name);
+	CohortAttribute createAttribute(@NotNull CohortAttribute attribute);
 	
-	List<CohortMember> findCohortMembersByCohort(Integer cohortId);
+	Collection<CohortAttribute> findAttributesByCohortUuid(@NotNull String cohortUuid);
 	
-	CohortMember saveCohortMember(CohortMember cohortmember);
+	Collection<CohortAttribute> findAttributesByTypeUuid(@NotNull String attributeTypeUuid);
 	
-	List<CohortMember> findCohortMembersByPatient(int patientId);
+	Collection<CohortAttribute> findAttributesByTypeName(@NotNull String attributeTypeName);
 	
-	CohortAttributeType getCohortAttributeType(Integer id);
+	CohortAttribute deleteAttribute(@NotNull CohortAttribute attribute, String retiredReason);
 	
-	List<CohortAttributeType> getAllCohortAttributeTypes();
+	void purgeAttribute(@NotNull CohortAttribute attribute);
 	
-	CohortAttributeType getCohortAttributeTypeByName(String attribute_type_name);
+	CohortAttributeType getAttributeTypeByUuid(@NotNull String uuid);
 	
-	CohortAttributeType getCohortAttributeTypeByUuid(String uuid);
+	CohortAttributeType getAttributeTypeByName(@NotNull String name);
 	
-	CohortAttributeType saveCohort(CohortAttributeType a);
+	Collection<CohortAttributeType> findAllAttributeTypes();
 	
-	void purgeCohortAttributes(CohortAttributeType attributes);
+	CohortAttributeType createAttributeType(@NotNull CohortAttributeType attributeType);
 	
-	CohortAttribute getCohortAttributeByUuid(String uuid);
+	CohortAttributeType deleteAttributeType(@NotNull CohortAttributeType attributeType, String retiredReason);
 	
-	CohortAttribute getCohortAttributeById(Integer id);
+	void purgeAttributeType(@NotNull CohortAttributeType attributeType);
 	
-	CohortAttribute saveCohortAttribute(CohortAttribute att);
-	
-	void purgeCohortAtt(CohortAttribute att);
-	
-	List<CohortAttribute> findCohortAttributes(Integer cohortId, Integer attributeTypeId);
-	
-	CohortType getCohortTypeById(Integer id);
-	
-	CohortType getCohortTypeByUuid(String uuid);
-	
-	CohortType getCohortTypeByName(String name);
-	
-	List<CohortType> getAllCohortTypes();
-	
-	CohortType saveCohort(CohortType cohort);
-	
-	void purgeCohortType(CohortType type);
-	
-	Long getCount(String name);
-	
-	List<CohortAttribute> getCohortAttributesByAttributeType(Integer attributeId);
-	
-	List<CohortM> getCohortsByLocationId(int locationId);
+	//Search
+	List<CohortM> findMatchingCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType);
 }

@@ -9,7 +9,8 @@
  */
 package org.openmrs.module.cohort.web.resource;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortAttributeType;
@@ -26,9 +27,16 @@ import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceD
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
-@Resource(name = RestConstants.VERSION_1 + CohortRest.COHORT_NAMESPACE
+@SuppressWarnings("unused")
+@Resource(name = RestConstants.VERSION_1 + CohortMainRestController.COHORT_NAMESPACE
         + "/cohortattributetype", supportedClass = CohortAttributeType.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
 public class CohortAttributeTypeResource extends DataDelegatingCrudResource<CohortAttributeType> {
+	
+	private final CohortService cohortService;
+	
+	public CohortAttributeTypeResource() {
+		this.cohortService = Context.getRegisteredComponent("cohort.cohortService", CohortService.class);
+	}
 	
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
@@ -67,20 +75,18 @@ public class CohortAttributeTypeResource extends DataDelegatingCrudResource<Coho
 	
 	@Override
 	public CohortAttributeType save(CohortAttributeType cohortAttributeType) {
-		return Context.getService(CohortService.class).saveCohort(cohortAttributeType);
+		return cohortService.createAttributeType(cohortAttributeType);
 	}
 	
 	@Override
 	protected void delete(CohortAttributeType cohortAttributeType, String reason, RequestContext context)
 	        throws ResponseException {
-		cohortAttributeType.setVoided(true);
-		cohortAttributeType.setVoidReason(reason);
-		Context.getService(CohortService.class).saveCohort(cohortAttributeType);
+		cohortService.deleteAttributeType(cohortAttributeType, reason);
 	}
 	
 	@Override
 	public void purge(CohortAttributeType cohortAttributeType, RequestContext context) throws ResponseException {
-		Context.getService(CohortService.class).purgeCohortAttributes(cohortAttributeType);
+		cohortService.purgeAttributeType(cohortAttributeType);
 	}
 	
 	@Override
@@ -89,17 +95,13 @@ public class CohortAttributeTypeResource extends DataDelegatingCrudResource<Coho
 	}
 	
 	@Override
-	public CohortAttributeType getByUniqueId(String id) {
-		CohortAttributeType obj = Context.getService(CohortService.class).getCohortAttributeTypeByUuid(id);
-		if (obj == null) {
-			obj = Context.getService(CohortService.class).getCohortAttributeTypeByName(id);
-		}
-		return obj;
+	public CohortAttributeType getByUniqueId(String uuid) {
+		return cohortService.getAttributeTypeByUuid(uuid);
 	}
 	
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
-		List<CohortAttributeType> list = Context.getService(CohortService.class).getAllCohortAttributeTypes();
-		return new NeedsPaging<>(list, context);
+		Collection<CohortAttributeType> allCohortAttributeTypes = cohortService.findAllAttributeTypes();
+		return new NeedsPaging<>(new ArrayList<>(allCohortAttributeTypes), context);
 	}
 }

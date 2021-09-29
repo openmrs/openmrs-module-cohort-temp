@@ -7,27 +7,26 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.cohort.api.db;
+package org.openmrs.module.cohort.api.dao;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 
-import org.hibernate.SessionFactory;
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortM;
-import org.openmrs.module.cohort.api.TestSpringConfiguration;
-import org.openmrs.module.cohort.api.db.hibernate.HibernateCohortDAO;
+import org.openmrs.module.cohort.api.SpringTestConfiguration;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
-public class CohortDaoTest extends BaseModuleContextSensitiveTest {
+@ContextConfiguration(classes = SpringTestConfiguration.class, inheritLocations = false)
+public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String COHORT_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortDaoTest_initialTestData.xml";
 	
@@ -41,22 +40,20 @@ public class CohortDaoTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String COHORT_DESCRIPTION = "Cohort description";
 	
-	private HibernateCohortDAO dao;
-	
 	@Autowired
-	@Qualifier("sessionFactory")
-	private SessionFactory sessionFactory;
+	@Qualifier("cohort.genericDao")
+	private IGenericDao<CohortM> dao;
 	
 	@Before
 	public void setup() throws Exception {
-		dao = new HibernateCohortDAO();
-		dao.setSessionFactory(sessionFactory);
+		dao.setClazz(CohortM.class);
 		executeDataSet(COHORT_INITIAL_TEST_DATA_XML);
 	}
 	
 	@Test
 	public void shouldGetCohortByName() {
-		CohortM cohort = dao.getCohortByName(COHORT_NAME);
+		CohortM cohort = dao.findByUniqueProp(
+		    PropValue.builder().property("name").value(COHORT_NAME).associationPath(Optional.empty()).build());
 		assertThat(cohort, notNullValue());
 		assertThat(cohort.getName(), notNullValue());
 		assertThat(cohort.getName(), equalTo(COHORT_NAME));
@@ -64,7 +61,8 @@ public class CohortDaoTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void shouldGetCohortMById() {
-		CohortM cohort = dao.getCohortMById(COHORT_ID);
+		CohortM cohort = dao.findByUniqueProp(
+		    PropValue.builder().property("cohortId").value(COHORT_ID).associationPath(Optional.empty()).build());
 		assertThat(cohort, notNullValue());
 		assertThat(cohort.getCohortId(), notNullValue());
 		assertThat(cohort.getCohortId(), equalTo(COHORT_ID));
@@ -72,7 +70,7 @@ public class CohortDaoTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void shouldGetCohortMByUuid() {
-		CohortM cohort = dao.getCohortMByUuid(COHORT_UUID);
+		CohortM cohort = dao.get(COHORT_UUID);
 		assertThat(cohort, notNullValue());
 		assertThat(cohort.getCohortId(), notNullValue());
 		assertThat(cohort.getCohortId(), equalTo(COHORT_ID));
@@ -82,7 +80,7 @@ public class CohortDaoTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void shouldGetCohortUuid() {
-		CohortM cohort = dao.getCohortUuid(COHORT_UUID);
+		CohortM cohort = dao.get(COHORT_UUID);
 		assertThat(cohort, notNullValue());
 		assertThat(cohort.getUuid(), notNullValue());
 		assertThat(cohort.getUuid(), equalTo(COHORT_UUID));
@@ -91,24 +89,15 @@ public class CohortDaoTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void shouldCreateNewCohort() {
 		CohortM cohortM = new CohortM();
-		cohortM.setUuid("24c266ec-ef38-4af5-bf67-608d64a7a461");
+		cohortM.setUuid("24c266ec-ef38-4af5-bf67-608d64a7a4cv");
 		cohortM.setCohortId(1);
 		cohortM.setName(COHORT_NAME1);
+		cohortM.setGroupCohort(false);
 		cohortM.setDescription(COHORT_DESCRIPTION);
-		CohortM cohort = dao.saveCohort(cohortM);
-		assertThat(cohort, notNullValue());
 		
-		CohortM savedCohort = dao.getCohortMById(cohort.getCohortId());
-		assertThat(savedCohort, notNullValue());
-		assertThat(savedCohort, equalTo(cohort));
-		
-	}
-	
-	@Test
-	public void shouldGetCohortWhereLocationAndTypeAreNull() {
-		CohortM cohort = dao.getCohort(null, null, null);
-		assertThat(cohort, notNullValue());
-		assertThat(cohort.getLocation(), is(nullValue()));
-		assertThat(cohort.getCohortType(), is(nullValue()));
+		CohortM createdCohort = dao.createOrUpdate(cohortM);
+		assertThat(createdCohort, notNullValue());
+		assertThat(createdCohort.getCohortId(), equalTo(cohortM.getCohortId()));
+		assertThat(createdCohort.getName(), is(cohortM.getName()));
 	}
 }

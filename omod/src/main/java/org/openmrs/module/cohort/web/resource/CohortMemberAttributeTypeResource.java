@@ -9,6 +9,8 @@
  */
 package org.openmrs.module.cohort.web.resource;
 
+import java.util.List;
+
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortMemberAttributeType;
 import org.openmrs.module.cohort.api.CohortMemberService;
@@ -21,7 +23,7 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.BaseAttributeTypeCrudResource1_9;
 
 @SuppressWarnings("unused")
-@Resource(name = RestConstants.VERSION_1 + CohortRest.COHORT_NAMESPACE
+@Resource(name = RestConstants.VERSION_1 + CohortMainRestController.COHORT_NAMESPACE
         + "/cohort-member-attribute-type", supportedClass = CohortMemberAttributeType.class, supportedOpenmrsVersions = {
                 "1.8 - 2.*" })
 public class CohortMemberAttributeTypeResource extends BaseAttributeTypeCrudResource1_9<CohortMemberAttributeType> {
@@ -29,7 +31,7 @@ public class CohortMemberAttributeTypeResource extends BaseAttributeTypeCrudReso
 	private final CohortMemberService cohortMemberService;
 	
 	public CohortMemberAttributeTypeResource() {
-		this.cohortMemberService = Context.getRegisteredComponent("cohortMemberService", CohortMemberService.class);
+		this.cohortMemberService = Context.getRegisteredComponent("cohort.cohortMemberService", CohortMemberService.class);
 	}
 	
 	@Override
@@ -39,33 +41,33 @@ public class CohortMemberAttributeTypeResource extends BaseAttributeTypeCrudReso
 	
 	@Override
 	public CohortMemberAttributeType getByUniqueId(String uuid) {
-		return cohortMemberService.getCohortMemberAttributeTypeByUuid(uuid);
+		return cohortMemberService.getAttributeTypeByUuid(uuid);
 	}
 	
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
-		return new NeedsPaging<>(cohortMemberService.getAllCohortMemberAttributeTypes(), context);
+		return new NeedsPaging<>((List<CohortMemberAttributeType>) cohortMemberService.findAllAttributeTypes(), context);
 	}
 	
 	@Override
 	public CohortMemberAttributeType save(CohortMemberAttributeType cohortMemberAttributeType) {
-		return cohortMemberService.saveCohortMemberAttributeType(cohortMemberAttributeType);
+		return cohortMemberService.createAttributeType(cohortMemberAttributeType);
 	}
 	
 	@Override
 	public void delete(String uuid, String reason, RequestContext context) throws ResponseException {
-		cohortMemberService.deleteCohortMemberAttributeType(getByUniqueId(uuid), reason);
+		cohortMemberService.voidAttributeType(getByUniqueId(uuid), reason);
 	}
 	
 	@Override
 	public void delete(CohortMemberAttributeType cohortMemberAttributeType, String voidReason, RequestContext requestContext)
 	        throws ResponseException {
-		cohortMemberService.deleteCohortMemberAttributeType(cohortMemberAttributeType, voidReason);
+		cohortMemberService.voidAttributeType(cohortMemberAttributeType, voidReason);
 	}
 	
 	@Override
 	public void purge(CohortMemberAttributeType cohortMemberAttributeType, RequestContext requestContext)
 	        throws ResponseException {
-		cohortMemberService.purgeCohortMemberAttributeType(cohortMemberAttributeType);
+		cohortMemberService.purgeAttributeType(cohortMemberAttributeType);
 	}
 }

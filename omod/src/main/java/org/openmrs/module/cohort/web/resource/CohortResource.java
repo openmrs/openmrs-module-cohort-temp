@@ -9,21 +9,22 @@
  */
 package org.openmrs.module.cohort.web.resource;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.openmrs.Location;
 import org.openmrs.api.APIAuthenticationException;
-import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortAttribute;
 import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.api.CohortService;
+import org.openmrs.module.cohort.api.CohortTypeService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
@@ -39,9 +40,19 @@ import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
-@Resource(name = RestConstants.VERSION_1 + CohortRest.COHORT_NAMESPACE
+@SuppressWarnings("unused")
+@Resource(name = RestConstants.VERSION_1 + CohortMainRestController.COHORT_NAMESPACE
         + "/cohort", supportedClass = CohortM.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
 public class CohortResource extends DataDelegatingCrudResource<CohortM> {
+	
+	private final CohortService cohortService;
+	
+	private final CohortTypeService cohortTypeService;
+	
+	public CohortResource() {
+		this.cohortService = Context.getRegisteredComponent("cohort.cohortService", CohortService.class);
+		this.cohortTypeService = Context.getRegisteredComponent("cohort.cohortTypeService", CohortTypeService.class);
+	}
 	
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
@@ -126,19 +137,17 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 				cohortMember.setEndDate(cohort.getEndDate());
 			}
 		}
-		return Context.getService(CohortService.class).saveCohort(cohort);
+		return cohortService.createOrUpdate(cohort);
 	}
 	
 	@Override
 	protected void delete(CohortM cohort, String reason, RequestContext request) throws ResponseException {
-		cohort.setVoided(true);
-		cohort.setVoidReason(reason);
-		Context.getService(CohortService.class).saveCohort(cohort);
+		cohortService.delete(cohort, reason);
 	}
 	
 	@Override
 	public void purge(CohortM cohort, RequestContext request) throws ResponseException {
-		Context.getService(CohortService.class).purgeCohort(cohort);
+		cohortService.purge(cohort);
 	}
 	
 	@Override
@@ -148,13 +157,13 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	
 	@Override
 	public CohortM getByUniqueId(String uuid) {
-		return Context.getService(CohortService.class).getCohortByUuid(uuid);
+		return cohortService.getByUuid(uuid);
 	}
 	
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
-		List<CohortM> cohort = Context.getService(CohortService.class).getAllCohorts();
-		return new NeedsPaging<>(cohort, context);
+		Collection<CohortM> cohort = cohortService.findAll();
+		return new NeedsPaging<>(new ArrayList<>(cohort), context);
 	}
 	
 	@Override
@@ -174,14 +183,13 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 				    });
 			}
 			catch (Exception e) {
-				e.printStackTrace();
-				throw new RuntimeException("Invalid format for parameter 'attributes'");
+				throw new RuntimeException("Invalid format for parameter 'attributes'", e);
 			}
 		}
 		if (StringUtils.isNotBlank(cohortType)) {
-			type = Context.getService(CohortService.class).getCohortTypeByName(cohortType);
+			type = cohortTypeService.getByName(cohortType);
 			if (type == null) {
-				type = Context.getService(CohortService.class).getCohortTypeByUuid(cohortType);
+				type = cohortTypeService.getByUuid(cohortType);
 			}
 			if (type == null) {
 				throw new RuntimeException("No Cohort Type By Name/Uuid Found Matching The Supplied Parameter");
@@ -189,18 +197,11 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 		}
 		
 		if (StringUtils.isNotBlank(location)) {
-			Location cohortLocation = Context.getService(LocationService.class).getLocationByUuid(location);
-			if (cohortLocation == null) {
-				throw new RuntimeException("No Location found for that uuid");
-			} else {
-				int locationId = cohortLocation.getLocationId();
-				List<CohortM> cohorts = Context.getService(CohortService.class).getCohortsByLocationId(locationId);
-				return new NeedsPaging<>(cohorts, context);
-			}
+			Collection<CohortM> cohorts = cohortService.findByLocationUuid(location);
+			return new NeedsPaging<>(new ArrayList<>(cohorts), context);
 		}
 		
-		List<CohortM> cohort = Context.getService(CohortService.class).findCohortsMatching(context.getParameter("q"),
-		    attributes, type);
+		List<CohortM> cohort = cohortService.findMatchingCohorts(context.getParameter("q"), attributes, type);
 		return new NeedsPaging<>(cohort, context);
 		
 	}
@@ -212,10 +213,10 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	 * @param attributes Cohort attributes to be set
 	 */
 	@PropertySetter("attributes")
-	public static void setAttributes(CohortM cohort, List<CohortAttribute> attributes) {
+	public void setAttributes(CohortM cohort, List<CohortAttribute> attributes) {
 		for (CohortAttribute attribute : attributes) {
-			CohortAttribute existingAttribute = cohort.getAttribute(Context.getService(CohortService.class)
-			        .getCohortAttributeTypeByUuid(attribute.getCohortAttributeType().getUuid()));
+			CohortAttribute existingAttribute = cohort
+			        .getAttribute(cohortService.getAttributeTypeByUuid(attribute.getCohortAttributeType().getUuid()));
 			if (existingAttribute != null) {
 				if (attribute.getValue() == null) {
 					cohort.removeAttribute(existingAttribute);
@@ -229,7 +230,7 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	}
 	
 	@PropertyGetter("display")
-	public static String getDisplay(CohortM cohort) {
+	public String getDisplay(CohortM cohort) {
 		return cohort.getName();
 	}
 }

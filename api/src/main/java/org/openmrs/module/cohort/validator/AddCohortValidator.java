@@ -9,11 +9,11 @@
  */
 package org.openmrs.module.cohort.validator;
 
-import java.util.List;
+import java.util.Collection;
 
-import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.api.CohortService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -24,6 +24,13 @@ import org.springframework.validation.Validator;
 @Qualifier("addCohortValidator")
 public class AddCohortValidator implements Validator {
 	
+	private final CohortService cohortService;
+	
+	@Autowired
+	public AddCohortValidator(CohortService cohortService) {
+		this.cohortService = cohortService;
+	}
+	
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return clazz.equals(CohortM.class);
@@ -31,8 +38,6 @@ public class AddCohortValidator implements Validator {
 	
 	@Override
 	public void validate(Object command, Errors errors) {
-		CohortService service = Context.getService(CohortService.class);
-		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "Cohort Name Required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "Cohort Description Required");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "Cohort Start Date Required");
@@ -44,7 +49,7 @@ public class AddCohortValidator implements Validator {
 		}
 		
 		// TODO change it to find by name and then reject
-		List<CohortM> allCohorts = service.getAllCohorts();
+		Collection<CohortM> allCohorts = cohortService.findAll();
 		for (CohortM checkCohort : allCohorts) {
 			if (checkCohort.getName().equals(cohort.getName())) {
 				errors.rejectValue("name", "A cohort with this name already exists");

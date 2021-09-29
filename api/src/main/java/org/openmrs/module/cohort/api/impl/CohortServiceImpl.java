@@ -9,219 +9,173 @@
  */
 package org.openmrs.module.cohort.api.impl;
 
+import javax.validation.constraints.NotNull;
+
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.Provider;
-import org.openmrs.User;
-import org.openmrs.api.ProviderService;
-import org.openmrs.api.context.Context;
+import lombok.AccessLevel;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cohort.CohortAttribute;
 import org.openmrs.module.cohort.CohortAttributeType;
 import org.openmrs.module.cohort.CohortM;
-import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.api.CohortService;
-import org.openmrs.module.cohort.api.db.CohortDAO;
+import org.openmrs.module.cohort.api.dao.IGenericDao;
+import org.openmrs.module.cohort.api.dao.PropValue;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * It is a default implementation of {@link CohortService}.
- */
+@Slf4j
+@Transactional
+@Setter(AccessLevel.PACKAGE)
+@Component(value = "cohort.cohortService")
 public class CohortServiceImpl extends BaseOpenmrsService implements CohortService {
 	
-	protected final Log log = LogFactory.getLog(this.getClass());
+	private final IGenericDao<CohortM> cohortDao;
 	
-	private CohortDAO dao;
+	private final IGenericDao<CohortAttribute> cohortAttributeDao;
 	
-	public CohortDAO getDao() {
-		return dao;
-	}
+	private final IGenericDao<CohortAttributeType> cohortAttributeTypeDao;
 	
-	/**
-	 * @param dao the dao to set
-	 */
-	public void setDao(CohortDAO dao) {
-		this.dao = dao;
-	}
-	
-	@Override
-	public CohortType getCohortTypeById(Integer cohort_type_id) {
-		return dao.getCohortType(cohort_type_id);
+	@Autowired
+	public CohortServiceImpl(IGenericDao<CohortM> cohortDao, IGenericDao<CohortAttribute> cohortAttributeDao,
+	    IGenericDao<CohortAttributeType> cohortAttributeTypeDao) {
+		this.cohortDao = cohortDao;
+		this.cohortDao.setClazz(CohortM.class);
+		this.cohortAttributeDao = cohortAttributeDao;
+		this.cohortAttributeDao.setClazz(CohortAttribute.class);
+		this.cohortAttributeTypeDao = cohortAttributeTypeDao;
+		this.cohortAttributeTypeDao.setClazz(CohortAttributeType.class);
 	}
 	
 	@Override
-	public CohortMember saveCohortMember(CohortMember cohort) {
-		return dao.saveCPatient(cohort);
+	public CohortM getByUuid(@NotNull String uuid) {
+		return cohortDao.get(uuid);
 	}
 	
 	@Override
-	public CohortAttributeType saveCohort(CohortAttributeType a) {
-		return dao.saveCohortAttributes(a);
+	public CohortM findByName(@NotNull String name) {
+		return cohortDao.findByUniqueProp(PropValue.builder().property("name").value(name).build());
 	}
 	
 	@Override
-	public CohortType saveCohort(CohortType cohort) {
-		return dao.saveCohortType(cohort);
+	public Collection<CohortM> findByLocationUuid(@NotNull String locationUuid) {
+		return cohortDao.findBy(
+		    PropValue.builder().property("uuid").associationPath(Optional.of("location")).value(locationUuid).build());
 	}
 	
 	@Override
-	public void purgeCohortAttributes(CohortAttributeType attributes) {
-		dao.purgeCohortAttributes(attributes);
+	public Collection<CohortM> findByPatientUuid(@NotNull String patientUuid) {
+		return cohortDao.findBy(
+		    PropValue.builder().property("uuid").associationPath(Optional.of("patient")).value(patientUuid).build());
 	}
 	
 	@Override
-	public void purgeCohortAtt(CohortAttribute att) {
-		dao.purgeCohortAtt(att);
+	public Collection<CohortM> findAll() {
+		return cohortDao.findAll();
 	}
 	
 	@Override
-	public List<CohortType> getAllCohortTypes() {
-		return dao.getAllCohortTypes();
+	public CohortM createOrUpdate(@NotNull CohortM cohortM) {
+		return cohortDao.createOrUpdate(cohortM);
 	}
 	
 	@Override
-	public List<CohortAttributeType> getAllCohortAttributeTypes() {
-		return dao.getAllCohortAttributes();
+	public CohortM delete(@NotNull CohortM cohort, String reason) {
+		cohort.setVoided(true);
+		cohort.setVoidReason(reason);
+		cohort.setDateVoided(new Date());
+		return cohortDao.createOrUpdate(cohort);
 	}
 	
 	@Override
-	public CohortAttributeType getCohortAttributeTypeByName(String attribute_type_name) {
-		return dao.findCohortAttributes(attribute_type_name);
+	public void purge(@NotNull CohortM cohort) {
+		cohortDao.delete(cohort);
 	}
 	
 	@Override
-	public CohortM saveCohort(CohortM cohort) {
-		return dao.saveCohort(cohort);
+	public CohortAttribute getAttributeByUuid(@NotNull String uuid) {
+		return cohortAttributeDao.get(uuid);
 	}
 	
 	@Override
-	public void purgeCohort(CohortM cohort) {
-		dao.purgeCohort(cohort);
+	public CohortAttribute createAttribute(@NotNull CohortAttribute attribute) {
+		return cohortAttributeDao.createOrUpdate(attribute);
 	}
 	
 	@Override
-	public List<CohortM> getAllCohorts() {
-		return dao.findCohorts();
+	public Collection<CohortAttribute> findAttributesByCohortUuid(String cohortUuid) {
+		return cohortAttributeDao.findBy(
+		    PropValue.builder().associationPath(Optional.of("cohort")).property("uuid").value(cohortUuid).build());
 	}
 	
 	@Override
-	public List<CohortM> findCohortsMatching(String nameMatching, Map<String, String> attributes, CohortType cohortType) {
-		return dao.findCohorts(nameMatching, attributes, cohortType);
+	public Collection<CohortAttribute> findAttributesByTypeUuid(String attributeTypeUuid) {
+		return cohortAttributeDao.findBy(PropValue.builder().associationPath(Optional.of("attributeType")).property("uuid")
+		        .value(attributeTypeUuid).build());
 	}
 	
 	@Override
-	public CohortAttribute saveCohortAttribute(CohortAttribute att) {
-		return dao.saveCohortAttributes(att);
+	public Collection<CohortAttribute> findAttributesByTypeName(String attributeTypeName) {
+		return cohortAttributeDao.findBy(PropValue.builder().associationPath(Optional.of("attributeType")).property("name")
+		        .value(attributeTypeName).build());
 	}
 	
 	@Override
-	public void purgeCohortType(CohortType type) {
-		dao.purgeCohortType(type);
+	public CohortAttribute deleteAttribute(@NotNull CohortAttribute attribute, String retiredReason) {
+		attribute.setVoided(true);
+		attribute.setDateVoided(new Date());
+		attribute.setVoidReason(retiredReason);
+		return cohortAttributeDao.createOrUpdate(attribute);
 	}
 	
 	@Override
-	public CohortM getCohortById(Integer id) {
-		return dao.getCohortMById(id);
+	public void purgeAttribute(@NotNull CohortAttribute attribute) {
+		cohortAttributeDao.delete(attribute);
 	}
 	
 	@Override
-	public CohortM getCohortByUuid(String uuid) {
-		return dao.getCohortUuid(uuid);
+	public CohortAttributeType getAttributeTypeByUuid(@NotNull String uuid) {
+		return cohortAttributeTypeDao.get(uuid);
 	}
 	
 	@Override
-	public CohortAttribute getCohortAttributeByUuid(String uuid) {
-		return dao.getCohortAttributeByUuid(uuid);
+	public CohortAttributeType getAttributeTypeByName(String name) {
+		return cohortAttributeTypeDao.findByUniqueProp(PropValue.builder().property("name").value(name).build());
 	}
 	
 	@Override
-	public CohortMember getCohortMemberByUuid(String uuid) {
-		return dao.getCohortMemUuid(uuid);
+	public Collection<CohortAttributeType> findAllAttributeTypes() {
+		return cohortAttributeTypeDao.findAll();
 	}
 	
 	@Override
-	public CohortType getCohortTypeByUuid(String uuid) {
-		return dao.getCohortTypeByUuid(uuid);
+	public CohortAttributeType createAttributeType(@NotNull CohortAttributeType attributeType) {
+		return cohortAttributeTypeDao.createOrUpdate(attributeType);
 	}
 	
 	@Override
-	public CohortAttributeType getCohortAttributeTypeByUuid(String uuid) {
-		return dao.getCohortAttributeTypeUuid(uuid);
+	public CohortAttributeType deleteAttributeType(@NotNull CohortAttributeType attributeType, String retiredReason) {
+		attributeType.setVoided(true);
+		attributeType.setDateVoided(new Date());
+		attributeType.setVoidReason(retiredReason);
+		return cohortAttributeTypeDao.createOrUpdate(attributeType);
 	}
 	
 	@Override
-	public CohortAttribute getCohortAttributeById(Integer id) {
-		return dao.getCohortAttribute(id);
+	public void purgeAttributeType(@NotNull CohortAttributeType attributeType) {
+		cohortAttributeTypeDao.delete(attributeType);
 	}
 	
 	@Override
-	public CohortAttributeType getCohortAttributeType(Integer id) {
-		return dao.findCohortAttributeType(id);
-	}
-	
-	private Collection<Provider> usersToProviders(Collection<User> users) {
-		if (users == null) {
-			return null;
-		}
-		ProviderService providerService = Context.getProviderService();
-		Collection<Provider> providers = new HashSet<>();
-		for (User user : users) {
-			providers.addAll(providerService.getProvidersByPerson(user.getPerson()));
-		}
-		return providers;
-	}
-	
-	@Override
-	public Long getCount(String name) {
-		return dao.getCount(name);
-	}
-	
-	@Override
-	public List<CohortMember> findCohortMemberByName(String name) {
-		return dao.findCohortMember(name);
-	}
-	
-	@Override
-	public List<CohortMember> findCohortMembersByCohort(Integer cohortId) {
-		return dao.findCohortMembersByCohortId(cohortId);
-	}
-	
-	@Override
-	public CohortM getCohort(Integer locationId, Integer programId, Integer typeId) {
-		return dao.getCohort(locationId, programId, typeId);
-	}
-	
-	@Override
-	public List<CohortAttribute> findCohortAttributes(Integer cohortId, Integer attributeTypeId) {
-		return dao.findCohortAttributes(cohortId, attributeTypeId);
-	}
-	
-	@Override
-	public CohortType getCohortTypeByName(String name) {
-		return dao.getCohortTypeByName(name);
-	}
-	
-	@Override
-	public CohortM getCohortByName(String name) {
-		return dao.getCohortByName(name);
-	}
-	
-	public List<CohortMember> findCohortMembersByPatient(int patientId) {
-		return dao.getCohortMembersByPatientId(patientId);
-	}
-	
-	@Override
-	public List<CohortAttribute> getCohortAttributesByAttributeType(Integer attributeTypeId) {
-		return dao.getCohortAttributesByAttributeType(attributeTypeId);
-	}
-	
-	@Override
-	public List<CohortM> getCohortsByLocationId(int locationId) {
-		return dao.getCohortsByLocationId(locationId);
+	public List<CohortM> findMatchingCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType) {
+		return cohortDao.getSearchHandler().findCohorts(nameMatching, attributes, cohortType);
 	}
 }

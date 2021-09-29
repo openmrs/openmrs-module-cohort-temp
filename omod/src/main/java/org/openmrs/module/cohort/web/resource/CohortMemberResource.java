@@ -9,7 +9,8 @@
  */
 package org.openmrs.module.cohort.web.resource;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +20,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortMemberAttribute;
-import org.openmrs.module.cohort.api.CohortService;
+import org.openmrs.module.cohort.api.CohortMemberService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
@@ -34,9 +35,16 @@ import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceD
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
-@Resource(name = RestConstants.VERSION_1 + CohortRest.COHORT_NAMESPACE
+@SuppressWarnings("unused")
+@Resource(name = RestConstants.VERSION_1 + CohortMainRestController.COHORT_NAMESPACE
         + "/cohortmember", supportedClass = CohortMember.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
 public class CohortMemberResource extends DataDelegatingCrudResource<CohortMember> {
+	
+	private final CohortMemberService cohortMemberService;
+	
+	public CohortMemberResource() {
+		this.cohortMemberService = Context.getRegisteredComponent("cohort.cohortMemberService", CohortMemberService.class);
+	}
 	
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
@@ -115,24 +123,27 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 				}
 			}
 		}
-		return Context.getService(CohortService.class).saveCohortMember(cohortMember);
+		return cohortMemberService.createOrUpdate(cohortMember);
 	}
 	
 	@Override
 	public void delete(CohortMember cohortMember, String reason, RequestContext context) throws ResponseException {
-		cohortMember.setVoided(true);
-		cohortMember.setVoidReason(reason);
-		Context.getService(CohortService.class).saveCohortMember(cohortMember);
+		cohortMemberService.delete(cohortMember, reason);
 	}
 	
 	@Override
 	public CohortMember getByUniqueId(String uuid) {
-		return Context.getService(CohortService.class).getCohortMemberByUuid(uuid);
+		return cohortMemberService.getByUuid(uuid);
 	}
 	
 	@Override
 	public void purge(CohortMember cohortMember, RequestContext context) throws ResponseException {
-		throw new UnsupportedOperationException();
+		boolean purge = Boolean.getBoolean(context.getParameter("purge"));
+		if (purge) {
+			cohortMemberService.purge(cohortMember);
+		} else {
+			cohortMemberService.delete(cohortMember, "");
+		}
 	}
 	
 	@PropertySetter("attributes")
@@ -156,36 +167,21 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 	
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
-		String cohort = context.getParameter("cohort");
+		String cohortUuid = context.getParameter("cohort");
 		String patientUuid = context.getParameter("patient");
-		List<CohortMember> list;
 		
-		if (StringUtils.isNotBlank(cohort) && StringUtils.isNotBlank(patientUuid)) {
+		Collection<CohortMember> cohortMemberCollection;
+		if (StringUtils.isNotBlank(cohortUuid) && StringUtils.isNotBlank(patientUuid)) {
 			throw new IllegalArgumentException(
 			        "Patient and Cohort Parameters can't both be declared in the url, search by either cohort or patient, not both");
-			
-		} else if (StringUtils.isNotBlank(cohort)) {
-			CohortM cohortByName = Context.getService(CohortService.class).getCohortByName(cohort);
-			if (cohortByName == null) {
-				// check by uuid
-				cohortByName = Context.getService(CohortService.class).getCohortByUuid(cohort);
-			}
-			if (cohortByName == null) {
-				throw new IllegalArgumentException("No match found in cohort");
-			}
-			list = Context.getService(CohortService.class).findCohortMembersByCohort(cohortByName.getCohortId());
-			
+		} else if (StringUtils.isNotBlank(cohortUuid)) {
+			cohortMemberCollection = cohortMemberService.findCohortMembersByCohortUuid(cohortUuid);
 		} else if (StringUtils.isNotBlank(patientUuid)) {
-			Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
-			if (patient == null) {
-				throw new IllegalArgumentException("No patient with uuid " + patientUuid);
-			}
-			list = Context.getService(CohortService.class).findCohortMembersByPatient(patient.getId());
-			
+			cohortMemberCollection = cohortMemberService.findCohortMembersByPatientUuid(patientUuid);
 		} else {
 			throw new IllegalArgumentException("No valid value specified for param cohort and/or patient");
 		}
 		
-		return new NeedsPaging<>(list, context);
+		return new NeedsPaging<>(new ArrayList<>(cohortMemberCollection), context);
 	}
 }

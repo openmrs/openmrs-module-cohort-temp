@@ -9,75 +9,150 @@
  */
 package org.openmrs.module.cohort.api.impl;
 
-import java.util.List;
+import javax.validation.constraints.NotNull;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.Optional;
 
 import lombok.AccessLevel;
 import lombok.Setter;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortMemberAttribute;
 import org.openmrs.module.cohort.CohortMemberAttributeType;
 import org.openmrs.module.cohort.api.CohortMemberService;
-import org.openmrs.module.cohort.api.db.CohortMemberAttributeDao;
-import org.openmrs.module.cohort.api.db.CohortMemberAttributeTypeDao;
+import org.openmrs.module.cohort.api.dao.IGenericDao;
+import org.openmrs.module.cohort.api.dao.PropValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component("cohortMemberService")
-@Setter(AccessLevel.PACKAGE)
 @Transactional
+@Setter(AccessLevel.PACKAGE)
+@Component(value = "cohort.cohortMemberService")
 public class CohortMemberServiceImpl extends BaseOpenmrsService implements CohortMemberService {
 	
-	@Autowired
-	private CohortMemberAttributeTypeDao attributeTypeDao;
+	private final IGenericDao<CohortMember> cohortMemberDao;
+	
+	private final IGenericDao<CohortMemberAttributeType> cohortMemberAttributeTypeDao;
+	
+	private final IGenericDao<CohortMemberAttribute> cohortMemberAttributeDao;
 	
 	@Autowired
-	private CohortMemberAttributeDao attributeDao;
-	
-	@Override
-	public CohortMemberAttributeType getCohortMemberAttributeTypeByUuid(String uuid) {
-		return attributeTypeDao.getCohortMemberAttributeTypeByUuid(uuid);
+	public CohortMemberServiceImpl(IGenericDao<CohortMember> cohortMemberDao,
+	    IGenericDao<CohortMemberAttributeType> cohortMemberAttributeTypeDao,
+	    IGenericDao<CohortMemberAttribute> cohortMemberAttributeDao) {
+		this.cohortMemberDao = cohortMemberDao;
+		this.cohortMemberAttributeTypeDao = cohortMemberAttributeTypeDao;
+		this.cohortMemberAttributeDao = cohortMemberAttributeDao;
+		
+		this.cohortMemberDao.setClazz(CohortMember.class);
+		this.cohortMemberAttributeDao.setClazz(CohortMemberAttribute.class);
+		this.cohortMemberAttributeTypeDao.setClazz(CohortMemberAttributeType.class);
 	}
 	
 	@Override
-	public List<CohortMemberAttributeType> getAllCohortMemberAttributeTypes() {
-		return attributeTypeDao.getCohortMemberAttributeTypes();
+	public CohortMember getByUuid(@NotNull String uuid) {
+		return cohortMemberDao.get(uuid);
 	}
 	
 	@Override
-	@Transactional
-	public CohortMemberAttributeType saveCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
-		return attributeTypeDao.createCohortMemberAttributeType(cohortMemberAttributeType);
+	public CohortMember getByName(String name) {
+		return cohortMemberDao.findByUniqueProp(PropValue.builder().property("name").value(name).build());
 	}
 	
 	@Override
-	public CohortMemberAttributeType deleteCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType,
+	public Collection<CohortMember> findAll() {
+		return cohortMemberDao.findAll();
+	}
+	
+	@Override
+	public CohortMember createOrUpdate(CohortMember cohortMember) {
+		return cohortMemberDao.createOrUpdate(cohortMember);
+	}
+	
+	@Override
+	public CohortMember delete(CohortMember cohortMember, String retireReason) {
+		if (cohortMember != null) {
+			cohortMember.setVoided(true);
+			cohortMember.setVoidReason(retireReason);
+			cohortMember.setDateVoided(new Date());
+			return cohortMemberDao.createOrUpdate(cohortMember);
+		}
+		return null;
+	}
+	
+	@Override
+	public void purge(CohortMember cohortMember) {
+		cohortMemberDao.delete(cohortMember);
+	}
+	
+	@Override
+	public CohortMemberAttributeType getAttributeTypeByUuid(String uuid) {
+		return cohortMemberAttributeTypeDao.get(uuid);
+	}
+	
+	@Override
+	public Collection<CohortMemberAttributeType> findAllAttributeTypes() {
+		return cohortMemberAttributeTypeDao.findAll();
+	}
+	
+	@Override
+	public CohortMemberAttributeType createAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
+		return cohortMemberAttributeTypeDao.createOrUpdate(cohortMemberAttributeType);
+	}
+	
+	@Override
+	public CohortMemberAttributeType voidAttributeType(CohortMemberAttributeType cohortMemberAttributeType,
 	        String voidReason) {
-		return attributeTypeDao.deleteCohortMemberAttributeType(cohortMemberAttributeType, voidReason);
+		cohortMemberAttributeType.setRetired(true);
+		cohortMemberAttributeType.setRetireReason(voidReason);
+		return cohortMemberAttributeTypeDao.createOrUpdate(cohortMemberAttributeType);
 	}
 	
 	@Override
-	public void purgeCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
-		attributeTypeDao.purgeCohortMemberAttribute(cohortMemberAttributeType);
+	public void purgeAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
+		cohortMemberAttributeTypeDao.delete(cohortMemberAttributeType);
 	}
 	
 	@Override
-	public CohortMemberAttribute getCohortMemberAttributeByUuid(String uuid) {
-		return attributeDao.getCohortMemberAttributeByUuid(uuid);
+	public CohortMemberAttribute getAttributeByUuid(@NotNull String uuid) {
+		return cohortMemberAttributeDao.get(uuid);
 	}
 	
 	@Override
-	public List<CohortMemberAttribute> getCohortMemberAttributeByTypeUuid(String attributeTypeUuid) {
-		return attributeDao.getCohortMemberAttributesByTypeUuid(attributeTypeUuid);
+	public Collection<CohortMemberAttribute> getAttributeByTypeUuid(@NotNull String uuid) {
+		return cohortMemberAttributeDao.findBy(
+		    PropValue.builder().property("uuid").associationPath(Optional.of("attributeType")).value(uuid).build());
 	}
 	
 	@Override
-	public CohortMemberAttribute saveCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute) {
-		return attributeDao.saveCohortMemberAttribute(cohortMemberAttribute);
+	public CohortMemberAttribute createAttribute(CohortMemberAttribute cohortMemberAttribute) {
+		return cohortMemberAttributeDao.createOrUpdate(cohortMemberAttribute);
 	}
 	
 	@Override
-	public void purgeCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute) {
-		attributeDao.purgeCohortMemberAttribute(cohortMemberAttribute);
+	public CohortMemberAttribute deleteAttribute(CohortMemberAttribute attribute, String voidReason) {
+		attribute.setVoided(true);
+		attribute.setVoidReason(voidReason);
+		return cohortMemberAttributeDao.createOrUpdate(attribute);
+	}
+	
+	@Override
+	public void purgeAttribute(CohortMemberAttribute cohortMemberAttribute) {
+		cohortMemberAttributeDao.delete(cohortMemberAttribute);
+	}
+	
+	@Override
+	public Collection<CohortMember> findCohortMembersByCohortUuid(String cohortUuid) {
+		return cohortMemberDao.findBy(
+		    PropValue.builder().property("uuid").associationPath(Optional.of("cohort")).value(cohortUuid).build());
+	}
+	
+	@Override
+	public Collection<CohortMember> findCohortMembersByPatientUuid(String patientUuid) {
+		return cohortMemberDao.findBy(
+		    PropValue.builder().property("uuid").associationPath(Optional.of("patient")).value(patientUuid).build());
 	}
 }

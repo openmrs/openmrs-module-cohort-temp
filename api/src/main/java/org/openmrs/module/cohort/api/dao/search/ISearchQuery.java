@@ -7,12 +7,19 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.cohort.api;
+package org.openmrs.module.cohort.api.dao.search;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
+import java.util.List;
+import java.util.Map;
 
-@Configuration
-@ImportResource({ "classpath:applicationContext-service.xml", "classpath:moduleApplicationContext.xml",
-        "classpath:TestApplicationContext.xml" })
-public class TestSpringConfiguration {}
+import org.openmrs.module.cohort.CohortM;
+import org.openmrs.module.cohort.CohortType;
+
+/**
+ * ISearchQuery interface
+ */
+public interface ISearchQuery {
+	
+	//Add cohort search methods
+	List<CohortM> findCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType);
+}

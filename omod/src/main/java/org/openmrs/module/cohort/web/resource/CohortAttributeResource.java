@@ -9,12 +9,13 @@
  */
 package org.openmrs.module.cohort.web.resource;
 
-import java.util.List;
+import javax.validation.constraints.NotNull;
 
+import java.util.ArrayList;
+
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortAttribute;
-import org.openmrs.module.cohort.CohortAttributeType;
-import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
@@ -29,9 +30,16 @@ import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
-@Resource(name = RestConstants.VERSION_1 + CohortRest.COHORT_NAMESPACE
+@SuppressWarnings("unused")
+@Resource(name = RestConstants.VERSION_1 + CohortMainRestController.COHORT_NAMESPACE
         + "/cohortattribute", supportedClass = CohortAttribute.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
 public class CohortAttributeResource extends DataDelegatingCrudResource<CohortAttribute> {
+	
+	private final CohortService cohortService;
+	
+	public CohortAttributeResource() {
+		this.cohortService = Context.getRegisteredComponent("cohort.cohortService", CohortService.class);
+	}
 	
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
@@ -75,19 +83,17 @@ public class CohortAttributeResource extends DataDelegatingCrudResource<CohortAt
 	
 	@Override
 	public CohortAttribute save(CohortAttribute cohortAttribute) {
-		return Context.getService(CohortService.class).saveCohortAttribute(cohortAttribute);
+		return cohortService.createAttribute(cohortAttribute);
 	}
 	
 	@Override
 	protected void delete(CohortAttribute cohortAttribute, String reason, RequestContext request) throws ResponseException {
-		cohortAttribute.setVoided(true);
-		cohortAttribute.setVoidReason(reason);
-		Context.getService(CohortService.class).saveCohortAttribute(cohortAttribute);
+		cohortService.deleteAttribute(cohortAttribute, reason);
 	}
 	
 	@Override
 	public void purge(CohortAttribute cohortAttribute, RequestContext request) throws ResponseException {
-		Context.getService(CohortService.class).purgeCohortAtt(cohortAttribute);
+		cohortService.purgeAttribute(cohortAttribute);
 	}
 	
 	@Override
@@ -96,47 +102,25 @@ public class CohortAttributeResource extends DataDelegatingCrudResource<CohortAt
 	}
 	
 	@Override
-	public CohortAttribute getByUniqueId(String uuid) {
-		return Context.getService(CohortService.class).getCohortAttributeByUuid(uuid);
+	public CohortAttribute getByUniqueId(@NotNull String uuid) {
+		return cohortService.getAttributeByUuid(uuid);
 	}
 	
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
-		String cohort = context.getParameter("cohort");
-		String attr = context.getParameter("attributeType");
+		String cohortUuid = context.getParameter("cohort");
+		String attributeTypeUuid = context.getParameter("attributeType");
 		
-		CohortM cohortByName = Context.getService(CohortService.class).getCohortByName(cohort);
-		if (cohortByName == null) {
-			cohortByName = Context.getService(CohortService.class).getCohortByUuid(cohort);
+		if (StringUtils.isNotBlank(cohortUuid) && StringUtils.isNotBlank(attributeTypeUuid)) {
+			throw new IllegalArgumentException(
+			        "cohort and attributeType Parameters can't both be declared in the url, search by either cohort or attributeType, not both");
 		}
-		
-		if (cohortByName == null) {
-			throw new IllegalArgumentException("No valid value specified for param cohort");
-		}
-		
-		Integer attributeId = null;
-		CohortAttributeType cohortAttributeType = null;
-		
-		if (org.apache.commons.lang3.StringUtils.isNotBlank(attr)) {
-			cohortAttributeType = Context.getService(CohortService.class).getCohortAttributeTypeByName(attr);
-			
-			if (cohortAttributeType == null) {
-				cohortAttributeType = Context.getService(CohortService.class).getCohortAttributeTypeByUuid(attr);
-			}
-			
-			if (cohortAttributeType != null) {
-				attributeId = cohortAttributeType.getCohortAttributeTypeId();
-			}
-		}
-		
-		if (cohortByName != null) {
-			List<CohortAttribute> list = Context.getService(CohortService.class)
-			        .findCohortAttributes(cohortByName.getCohortId(), attributeId);
-			return new NeedsPaging<>(list, context);
+		if ((cohortUuid != null)) {
+			return new NeedsPaging<>(new ArrayList<>(cohortService.findAttributesByCohortUuid(cohortUuid)), context);
+		} else if (attributeTypeUuid != null) {
+			return new NeedsPaging<>(new ArrayList<>(cohortService.findAttributesByCohortUuid(attributeTypeUuid)), context);
 		} else {
-			List<CohortAttribute> list = Context.getService(CohortService.class)
-			        .getCohortAttributesByAttributeType(attributeId);
-			return new NeedsPaging<>(list, context);
+			return new NeedsPaging<>(new ArrayList<>(), context);
 		}
 	}
 }

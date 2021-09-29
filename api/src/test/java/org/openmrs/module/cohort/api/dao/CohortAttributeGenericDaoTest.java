@@ -7,30 +7,29 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.cohort.api.db;
+package org.openmrs.module.cohort.api.dao;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Optional;
 
 import org.hamcrest.Matchers;
-import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortAttribute;
+import org.openmrs.module.cohort.api.SpringTestConfiguration;
 import org.openmrs.module.cohort.api.TestDataUtils;
-import org.openmrs.module.cohort.api.TestSpringConfiguration;
-import org.openmrs.module.cohort.api.db.hibernate.HibernateCohortDAO;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
-public class CohortAttributeDaoTest extends BaseModuleContextSensitiveTest {
+@ContextConfiguration(classes = SpringTestConfiguration.class, inheritLocations = false)
+public class CohortAttributeGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String COHORT_ATTRIBUTE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortAttributeDaoTest_initialTestData.xml";
 	
@@ -44,37 +43,27 @@ public class CohortAttributeDaoTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String COHORT_ATTRIBUTE_VALUE = "cohortAttribute";
 	
-	private HibernateCohortDAO dao;
-	
 	@Autowired
-	@Qualifier("sessionFactory")
-	private SessionFactory sessionFactory;
+	@Qualifier("cohort.genericDao")
+	private IGenericDao<CohortAttribute> dao;
 	
 	@Before
 	public void setup() throws Exception {
-		dao = new HibernateCohortDAO();
-		dao.setSessionFactory(sessionFactory);
+		dao.setClazz(CohortAttribute.class);
 		executeDataSet(COHORT_ATTRIBUTE_INITIAL_TEST_DATA_XML);
 	}
 	
 	@Test
-	public void getCohortAttributeById_shouldGetCohortAttributeById() {
-		CohortAttribute cohortAttribute = dao.getCohortAttributeById(COHORT_ATTRIBUTE_ID);
-		assertThat(cohortAttribute, notNullValue());
-		assertThat(cohortAttribute.getCohortAttributeId(), equalTo(COHORT_ATTRIBUTE_ID));
-	}
-	
-	@Test
-	public void getCohortAttributeByUuid_shouldGetCohortAttributeByUuid() {
-		CohortAttribute cohortAttribute = dao.getCohortAttributeByUuid(COHORT_ATTRIBUTE_UUID);
+	public void shouldGetCohortAttributeByUuid() {
+		CohortAttribute cohortAttribute = dao.get(COHORT_ATTRIBUTE_UUID);
 		assertThat(cohortAttribute, notNullValue());
 		assertThat(cohortAttribute.getCohortAttributeId(), equalTo(COHORT_ATTRIBUTE_ID));
 		assertThat(cohortAttribute.getUuid(), equalTo(COHORT_ATTRIBUTE_UUID));
 	}
 	
 	@Test
-	public void saveCohortAttributes_shouldCreateNewCohortAttribute() {
-		CohortAttribute cohortAttribute = dao.saveCohortAttributes(TestDataUtils.COHORT_ATTRIBUTE());
+	public void shouldCreateNewCohortAttribute() {
+		CohortAttribute cohortAttribute = dao.createOrUpdate(TestDataUtils.COHORT_ATTRIBUTE());
 		assertThat(cohortAttribute, notNullValue());
 		assertThat(cohortAttribute.getCohortAttributeId(), notNullValue());
 		assertThat(cohortAttribute.getCohortAttributeId(), equalTo(TEST_COHORT_ATTRIBUTE_ID));
@@ -82,10 +71,11 @@ public class CohortAttributeDaoTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void findCohortAttributes_shouldFindMatchingCohortAttributes() {
-		List<CohortAttribute> results = dao.findCohortAttribute(TEST_COHORT_ATTRIBUTE);
+	public void shouldFindMatchingCohortAttributes() {
+		Collection<CohortAttribute> results = dao.findBy(
+		    PropValue.builder().property("value").value(TEST_COHORT_ATTRIBUTE).associationPath(Optional.empty()).build());
 		assertThat(results, notNullValue());
-		assertThat(results, not(Matchers.<CohortAttribute> empty()));
-		assertThat(results, Matchers.<CohortAttribute> hasSize(equalTo(1)));
+		assertThat(results, not(Matchers.empty()));
+		assertThat(results, Matchers.hasSize(equalTo(1)));
 	}
 }

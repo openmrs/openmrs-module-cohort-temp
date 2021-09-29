@@ -18,36 +18,4 @@
 
     <context:annotation-config />
     <context:component-scan base-package="org.openmrs.module.cohort"/>
-
-    <bean id="sessionFactory" class="org.openmrs.api.db.hibernate.HibernateSessionFactoryBean">
-        <property name="packagesToScan">
-            <list merge="true">
-                <value>org.openmrs.module.cohort</value>
-            </list>
-        </property>
-    </bean>
-
-    <!-- Services accessible via Context.getService() -->
-    <bean parent="serviceContext">
-        <property name="moduleService">
-            <list>
-                <value>${project.parent.groupId}.${project.parent.artifactId}.api.CohortService</value>
-                <bean
-                        class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-                    <property name="transactionManager" ref="transactionManager"/>
-                    <property name="target">
-                        <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.CohortServiceImpl">
-                            <property name="dao">
-                                <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateCohortDAO">
-                                    <property name="sessionFactory" ref="sessionFactory"/>
-                                </bean>
-                            </property>
-                        </bean>
-                    </property>
-                    <property name="preInterceptors" ref="serviceInterceptors"/>
-                    <property name="transactionAttributeSource" ref="transactionAttributeSource"/>
-                </bean>
-            </list>
-        </property>
-    </bean>
 </beans>

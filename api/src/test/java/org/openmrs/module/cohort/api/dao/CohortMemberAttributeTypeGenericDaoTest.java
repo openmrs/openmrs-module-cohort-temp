@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.cohort.api.db.impl;
+package org.openmrs.module.cohort.api.dao;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -18,23 +18,24 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
-import java.util.List;
+import java.util.Collection;
 
-import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortMemberAttributeType;
+import org.openmrs.module.cohort.api.SpringTestConfiguration;
 import org.openmrs.module.cohort.api.TestDataUtils;
-import org.openmrs.module.cohort.api.TestSpringConfiguration;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 
 @Ignore
-@ContextConfiguration(classes = TestSpringConfiguration.class, inheritLocations = false)
-public class CohortMemberAttributeTypeDaoTest extends BaseModuleContextSensitiveTest {
+@ContextConfiguration(classes = SpringTestConfiguration.class, inheritLocations = false)
+public class CohortMemberAttributeTypeGenericDaoTest extends BaseModuleContextSensitiveTest {
+	
+	String COHORT_MEMBER_ATTRIBUTE_TYPE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortMemberAttributeTypeDaoTest_initialTestData.xml";
 	
 	private static final String COHORT_MEMBER_ATTRIBUTE_TYPE_NAME = "cohort member attributeType Name";
 	
@@ -42,23 +43,20 @@ public class CohortMemberAttributeTypeDaoTest extends BaseModuleContextSensitive
 	
 	private final String COHORT_MEMBER_ATTRIBUTE_TYPE_UUID = "9eb7fe43-2813-4ebc-80dc-2e5d30251bb7";
 	
-	private CohortMemberAttributeTypeDaoImpl dao;
-	
 	@Autowired
-	@Qualifier("sessionFactory")
-	private SessionFactory sessionFactory;
+	@Qualifier("cohort.genericDao")
+	private IGenericDao<CohortMemberAttributeType> dao;
 	
 	@Before
 	public void setup() throws Exception {
-		dao = new CohortMemberAttributeTypeDaoImpl();
-		dao.setSessionFactory(sessionFactory);
-		String COHORT_MEMBER_ATTRIBUTE_TYPE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortMemberAttributeTypeDaoTest_initialTestData.xml";
+		dao.setClazz(CohortMemberAttributeType.class);
+		
 		executeDataSet(COHORT_MEMBER_ATTRIBUTE_TYPE_INITIAL_TEST_DATA_XML);
 	}
 	
 	@Test
 	public void shouldGetCohortMemberAttributeTypeByUuid() {
-		CohortMemberAttributeType attributeType = dao.getCohortMemberAttributeTypeByUuid(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID);
+		CohortMemberAttributeType attributeType = dao.get(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID);
 		
 		assertThat(attributeType, notNullValue());
 		assertThat(attributeType.getUuid(), equalTo(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID));
@@ -66,7 +64,7 @@ public class CohortMemberAttributeTypeDaoTest extends BaseModuleContextSensitive
 	
 	@Test
 	public void shouldGetAllCohortMemberAttributeTypes() {
-		List<CohortMemberAttributeType> attributeTypes = dao.getCohortMemberAttributeTypes();
+		Collection<CohortMemberAttributeType> attributeTypes = dao.findAll();
 		
 		assertThat(attributeTypes, notNullValue());
 		assertThat(attributeTypes, hasSize(2));
@@ -76,7 +74,7 @@ public class CohortMemberAttributeTypeDaoTest extends BaseModuleContextSensitive
 	@Test
 	public void shouldCreateNewCohortMemberAttributeType() {
 		CohortMemberAttributeType cohortMemberAttributeType = dao
-		        .createCohortMemberAttributeType(TestDataUtils.COHORT_MEMBER_ATTRIBUTE_TYPE());
+		        .createOrUpdate(TestDataUtils.COHORT_MEMBER_ATTRIBUTE_TYPE());
 		assertThat(cohortMemberAttributeType, notNullValue());
 		assertThat(cohortMemberAttributeType.getId(), notNullValue());
 		assertThat(cohortMemberAttributeType.getId(), equalTo(COHORT_MEMBER_ATTRIBUTE_TYPE_ID));
@@ -85,9 +83,12 @@ public class CohortMemberAttributeTypeDaoTest extends BaseModuleContextSensitive
 	
 	@Test
 	public void shouldVoidCohortMemberAttributeType() {
-		CohortMemberAttributeType attributeType = dao.deleteCohortMemberAttributeType(
-		    TestDataUtils.COHORT_MEMBER_ATTRIBUTE_TYPE(), "Voided via cohort rest call");
+		CohortMemberAttributeType attributeTypeToRetire = dao.get(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID);
+		attributeTypeToRetire.setRetireReason("Voided via cohort rest call");
+		attributeTypeToRetire.setRetired(true);
+		dao.createOrUpdate(attributeTypeToRetire);
 		
+		CohortMemberAttributeType attributeType = dao.get(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID);
 		assertThat(attributeType, notNullValue());
 		assertThat(attributeType.getRetired(), is(true));
 		assertThat(attributeType.getRetireReason(), is("Voided via cohort rest call"));
@@ -95,8 +96,8 @@ public class CohortMemberAttributeTypeDaoTest extends BaseModuleContextSensitive
 	
 	@Test
 	public void shouldPurgeCohortMemberAttributeType() {
-		dao.purgeCohortMemberAttribute(dao.getCohortMemberAttributeTypeByUuid(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID));
+		dao.delete(dao.get(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID));
 		
-		assertThat(dao.getCohortMemberAttributeTypeByUuid(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID), nullValue());
+		assertThat(dao.get(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID), nullValue());
 	}
 }
