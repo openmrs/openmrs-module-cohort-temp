@@ -45,4 +45,28 @@
         <sqlFile path="sql/copy-over-cohort-leaders.sql"/>
     </changeSet>
 
+    <changeSet id="add_column_definition_handler_20211004" author="corneliouzbett">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="cohort" columnName="definition_handler"/>
+            </not>
+        </preConditions>
+        <comment>Creating a definition_handler column</comment>
+        <addColumn tableName="cohort">
+            <column name="definition_handler" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add_column_definition_handler_config_20211004" author="corneliouzbett">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="cohort" columnName="definition_handler_config"/>
+            </not>
+        </preConditions>
+        <comment>Creating a definition_handler_config column</comment>
+        <addColumn tableName="cohort">
+            <column name="definition_handler_config" type="clob" defaultValue="null" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

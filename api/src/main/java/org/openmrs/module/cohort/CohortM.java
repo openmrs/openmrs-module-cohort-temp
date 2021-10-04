@@ -16,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -23,12 +24,21 @@ import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.Location;
+import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.cohort.definition.CohortDefinitionHandler;
+import org.openmrs.module.cohort.definition.ManualCohortDefinitionHandler;
+import org.openmrs.module.cohort.exceptions.ManualChangeNotSupportedException;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 @Entity
 @Table(name = "cohort")
 public class CohortM extends BaseOpenmrsData {
@@ -64,6 +74,13 @@ public class CohortM extends BaseOpenmrsData {
 	
 	@Column(name = "is_group_cohort", nullable = false)
 	private Boolean groupCohort;
+	
+	@Column(name = "definition_handler", nullable = false)
+	private String definitionHandlerClassname;
+	
+	@Lob
+	@Column(name = "definition_handler_config")
+	private String definitionHandlerConfig;
 	
 	public Integer getCohortId() {
 		return cohortId;
@@ -119,10 +136,6 @@ public class CohortM extends BaseOpenmrsData {
 	
 	public void setCohortType(CohortType cohortType) {
 		this.cohortType = cohortType;
-	}
-	
-	public void setCohortMembers(List<CohortMember> cohortMembers) {
-		this.cohortMembers = cohortMembers;
 	}
 	
 	public List<CohortMember> getCohortMembers() {
@@ -422,5 +435,71 @@ public class CohortM extends BaseOpenmrsData {
 	@Override
 	public String toString() {
 		return this.name;
+	}
+	
+	public String getDefinitionHandlerClassname() {
+		return definitionHandlerClassname;
+	}
+	
+	public void setDefinitionHandlerClassname(String definitionHandlerClassname) {
+		this.definitionHandlerClassname = definitionHandlerClassname;
+	}
+	
+	public String getDefinitionHandlerConfig() {
+		return definitionHandlerConfig;
+	}
+	
+	public void setDefinitionHandlerConfig(String definitionHandlerConfig) {
+		this.definitionHandlerConfig = definitionHandlerConfig;
+	}
+	
+	public void addMembership(CohortMember cohortMember) {
+		CohortDefinitionHandler cohortDefinition = getDefinitionHandler();
+		if (cohortDefinition instanceof ManualCohortDefinitionHandler) {
+			((ManualCohortDefinitionHandler) cohortDefinition).addMember(this, cohortMember);
+		} else {
+			throw new ManualChangeNotSupportedException("Manual changes to this cohort aren't supported");
+		}
+	}
+	
+	public void removeMembership(CohortMember cohortMember) {
+		if (getDefinitionHandlerClassname().isEmpty()) {
+			throw new APIException("CohortDefinitionHandler is null");
+		}
+		CohortDefinitionHandler cohortDefinition = getDefinitionHandler();
+		if (cohortDefinition instanceof ManualCohortDefinitionHandler) {
+			((ManualCohortDefinitionHandler) cohortDefinition).removeMember(this, cohortMember);
+		} else {
+			throw new ManualChangeNotSupportedException("Manual changes to this cohort aren't supported");
+		}
+	}
+	
+	/**
+	 * Loads cohort definition handler class - If the cohortDefinitionHandlerClassname is null, use
+	 * defaultCohortDefinitionHandler
+	 *
+	 * @return CohortDefinitionHandler
+	 * @throws org.openmrs.api.APIException If fails to load cohortDefinitionHandlerClass
+	 */
+	@SneakyThrows
+	@SuppressWarnings("unchecked")
+	public CohortDefinitionHandler getDefinitionHandler() {
+		Class<?> definitionHandlerClass;
+		try {
+			definitionHandlerClass = Context.loadClass(getDefinitionHandlerClassname());
+		}
+		catch (ClassNotFoundException e) {
+			log.error("Failed to load class {}", getDefinitionHandlerClassname(), e);
+			throw new APIException("CohortM.failed.load.definitionHandlerClass",
+			        new Object[] { getDefinitionHandlerClassname() }, e);
+		}
+		List<? extends CohortDefinitionHandler> handlers = (List<? extends CohortDefinitionHandler>) Context
+		        .getRegisteredComponents(definitionHandlerClass);
+		if (!handlers.isEmpty()) {
+			return handlers.get(0);
+		}
+		
+		return (CohortDefinitionHandler) Objects.requireNonNull(definitionHandlerClass).getDeclaredConstructor()
+		        .newInstance();
 	}
 }

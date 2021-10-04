@@ -123,6 +123,7 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 		description.addRequiredProperty("startDate");
 		description.addProperty("endDate");
 		description.addRequiredProperty("cohortType");
+		description.addRequiredProperty("definitionHandlerClassname");
 		description.addProperty("attributes");
 		description.addProperty("cohortMembers");
 	}
