@@ -16,6 +16,7 @@ import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.api.CohortTypeService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
@@ -46,6 +47,7 @@ public class CohortTypeResource extends DataDelegatingCrudResource<CohortType> {
 				description.addProperty("name");
 				description.addProperty("description");
 				description.addProperty("uuid");
+				description.addProperty("display");
 				description.addSelfLink();
 				description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 				return description;
@@ -54,6 +56,7 @@ public class CohortTypeResource extends DataDelegatingCrudResource<CohortType> {
 				description.addProperty("name");
 				description.addProperty("description");
 				description.addProperty("uuid");
+				description.addProperty("display");
 				description.addProperty("auditInfo");
 				description.addSelfLink();
 				return description;
@@ -110,5 +113,10 @@ public class CohortTypeResource extends DataDelegatingCrudResource<CohortType> {
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
 		return new NeedsPaging<>((List<CohortType>) cohortTypeService.findAll(), context);
+	}
+	
+	@PropertyGetter("display")
+	public static String getDisplay(CohortType cohortType) {
+		return cohortType.getName();
 	}
 }
