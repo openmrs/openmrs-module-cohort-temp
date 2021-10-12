@@ -28,7 +28,9 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(classes = SpringTestConfiguration.class, inheritLocations = false)
 public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
-	private static final String COHORT_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortDaoTest_initialTestData.xml";
+	private static final String[] COHORT_INITIAL_TEST_DATA_XML = {
+	        "org/openmrs/module/cohort/api/hibernate/db/CohortDaoTest_initialTestData.xml",
+	        "org/openmrs/module/cohort/api/hibernate/db/CohortMemberDaoTest_initialTestData.xml" };
 	
 	private static final String COHORT_UUID = "7f9a2479-c14a-4bfc-bcaa-632860258519";
 	
@@ -47,7 +49,9 @@ public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 	@Before
 	public void setup() throws Exception {
 		dao.setClazz(CohortM.class);
-		executeDataSet(COHORT_INITIAL_TEST_DATA_XML);
+		for (String data : COHORT_INITIAL_TEST_DATA_XML) {
+			executeDataSet(data);
+		}
 	}
 	
 	@Test
@@ -66,6 +70,7 @@ public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohort, notNullValue());
 		assertThat(cohort.getCohortId(), notNullValue());
 		assertThat(cohort.getCohortId(), equalTo(COHORT_ID));
+		assertThat(cohort.size(), equalTo(1));
 	}
 	
 	@Test
@@ -76,6 +81,7 @@ public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohort.getCohortId(), equalTo(COHORT_ID));
 		assertThat(cohort.getUuid(), notNullValue());
 		assertThat(cohort.getUuid(), equalTo(COHORT_UUID));
+		assertThat(cohort.size(), equalTo(1));
 	}
 	
 	@Test

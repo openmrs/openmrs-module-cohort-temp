@@ -502,4 +502,8 @@ public class CohortM extends BaseOpenmrsData {
 		return (CohortDefinitionHandler) Objects.requireNonNull(definitionHandlerClass).getDeclaredConstructor()
 		        .newInstance();
 	}
+	
+	public int size() {
+		return (int) getCohortMembers().stream().filter(cm -> !cm.getVoided()).count();
+	}
 }

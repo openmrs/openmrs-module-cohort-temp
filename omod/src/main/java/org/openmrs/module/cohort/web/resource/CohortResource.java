@@ -65,6 +65,7 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 				defaultDescription.addProperty("voided");
 				defaultDescription.addProperty("voidReason");
 				defaultDescription.addProperty("display");
+				defaultDescription.addProperty("size");
 				defaultDescription.addSelfLink();
 				defaultDescription.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 				return defaultDescription;
@@ -78,6 +79,7 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 				description.addProperty("uuid");
 				description.addProperty("auditInfo");
 				description.addProperty("display");
+				description.addProperty("size");
 				description.addSelfLink();
 				return description;
 			}
@@ -233,5 +235,10 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	@PropertyGetter("display")
 	public String getDisplay(CohortM cohort) {
 		return cohort.getName();
+	}
+	
+	@PropertyGetter("size")
+	public int size(CohortM cohort) {
+		return cohort.size();
 	}
 }
