@@ -11,6 +11,7 @@ package org.openmrs.module.cohort.api.dao.search;
 
 import static org.hibernate.criterion.Restrictions.eq;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.module.cohort.CohortM;
+import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortType;
 import org.springframework.stereotype.Component;
 
@@ -54,6 +56,24 @@ public class SearchQueryHandler extends AbstractSearchHandler implements ISearch
 		}
 		
 		criteria.setProjection(null).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		return criteria.list();
+	}
+	
+	@Override
+	public Collection<CohortMember> findCohortMembersByPatientNames(String name) {
+		String patientAlias = "_p";
+		Criteria criteria = getCurrentSession().createCriteria(CohortMember.class).createCriteria("patient", patientAlias);
+		return handleNames(criteria, patientAlias, name).list();
+	}
+	
+	@Override
+	public Collection<CohortMember> findCohortMembersByCohortAndPatient(String cohortUuid, String query) {
+		String patientAlias = "_p21";
+		Criteria criteria = getCurrentSession().createCriteria(CohortMember.class);
+		criteria.createCriteria("cohort", "c").add(Restrictions.eq("c.uuid", cohortUuid));
+		Criteria patientCriteria = criteria.createCriteria("patient", patientAlias);
+		handleNames(patientCriteria, patientAlias, query);
 		
 		return criteria.list();
 	}

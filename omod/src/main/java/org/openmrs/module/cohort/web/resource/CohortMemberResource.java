@@ -9,11 +9,12 @@
  */
 package org.openmrs.module.cohort.web.resource;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.api.context.Context;
@@ -33,6 +34,7 @@ import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
+import org.openmrs.module.webservices.rest.web.response.InvalidSearchException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 @SuppressWarnings("unused")
@@ -167,21 +169,22 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 	
 	@Override
 	protected PageableResult doSearch(RequestContext context) {
+		String query = context.getParameter("q");
 		String cohortUuid = context.getParameter("cohort");
 		String patientUuid = context.getParameter("patient");
 		
-		Collection<CohortMember> cohortMemberCollection;
-		if (StringUtils.isNotBlank(cohortUuid) && StringUtils.isNotBlank(patientUuid)) {
-			throw new IllegalArgumentException(
-			        "Patient and Cohort Parameters can't both be declared in the url, search by either cohort or patient, not both");
-		} else if (StringUtils.isNotBlank(cohortUuid)) {
-			cohortMemberCollection = cohortMemberService.findCohortMembersByCohortUuid(cohortUuid);
-		} else if (StringUtils.isNotBlank(patientUuid)) {
-			cohortMemberCollection = cohortMemberService.findCohortMembersByPatientUuid(patientUuid);
+		if (isNotBlank(cohortUuid) && isNotBlank(query)) {
+			Collection<CohortMember> cohortMembers = cohortMemberService.findCohortMembersByCohortAndPatient(cohortUuid,
+			    query);
+			return new NeedsPaging<>(new ArrayList<>(cohortMembers), context);
+		} else if (isNotBlank(cohortUuid)) {
+			return new NeedsPaging<>(new ArrayList<>(cohortMemberService.findCohortMembersByCohortUuid(cohortUuid)),
+			        context);
+		} else if (isNotBlank(patientUuid)) {
+			return new NeedsPaging<>(new ArrayList<>(cohortMemberService.findCohortMembersByPatientUuid(patientUuid)),
+			        context);
 		} else {
-			throw new IllegalArgumentException("No valid value specified for param cohort and/or patient");
+			throw new InvalidSearchException("No valid value specified for params query(q), cohort and/or patient");
 		}
-		
-		return new NeedsPaging<>(new ArrayList<>(cohortMemberCollection), context);
 	}
 }

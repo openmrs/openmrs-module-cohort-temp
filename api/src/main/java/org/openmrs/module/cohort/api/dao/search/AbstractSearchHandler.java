@@ -9,11 +9,16 @@
  */
 package org.openmrs.module.cohort.api.dao.search;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -27,5 +32,18 @@ public abstract class AbstractSearchHandler implements ISearchQuery {
 	
 	protected Session getCurrentSession() {
 		return sessionFactory.getCurrentSession();
+	}
+	
+	/**
+	 * Finds cohort members matching the specified name(can be givenName, middleName, or familyName)
+	 *
+	 * @param name givenName, middleName, or familyName
+	 * @return {@link org.hibernate.Criteria}
+	 */
+	protected Criteria handleNames(Criteria criteria, String patientAlias, @NotNull String name) {
+		return criteria.createCriteria(patientAlias + ".names", "_pn")
+		        .add(Restrictions.or(Restrictions.like("_pn.givenName", name, MatchMode.START),
+		            Restrictions.like("_pn.familyName", name, MatchMode.START),
+		            Restrictions.like("_pn.middleName", name, MatchMode.START)));
 	}
 }

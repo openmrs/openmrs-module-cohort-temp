@@ -56,4 +56,8 @@ public interface CohortMemberService extends OpenmrsService {
 	Collection<CohortMember> findCohortMembersByCohortUuid(@NotNull String cohortUuid);
 	
 	Collection<CohortMember> findCohortMembersByPatientUuid(@NotNull String patientUuid);
+	
+	Collection<CohortMember> findCohortMembersByPatientName(@NotNull String patientName);
+	
+	Collection<CohortMember> findCohortMembersByCohortAndPatient(@NotNull String cohortUuid, @NotNull String patientName);
 }

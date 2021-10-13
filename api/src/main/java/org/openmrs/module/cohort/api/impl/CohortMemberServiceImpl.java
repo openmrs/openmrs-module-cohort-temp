@@ -155,4 +155,15 @@ public class CohortMemberServiceImpl extends BaseOpenmrsService implements Cohor
 		return cohortMemberDao.findBy(
 		    PropValue.builder().property("uuid").associationPath(Optional.of("patient")).value(patientUuid).build());
 	}
+	
+	@Override
+	public Collection<CohortMember> findCohortMembersByPatientName(@NotNull String patientName) {
+		return cohortMemberDao.getSearchHandler().findCohortMembersByPatientNames(patientName);
+	}
+	
+	@Override
+	public Collection<CohortMember> findCohortMembersByCohortAndPatient(@NotNull String cohortUuid,
+	        @NotNull String patientName) {
+		return cohortMemberDao.getSearchHandler().findCohortMembersByCohortAndPatient(cohortUuid, patientName);
+	}
 }
