@@ -66,5 +66,6 @@ public interface CohortService extends OpenmrsService {
 	void purgeAttributeType(@NotNull CohortAttributeType attributeType);
 	
 	//Search
-	List<CohortM> findMatchingCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType);
+	List<CohortM> findMatchingCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType,
+	        boolean includeVoided);
 }

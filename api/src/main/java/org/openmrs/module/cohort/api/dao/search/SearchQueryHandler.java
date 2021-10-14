@@ -9,6 +9,8 @@
  */
 package org.openmrs.module.cohort.api.dao.search;
 
+import static org.hibernate.criterion.Restrictions.eq;
+
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +27,10 @@ import org.springframework.stereotype.Component;
 @Component(value = "cohort.search.cohortSearchHandler")
 public class SearchQueryHandler extends AbstractSearchHandler implements ISearchQuery {
 	
-	public List<CohortM> findCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType) {
+	public List<CohortM> findCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType,
+	        boolean includeVoided) {
 		Criteria criteria = getCurrentSession().createCriteria(CohortM.class);
+		criteria.add(eq("voided", includeVoided));
 		
 		if (StringUtils.isNotBlank(nameMatching)) {
 			criteria.add(Restrictions.ilike("name", nameMatching, MatchMode.ANYWHERE));

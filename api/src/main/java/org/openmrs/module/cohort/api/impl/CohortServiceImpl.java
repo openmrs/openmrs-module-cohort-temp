@@ -175,7 +175,8 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public List<CohortM> findMatchingCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType) {
-		return cohortDao.getSearchHandler().findCohorts(nameMatching, attributes, cohortType);
+	public List<CohortM> findMatchingCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType,
+	        boolean includeVoided) {
+		return cohortDao.getSearchHandler().findCohorts(nameMatching, attributes, cohortType, includeVoided);
 	}
 }

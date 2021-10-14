@@ -36,10 +36,19 @@ public interface IGenericDao<W extends OpenmrsObject & Auditable> {
 	Collection<W> findAll();
 	
 	@Transactional(readOnly = true)
+	Collection<W> findAll(boolean includeRetired);
+	
+	@Transactional(readOnly = true)
 	Collection<W> findBy(PropValue propValue);
 	
 	@Transactional(readOnly = true)
+	Collection<W> findBy(PropValue propValue, boolean includeRetired);
+	
+	@Transactional(readOnly = true)
 	W findByUniqueProp(PropValue propValue);
+	
+	@Transactional(readOnly = true)
+	W findByUniqueProp(PropValue propValue, boolean includeRetired);
 	
 	@Transactional(readOnly = true)
 	Collection<W> findByOr(Criterion... predicates);

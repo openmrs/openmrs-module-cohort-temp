@@ -11,13 +11,14 @@ package org.openmrs.module.cohort.api.dao;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortAttributeType;
 import org.openmrs.module.cohort.api.SpringTestConfiguration;
-import org.openmrs.module.cohort.api.TestDataUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,9 +29,11 @@ public class CohortAttributeTypeGenericDaoTest extends BaseModuleContextSensitiv
 	
 	private static final String COHORT_ATTRIBUTE_TYPE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortAttributeTypeDaoTest_initialTestData.xml";
 	
-	private static final String COHORT_ATTRIBUTE_TYPE_UUID = "9eb7fe43-2813-4ebc-80dc-2e5d30251bb7";
+	private static final String COHORT_ATTRIBUTE_TYPE_UUID = "8eb7fe43-5673-4ebc-80dc-2e5d30251cc3";
 	
-	private static final int COHORT_ATTRIBUTE_TYPE_ID = 1;
+	private static final String VOIDED_COHORT_ATTRIBUTE_TYPE_UUID = "9eb7fe43-2813-4ebc-80dc-2e5d30251bb7";
+	
+	private static final int COHORT_ATTRIBUTE_TYPE_ID = 2;
 	
 	@Autowired
 	@Qualifier("cohort.genericDao")
@@ -52,7 +55,7 @@ public class CohortAttributeTypeGenericDaoTest extends BaseModuleContextSensitiv
 	}
 	
 	@Test
-	public void shouldGetCohortAttributeTypeByUuid() {
+	public void getByUuid_shouldReturnCohortAttributeType() {
 		CohortAttributeType cohortAttributeType = dao.get(COHORT_ATTRIBUTE_TYPE_UUID);
 		assertThat(cohortAttributeType, notNullValue());
 		assertThat(cohortAttributeType.getCohortAttributeTypeId(), notNullValue());
@@ -61,20 +64,23 @@ public class CohortAttributeTypeGenericDaoTest extends BaseModuleContextSensitiv
 	}
 	
 	@Test
+	public void getByUuid_shouldReturnNullForVoidedCohortAttributeType() {
+		CohortAttributeType cohortAttributeType = dao.get(VOIDED_COHORT_ATTRIBUTE_TYPE_UUID);
+		assertThat(cohortAttributeType, nullValue());
+	}
+	
+	@Test
 	public void shouldCreateNewCohortAttributeType() {
-		CohortAttributeType cohortAttributeTypeToCreate = dao.createOrUpdate(TestDataUtils.COHORT_ATTRIBUTE_TYPE());
-		assertThat(cohortAttributeTypeToCreate, notNullValue());
-		assertThat(cohortAttributeTypeToCreate.getCohortAttributeTypeId(), notNullValue());
-		assertThat(cohortAttributeTypeToCreate.getCohortAttributeTypeId(),
-		    equalTo(TestDataUtils.COHORT_ATTRIBUTE_TYPE().getCohortAttributeTypeId()));
+		CohortAttributeType cohortAttributeTypeToCreate = new CohortAttributeType();
+		cohortAttributeTypeToCreate.setCohortAttributeTypeId(10);
+		cohortAttributeTypeToCreate.setUuid("fg89jk-34jkl5ks-4583-34jks90");
+		cohortAttributeTypeToCreate.setName("test cohort attribute type");
 		
-		// ISSUE: Batch update returned unexpected row count from update [0]; actual row count: 0; expected: 1
-		//		CohortAttributeType newlyCreatedCohortAttributeType = dao.get("32816782-d578-401c-8475-8ccbb26ce001");
-		//		assertThat(newlyCreatedCohortAttributeType, notNullValue());
-		//		assertThat(newlyCreatedCohortAttributeType.getCohortAttributeTypeId(), notNullValue());
-		//		assertThat(newlyCreatedCohortAttributeType.getUuid(), equalTo(cohortAttributeTypeToCreate.getUuid()));
-		//		assertThat(newlyCreatedCohortAttributeType.getFormat(), equalTo(cohortAttributeTypeToCreate.getFormat()));
-		//		assertThat(newlyCreatedCohortAttributeType.getCohortAttributeTypeId(), equalTo(cohortAttributeTypeToCreate.getCohortAttributeTypeId()));
+		CohortAttributeType newlyCreatedAttributeType = dao.createOrUpdate(cohortAttributeTypeToCreate);
+		assertThat(newlyCreatedAttributeType, notNullValue());
+		assertThat(newlyCreatedAttributeType.getCohortAttributeTypeId(),
+		    is(cohortAttributeTypeToCreate.getCohortAttributeTypeId()));
+		assertThat(newlyCreatedAttributeType.getName(), is(cohortAttributeTypeToCreate.getName()));
 	}
 	
 	@Test

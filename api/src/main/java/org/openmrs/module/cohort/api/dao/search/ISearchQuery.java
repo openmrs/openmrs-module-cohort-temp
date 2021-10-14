@@ -21,5 +21,6 @@ import org.openmrs.module.cohort.CohortType;
 public interface ISearchQuery {
 	
 	//Add cohort search methods
-	List<CohortM> findCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType);
+	List<CohortM> findCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType,
+	        boolean includeVoided);
 }

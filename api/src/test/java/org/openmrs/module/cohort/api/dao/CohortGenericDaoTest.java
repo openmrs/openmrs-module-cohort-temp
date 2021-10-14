@@ -11,9 +11,12 @@ package org.openmrs.module.cohort.api.dao;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -31,6 +34,8 @@ public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 	private static final String COHORT_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortDaoTest_initialTestData.xml";
 	
 	private static final String COHORT_UUID = "7f9a2479-c14a-4bfc-bcaa-632860258519";
+	
+	private static final String LOCATION_UUID = "65ab9667-7432-49af-8be8-65a4b58fc78k";
 	
 	private static final String COHORT_NAME = "COVID-19 patients";
 	
@@ -99,5 +104,44 @@ public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(createdCohort, notNullValue());
 		assertThat(createdCohort.getCohortId(), equalTo(cohortM.getCohortId()));
 		assertThat(createdCohort.getName(), is(cohortM.getName()));
+	}
+	
+	@Test
+	public void findByLocationUuid_shouldReturnNonVoidedCollectionOfCohortsMatchingTheLocation() {
+		Collection<CohortM> cohorts = dao.findBy(
+		    PropValue.builder().property("uuid").associationPath(Optional.of("location")).value(LOCATION_UUID).build());
+		
+		assertThat(cohorts, notNullValue());
+		assertThat(cohorts, hasSize(1));
+		for (CohortM cohort : cohorts) {
+			assertThat(cohort.getLocation(), notNullValue());
+			assertThat(cohort.getLocation().getUuid(), equalTo(LOCATION_UUID));
+		}
+	}
+	
+	@Test
+	public void findByLocationUuid_shouldReturnCohortsMatchingGivenLocationIncludingVoidedCohorts() {
+		Collection<CohortM> cohorts = dao.findBy(
+		    PropValue.builder().property("uuid").associationPath(Optional.of("location")).value(LOCATION_UUID).build(),
+		    true);
+		
+		assertThat(cohorts, notNullValue());
+		assertThat(cohorts, hasSize(2));
+		
+		for (CohortM cohort : cohorts) {
+			assertThat(cohort.getLocation(), notNullValue());
+			assertThat(cohort.getLocation().getUuid(), equalTo(LOCATION_UUID));
+			assertThat(cohort.getLocation().getName(), is("Cohort-21 Location"));
+		}
+	}
+	
+	@Test
+	public void getByUuid_shouldReturnNullForVoidedOrRetiredCohort() {
+		CohortM cohortToVoid = dao.get(COHORT_UUID);
+		cohortToVoid.setVoided(true);
+		cohortToVoid.setVoidReason("Voided by cohort test");
+		dao.createOrUpdate(cohortToVoid);
+		
+		assertThat(dao.get(COHORT_UUID), nullValue());
 	}
 }

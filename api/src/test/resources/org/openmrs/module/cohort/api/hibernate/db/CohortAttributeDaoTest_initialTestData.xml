@@ -19,4 +19,6 @@
     <cohort_attribute cohort_attribute_id="1" cohort_attribute_type_id="100" value="Test cohort attribute" creator="1" cohort_id="2"
                       date_created="2005-01-01 00:00:00.0" voided="true" voided_by="1" date_voided="2005-01-01 00:00:00.0"
                       void_reason="This is voided" uuid="ddadadd8-8034-4a28-9441-2eb2e7679e10"/>
+    <cohort_attribute cohort_attribute_id="2" cohort_attribute_type_id="100" value="System generated patient" creator="1" cohort_id="2"
+                      date_created="2021-10-14 00:00:00.0" voided="false" uuid="99ada908-8034-4a28-9441-2eb2e8979e32"/>
 </dataset>

@@ -29,7 +29,6 @@ public class TestDataUtils {
 	public static CohortAttributeType COHORT_ATTRIBUTE_TYPE() {
 		CohortAttributeType cohortAttributeType = new CohortAttributeType();
 		cohortAttributeType.setUuid("32816782-d578-401c-8475-8ccbb26ce001");
-		cohortAttributeType.setId(1);
 		cohortAttributeType.setName("cohortAttributeType");
 		cohortAttributeType.setDescription("test cohort attribute type");
 		cohortAttributeType.setFormat("java.lang.String");

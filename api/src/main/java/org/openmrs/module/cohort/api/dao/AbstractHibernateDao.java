@@ -24,6 +24,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.openmrs.Auditable;
 import org.openmrs.OpenmrsObject;
+import org.openmrs.Retireable;
+import org.openmrs.Voidable;
 import org.openmrs.module.cohort.api.dao.search.SearchQueryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -49,11 +51,19 @@ public abstract class AbstractHibernateDao<W extends OpenmrsObject & Auditable> 
 	}
 	
 	public W get(String uuid) {
-		return (W) getCurrentSession().createCriteria(clazz).add(eq("uuid", uuid)).uniqueResult();
+		Criteria criteria = getCurrentSession().createCriteria(clazz);
+		includeRetiredObjects(criteria, false);
+		return (W) criteria.add(eq("uuid", uuid)).uniqueResult();
 	}
 	
 	public Collection<W> findAll() {
-		return getCurrentSession().createCriteria(clazz).list();
+		return this.findAll(false);
+	}
+	
+	public Collection<W> findAll(boolean includeRetired) {
+		Criteria criteria = getCurrentSession().createCriteria(clazz);
+		includeRetiredObjects(criteria, includeRetired);
+		return criteria.list();
 	}
 	
 	public W createOrUpdate(W entity) {
@@ -69,18 +79,34 @@ public abstract class AbstractHibernateDao<W extends OpenmrsObject & Auditable> 
 		this.delete(this.get(uuid));
 	}
 	
+	/**
+	 * By default, retired/voided objects are excluded for searches
+	 * 
+	 * @param propValue Property and value
+	 * @return A Collection of W objects
+	 */
 	public Collection<W> findBy(PropValue propValue) {
-		Criteria criteria = getCurrentSession().createCriteria(clazz, "_wc");
+		return this.findBy(propValue, false);
+	}
+	
+	public Collection<W> findBy(PropValue propValue, boolean includeRetired) {
+		Criteria criteria = getCurrentSession().createCriteria(clazz);
+		includeRetiredObjects(criteria, includeRetired);
 		return propValue.getAssociationPath().isPresent()
-		        ? criteria.createCriteria("_wc." + propValue.getAssociationPath().get(), "_pv2021")
+		        ? criteria.createCriteria(propValue.getAssociationPath().get(), "_pv2021")
 		                .add(eq("_pv2021." + propValue.getProperty(), propValue.getValue())).list()
 		        : criteria.add(eq(propValue.getProperty(), propValue.getValue())).list();
 	}
 	
 	public W findByUniqueProp(PropValue propValue) {
-		Criteria criteria = getCurrentSession().createCriteria(clazz, "_cu");
+		return this.findByUniqueProp(propValue, false);
+	}
+	
+	public W findByUniqueProp(PropValue propValue, boolean includeRetired) {
+		Criteria criteria = getCurrentSession().createCriteria(clazz);
+		includeRetiredObjects(criteria, includeRetired);
 		return (W) (propValue.getAssociationPath().isPresent()
-		        ? criteria.createCriteria("_cu." + propValue.getAssociationPath().get(), "_cu2021")
+		        ? criteria.createCriteria(propValue.getAssociationPath().get(), "_cu2021")
 		                .add(eq("_cu2021." + propValue.getProperty(), propValue.getValue())).uniqueResult()
 		        : criteria.add(eq(propValue.getProperty(), propValue.getValue())).uniqueResult());
 	}
@@ -93,5 +119,31 @@ public abstract class AbstractHibernateDao<W extends OpenmrsObject & Auditable> 
 	public Collection<W> findByAnd(Criterion... predicates) {
 		Criteria andByCriteria = getCurrentSession().createCriteria(clazz);
 		return andByCriteria.add(and(predicates)).list();
+	}
+	
+	protected boolean isVoidable() {
+		return Voidable.class.isAssignableFrom(clazz);
+	}
+	
+	protected boolean isRetirable() {
+		return Retireable.class.isAssignableFrom(clazz);
+	}
+	
+	protected void handleVoidable(Criteria criteria) {
+		criteria.add(eq("voided", false));
+	}
+	
+	protected void handleRetirable(Criteria criteria) {
+		criteria.add(eq("retired", false));
+	}
+	
+	protected void includeRetiredObjects(Criteria criteria, boolean includeRetired) {
+		if (!includeRetired) {
+			if (isVoidable()) {
+				handleVoidable(criteria);
+			} else if (isRetirable()) {
+				handleRetirable(criteria);
+			}
+		}
 	}
 }

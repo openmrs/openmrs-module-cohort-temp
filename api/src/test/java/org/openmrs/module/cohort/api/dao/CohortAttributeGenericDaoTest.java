@@ -13,6 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -33,11 +34,15 @@ public class CohortAttributeGenericDaoTest extends BaseModuleContextSensitiveTes
 	
 	private static final String COHORT_ATTRIBUTE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortAttributeDaoTest_initialTestData.xml";
 	
-	private static final String COHORT_ATTRIBUTE_UUID = "ddadadd8-8034-4a28-9441-2eb2e7679e10";
+	private static final String VOIDED_COHORT_ATTRIBUTE_UUID = "ddadadd8-8034-4a28-9441-2eb2e7679e10";
 	
-	private static final int COHORT_ATTRIBUTE_ID = 1;
+	private static final String COHORT_ATTRIBUTE_UUID = "99ada908-8034-4a28-9441-2eb2e8979e32";
 	
-	private static final String TEST_COHORT_ATTRIBUTE = "Test cohort attribute";
+	private static final int COHORT_ATTRIBUTE_ID = 2;
+	
+	private static final String VOIDED_COHORT_ATTRIBUTE = "Test cohort attribute";
+	
+	private static final String UN_VOIDED_COHORT_ATTRIBUTE = "System generated patient";
 	
 	private static final int TEST_COHORT_ATTRIBUTE_ID = 200;
 	
@@ -54,11 +59,17 @@ public class CohortAttributeGenericDaoTest extends BaseModuleContextSensitiveTes
 	}
 	
 	@Test
-	public void shouldGetCohortAttributeByUuid() {
+	public void getByUuid_shouldReturnCohortAttribute() {
 		CohortAttribute cohortAttribute = dao.get(COHORT_ATTRIBUTE_UUID);
 		assertThat(cohortAttribute, notNullValue());
 		assertThat(cohortAttribute.getCohortAttributeId(), equalTo(COHORT_ATTRIBUTE_ID));
 		assertThat(cohortAttribute.getUuid(), equalTo(COHORT_ATTRIBUTE_UUID));
+	}
+	
+	@Test
+	public void getByUuid_shouldReturnNullForVoidedCohortAttribute() {
+		CohortAttribute cohortAttribute = dao.get(VOIDED_COHORT_ATTRIBUTE_UUID);
+		assertThat(cohortAttribute, nullValue());
 	}
 	
 	@Test
@@ -71,9 +82,19 @@ public class CohortAttributeGenericDaoTest extends BaseModuleContextSensitiveTes
 	}
 	
 	@Test
-	public void shouldFindMatchingCohortAttributes() {
+	public void shouldFindMatchingVoidedCohortAttributes() {
 		Collection<CohortAttribute> results = dao.findBy(
-		    PropValue.builder().property("value").value(TEST_COHORT_ATTRIBUTE).associationPath(Optional.empty()).build());
+		    PropValue.builder().property("value").value(VOIDED_COHORT_ATTRIBUTE).associationPath(Optional.empty()).build(),
+		    true);
+		assertThat(results, notNullValue());
+		assertThat(results, not(Matchers.empty()));
+		assertThat(results, Matchers.hasSize(equalTo(1)));
+	}
+	
+	@Test
+	public void shouldFindMatchingUnVoidedCohortAttributes() {
+		Collection<CohortAttribute> results = dao.findBy(PropValue.builder().property("value")
+		        .value(UN_VOIDED_COHORT_ATTRIBUTE).associationPath(Optional.empty()).build());
 		assertThat(results, notNullValue());
 		assertThat(results, not(Matchers.empty()));
 		assertThat(results, Matchers.hasSize(equalTo(1)));
