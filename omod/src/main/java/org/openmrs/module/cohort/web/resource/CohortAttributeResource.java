@@ -13,72 +13,74 @@ import javax.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortAttribute;
+import org.openmrs.module.cohort.CohortAttributeType;
+import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
-import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.annotation.Resource;
-import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
-import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
-import org.openmrs.module.webservices.rest.web.representation.Representation;
+import org.openmrs.module.webservices.rest.web.annotation.PropertySetter;
+import org.openmrs.module.webservices.rest.web.annotation.SubResource;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
-import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
-import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
-import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
+import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.BaseAttributeCrudResource1_9;
 
+@Slf4j
 @SuppressWarnings("unused")
-@Resource(name = RestConstants.VERSION_1 + CohortMainRestController.COHORT_NAMESPACE
-        + "/cohortattribute", supportedClass = CohortAttribute.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
-public class CohortAttributeResource extends DataDelegatingCrudResource<CohortAttribute> {
-	
+@SubResource(parent = CohortResource.class, path = "attribute", supportedClass = CohortAttribute.class, supportedOpenmrsVersions = {
+        "1.8 - 2.*" })
+public class CohortAttributeResource extends BaseAttributeCrudResource1_9<CohortAttribute, CohortM, CohortResource> {
+
 	private final CohortService cohortService;
-	
+
 	public CohortAttributeResource() {
 		this.cohortService = Context.getRegisteredComponent("cohort.cohortService", CohortService.class);
 	}
 	
-	@Override
-	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
-		if (Context.isAuthenticated()) {
-			if (rep instanceof DefaultRepresentation) {
-				final DelegatingResourceDescription description = new DelegatingResourceDescription();
-				description.addProperty("cohort", Representation.REF);
-				description.addProperty("value");
-				description.addProperty("cohortAttributeType");
-				description.addProperty("uuid");
-				description.addSelfLink();
-				description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
-				return description;
-			} else if (rep instanceof FullRepresentation) {
-				final DelegatingResourceDescription description = new DelegatingResourceDescription();
-				description.addProperty("cohort", Representation.REF);
-				description.addProperty("value");
-				description.addProperty("cohortAttributeType");
-				description.addProperty("uuid");
-				description.addProperty("auditInfo");
-				description.addSelfLink();
-				return description;
-			}
-		}
-		return null;
+	/**
+	 * Sets cohortAttributeType of a given cohortAttribute.
+	 *
+	 * @param cohortAttribute cohort attribute
+	 * @param attributeType cohort attribute type to set
+	 */
+	@PropertySetter("attributeType")
+	public static void setAttributeType(CohortAttribute cohortAttribute, CohortAttributeType attributeType) {
+		cohortAttribute.setAttributeType(attributeType);
 	}
 	
+	/**
+	 * @param cohortAttribute attribute
+	 * @return the parent of the given instance of this subresource
+	 */
 	@Override
-	public DelegatingResourceDescription getCreatableProperties() {
-		DelegatingResourceDescription description = new DelegatingResourceDescription();
-		description.addRequiredProperty("cohort");
-		description.addRequiredProperty("value");
-		description.addRequiredProperty("cohortAttributeType");
-		return description;
+	public CohortM getParent(CohortAttribute cohortAttribute) {
+		return cohortAttribute.getCohort();
 	}
 	
+	/**
+	 * Sets the parent property on the given instance of this subresource
+	 *
+	 * @param cohortAttribute cohort attribute
+	 * @param cohort parent cohort
+	 */
 	@Override
-	public DelegatingResourceDescription getUpdatableProperties() throws ResourceDoesNotSupportOperationException {
-		return getCreatableProperties();
+	public void setParent(CohortAttribute cohortAttribute, CohortM cohort) {
+		cohortAttribute.setCohort(cohort);
+	}
+	
+	/**
+	 * Implementations should override this method to return a list of all instances that belong to the
+	 * given parent
+	 *
+	 * @param cohort parent cohort
+	 * @param context request context
+	 * @throws org.openmrs.module.webservices.rest.web.response.ResponseException e
+	 */
+	@Override
+	public PageableResult doGetAll(CohortM cohort, RequestContext context) throws ResponseException {
+		return new NeedsPaging<>(new ArrayList<>(cohort.getActiveAttributes()), context);
 	}
 	
 	@Override
@@ -105,22 +107,10 @@ public class CohortAttributeResource extends DataDelegatingCrudResource<CohortAt
 	public CohortAttribute getByUniqueId(@NotNull String uuid) {
 		return cohortService.getAttributeByUuid(uuid);
 	}
-	
+
 	@Override
-	protected PageableResult doSearch(RequestContext context) {
-		String cohortUuid = context.getParameter("cohort");
-		String attributeTypeUuid = context.getParameter("attributeType");
-		
-		if (StringUtils.isNotBlank(cohortUuid) && StringUtils.isNotBlank(attributeTypeUuid)) {
-			throw new IllegalArgumentException(
-			        "cohort and attributeType Parameters can't both be declared in the url, search by either cohort or attributeType, not both");
-		}
-		if ((cohortUuid != null)) {
-			return new NeedsPaging<>(new ArrayList<>(cohortService.findAttributesByCohortUuid(cohortUuid)), context);
-		} else if (attributeTypeUuid != null) {
-			return new NeedsPaging<>(new ArrayList<>(cohortService.findAttributesByCohortUuid(attributeTypeUuid)), context);
-		} else {
-			return new NeedsPaging<>(new ArrayList<>(), context);
-		}
+	public String getUri(Object instance) {
+		log.debug("URI: {}", super.getUri(instance));
+		return super.getUri(instance);
 	}
 }

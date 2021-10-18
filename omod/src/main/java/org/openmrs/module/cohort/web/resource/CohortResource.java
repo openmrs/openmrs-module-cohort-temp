@@ -16,8 +16,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortAttribute;
 import org.openmrs.module.cohort.CohortM;
@@ -40,6 +40,7 @@ import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
+@Slf4j
 @SuppressWarnings("unused")
 @Resource(name = RestConstants.VERSION_1 + CohortMainRestController.COHORT_NAMESPACE
         + "/cohort", supportedClass = CohortM.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
@@ -56,36 +57,33 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
-		if (Context.isAuthenticated()) {
-			if (rep instanceof DefaultRepresentation) {
-				final DelegatingResourceDescription defaultDescription = getSharedDelegatingResourceDescription();
-				defaultDescription.addProperty("uuid");
-				defaultDescription.addProperty("location", Representation.REF);
-				defaultDescription.addProperty("cohortType", Representation.REF);
-				defaultDescription.addProperty("voided");
-				defaultDescription.addProperty("voidReason");
-				defaultDescription.addProperty("display");
-				defaultDescription.addProperty("size");
-				defaultDescription.addSelfLink();
-				defaultDescription.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
-				return defaultDescription;
-			} else if (rep instanceof FullRepresentation) {
-				final DelegatingResourceDescription description = getSharedDelegatingResourceDescription();
-				description.addProperty("location", Representation.FULL);
-				description.addProperty("cohortMembers", Representation.FULL);
-				description.addProperty("cohortType", Representation.FULL);
-				description.addProperty("voided");
-				description.addProperty("voidReason");
-				description.addProperty("uuid");
-				description.addProperty("auditInfo");
-				description.addProperty("display");
-				description.addProperty("size");
-				description.addSelfLink();
-				return description;
-			}
-			return null;
+		if (rep instanceof DefaultRepresentation) {
+			final DelegatingResourceDescription defaultDescription = getSharedDelegatingResourceDescription();
+			defaultDescription.addProperty("uuid");
+			defaultDescription.addProperty("location", Representation.REF);
+			defaultDescription.addProperty("cohortType", Representation.REF);
+			defaultDescription.addProperty("attributes", Representation.REF);
+			defaultDescription.addProperty("voided");
+			defaultDescription.addProperty("voidReason");
+			defaultDescription.addProperty("display");
+			defaultDescription.addSelfLink();
+			defaultDescription.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
+			return defaultDescription;
+		} else if (rep instanceof FullRepresentation) {
+			final DelegatingResourceDescription description = getSharedDelegatingResourceDescription();
+			description.addProperty("location", Representation.FULL);
+			description.addProperty("cohortMembers", Representation.FULL);
+			description.addProperty("cohortType", Representation.FULL);
+			description.addProperty("attributes", Representation.DEFAULT);
+			description.addProperty("voided");
+			description.addProperty("voidReason");
+			description.addProperty("uuid");
+			description.addProperty("auditInfo");
+			description.addProperty("display");
+			description.addSelfLink();
+			return description;
 		}
-		throw new APIAuthenticationException("Unauthorized");
+		return null;
 	}
 	
 	private DelegatingResourceDescription getSharedDelegatingResourceDescription() {
@@ -94,7 +92,6 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 		description.addProperty("description");
 		description.addProperty("startDate");
 		description.addProperty("endDate");
-		description.addProperty("attributes");
 		description.addProperty("groupCohort");
 		return description;
 	}
@@ -211,25 +208,15 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	}
 	
 	/**
-	 * Sets attributes on the given cohort.
+	 * Sets the attributes of a cohort.
 	 *
-	 * @param cohort The current cohort
-	 * @param attributes Cohort attributes to be set
+	 * @param cohort the cohort whose attributes to set
+	 * @param attributes attributes to be set
 	 */
 	@PropertySetter("attributes")
 	public void setAttributes(CohortM cohort, List<CohortAttribute> attributes) {
 		for (CohortAttribute attribute : attributes) {
-			CohortAttribute existingAttribute = cohort
-			        .getAttribute(cohortService.getAttributeTypeByUuid(attribute.getCohortAttributeType().getUuid()));
-			if (existingAttribute != null) {
-				if (attribute.getValue() == null) {
-					cohort.removeAttribute(existingAttribute);
-				} else {
-					existingAttribute.setValue(attribute.getValue());
-				}
-			} else {
-				cohort.addAttribute(attribute);
-			}
+			cohort.addAttribute(attribute);
 		}
 	}
 	
@@ -241,5 +228,10 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	@PropertyGetter("size")
 	public int size(CohortM cohort) {
 		return cohort.size();
+	}
+	
+	@PropertyGetter("attributes")
+	public Collection<CohortAttribute> getCohortAttributes(CohortM cohort) {
+		return cohort.getActiveAttributes();
 	}
 }

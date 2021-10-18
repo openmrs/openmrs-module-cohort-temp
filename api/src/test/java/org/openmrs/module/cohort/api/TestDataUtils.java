@@ -31,7 +31,7 @@ public class TestDataUtils {
 		cohortAttributeType.setUuid("32816782-d578-401c-8475-8ccbb26ce001");
 		cohortAttributeType.setName("cohortAttributeType");
 		cohortAttributeType.setDescription("test cohort attribute type");
-		cohortAttributeType.setFormat("java.lang.String");
+		cohortAttributeType.setDatatypeClassname("java.lang.String");
 		cohortAttributeType.setCohortAttributeTypeId(400);
 		return cohortAttributeType;
 	}
@@ -42,7 +42,7 @@ public class TestDataUtils {
 		cohortAttribute.setUuid("");
 		cohortAttribute.setCohortAttributeId(200);
 		cohortAttribute.setValue("cohortAttribute");
-		cohortAttribute.setCohortAttributeType(COHORT_ATTRIBUTE_TYPE());
+		cohortAttribute.setAttributeType(COHORT_ATTRIBUTE_TYPE());
 		return cohortAttribute;
 	}
 	

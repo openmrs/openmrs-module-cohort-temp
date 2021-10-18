@@ -9,94 +9,40 @@
  */
 package org.openmrs.module.cohort;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+import org.openmrs.attribute.Attribute;
+import org.openmrs.attribute.BaseAttribute;
 
-import java.util.Date;
-
-import org.openmrs.BaseOpenmrsData;
-import org.openmrs.api.context.Context;
-
-@Entity
-@Table(name = "cohort_attribute")
-public class CohortAttribute extends BaseOpenmrsData {
+public class CohortAttribute extends BaseAttribute<CohortAttributeType, CohortM> implements Attribute<CohortAttributeType, CohortM> {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "cohort_attribute_id")
+	@Getter
+	@Setter
 	private Integer cohortAttributeId;
 	
-	@ManyToOne
-	@JoinColumn(name = "cohort_id")
-	private CohortM cohort;
-	
-	private String value;
-	
-	@ManyToOne
-	@JoinColumn(name = "cohort_attribute_type_id")
-	private CohortAttributeType cohortAttributeType;
-	
-	public Integer getCohortAttributeId() {
-		return cohortAttributeId;
-	}
-	
-	public void setCohortAttributeId(Integer cohortAttributeId) {
-		this.cohortAttributeId = cohortAttributeId;
-	}
-	
-	public CohortM getCohort() {
-		return cohort;
-	}
-	
-	public void setCohort(CohortM cohort) {
-		this.cohort = cohort;
-	}
-	
-	public String getValue() {
-		return value;
-	}
-	
-	public void setValue(String value) {
-		this.value = value;
-	}
-	
-	public CohortAttributeType getCohortAttributeType() {
-		return cohortAttributeType;
-	}
-	
-	public void setCohortAttributeType(CohortAttributeType cohortAttributeType) {
-		this.cohortAttributeType = cohortAttributeType;
+	/**
+	 * @return id - The unique Identifier for the object
+	 */
+	@Override
+	public Integer getId() {
+		return this.cohortAttributeId;
 	}
 	
 	/**
-	 * Convenience method for voiding this attribute
-	 *
-	 * @param reason
-	 * @should set voided bit to true
+	 * @param id - The unique Identifier for the object
 	 */
-	public void voidAttribute(String reason) {
-		setVoided(true);
-		setVoidedBy(Context.getAuthenticatedUser());
-		setVoidReason(reason);
-		setDateVoided(new Date());
-	}
-	
 	@Override
-	public Integer getId() {
-		return getCohortAttributeId();
+	public void setId(Integer id) {
+		this.setCohortAttributeId(id);
 	}
 	
-	@Override
-	public void setId(Integer cohortAttributeId) {
-		setCohortAttributeId(cohortAttributeId);
+	public void setCohort(CohortM cohort) {
+		this.setOwner(cohort);
 	}
 	
+	public CohortM getCohort() {
+		return this.getOwner();
+	}
 }

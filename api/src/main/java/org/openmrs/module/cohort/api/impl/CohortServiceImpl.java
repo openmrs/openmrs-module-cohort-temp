@@ -163,9 +163,9 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	
 	@Override
 	public CohortAttributeType deleteAttributeType(@NotNull CohortAttributeType attributeType, String retiredReason) {
-		attributeType.setVoided(true);
-		attributeType.setDateVoided(new Date());
-		attributeType.setVoidReason(retiredReason);
+		attributeType.setRetired(true);
+		attributeType.setDateRetired(new Date());
+		attributeType.setRetireReason(retiredReason);
 		return cohortAttributeTypeDao.createOrUpdate(attributeType);
 	}
 	

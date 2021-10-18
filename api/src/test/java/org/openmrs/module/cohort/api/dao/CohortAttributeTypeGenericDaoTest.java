@@ -29,7 +29,7 @@ public class CohortAttributeTypeGenericDaoTest extends BaseModuleContextSensitiv
 	
 	private static final String COHORT_ATTRIBUTE_TYPE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortAttributeTypeDaoTest_initialTestData.xml";
 	
-	private static final String COHORT_ATTRIBUTE_TYPE_UUID = "8eb7fe43-5673-4ebc-80dc-2e5d30251cc3";
+	private static final String COHORT_ATTRIBUTE_TYPE_UUID = "7fb7fe43-2813-4ebc-78dc-2e5d30251hj6";
 	
 	private static final String VOIDED_COHORT_ATTRIBUTE_TYPE_UUID = "9eb7fe43-2813-4ebc-80dc-2e5d30251bb7";
 	
@@ -87,7 +87,7 @@ public class CohortAttributeTypeGenericDaoTest extends BaseModuleContextSensitiv
 	public void shouldUpdateCohortAttributeType() {
 		CohortAttributeType cohortAttributeTypeToUpdate = dao.get(COHORT_ATTRIBUTE_TYPE_UUID);
 		assertThat(cohortAttributeTypeToUpdate, notNullValue());
-		assertThat(cohortAttributeTypeToUpdate.getDescription(), equalTo("This is description"));
+		assertThat(cohortAttributeTypeToUpdate.getDescription(), equalTo("Test cohort attribute type description"));
 		cohortAttributeTypeToUpdate.setDescription("Updated cohort attribute type");
 		
 		dao.createOrUpdate(cohortAttributeTypeToUpdate);

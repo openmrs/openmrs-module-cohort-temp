@@ -115,6 +115,8 @@
 
         <mapping resource="CohortMemberAttribute.hbm.xml" />
         <mapping resource="CohortMemberAttributeType.hbm.xml" />
+        <mapping resource="CohortAttribute.hbm.xml" />
+        <mapping resource="CohortAttributeType.hbm.xml" />
 
     </session-factory>
 

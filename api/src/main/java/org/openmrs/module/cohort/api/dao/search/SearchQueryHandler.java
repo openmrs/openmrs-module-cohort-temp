@@ -40,7 +40,7 @@ public class SearchQueryHandler extends AbstractSearchHandler implements ISearch
 		
 		if (attributes != null && !attributes.isEmpty()) {
 			Criteria attributeCriteria = criteria.createCriteria("attributes").add(Restrictions.eq("voided", false))
-			        .createAlias("cohortAttributeType", "attrType");
+			        .createAlias("attributeType", "attrType");
 			
 			Disjunction disjunction = Restrictions.disjunction();
 			for (String attribute : attributes.keySet()) {

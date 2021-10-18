@@ -56,41 +56,47 @@
         </createTable>
     </changeSet>
     <changeSet id="cohortattritype1065" author="sharon">
+        <validCheckSum>3:438b0d7c1f87e1930fc8514e764a006c</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="cohort_attributes_type"/>
+                <tableExists tableName="cohort_attribute_type"/>
             </not>
         </preConditions>
-        <createTable tableName="cohort_attributes_type">
+        <createTable tableName="cohort_attribute_type">
             <column name="cohort_attribute_type_id" autoIncrement="true" type="int(11)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="format" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
 
             <column name="description" type="varchar(255)"/>
+            <column name="datatype" type="varchar(255)"/>
+            <column name="datatype_config" type="text"/>
+            <column name="preferred_handler" type="varchar(255)"/>
+            <column name="handler_config" type="text"/>
+            <column name="max_occurs" type="int(11)"/>
+            <column name="min_occurs" type="int(11)">
+                <constraints nullable="false"/>
+            </column>
             <column name="date_created" type="datetime">
                 <constraints nullable="false"/>
             </column>
             <column name="creator" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortattributetypecreator_fk" references="users(user_id)"/>
+                <constraints nullable="false" foreignKeyName="cohort_attribute_type_creator_fk" references="users(user_id)"/>
             </column>
             <column name="changed_by" type="int(11)">
-                <constraints foreignKeyName="cohorattributetypeeditor_fk" references="users(user_id)"/>
+                <constraints foreignKeyName="cohort_attribute_type_editor_fk" references="users(user_id)"/>
             </column>
             <column name="date_changed" type="datetime"/>
-            <column name="voided" type="tinyint(1)" defaultValueBoolean="false">
+            <column name="retired" type="tinyint(1)" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="voided_by" type="int(11)">
-                <constraints foreignKeyName="cohortattributetypevoider_fk" references="users(user_id)"/>
+            <column name="retired_by" type="int(11)">
+                <constraints foreignKeyName="cohort_attribute_type_retired_by_fk" references="users(user_id)"/>
             </column>
-            <column name="date_voided" type="datetime"/>
-            <column name="void_reason" type="varchar(255)"/>
+            <column name="date_retired" type="datetime"/>
+            <column name="retire_reason" type="varchar(255)"/>
             <column name="uuid" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
@@ -151,7 +157,10 @@
             <column name="cohort_type_id" type="int(11)" defaultValue="null"/>
         </addColumn>
     </changeSet>
+
+    <!--Rename value to value_reference -->
     <changeSet id="cohortattribute1065" author="sharon">
+        <validCheckSum>3:17c3a2138b042e7572bbcdb959ba225c</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="cohort_attribute"/>
@@ -162,31 +171,31 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="cohort_id" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortattributecohort_fk" references="cohort(cohort_id)"/>
+                <constraints nullable="false" foreignKeyName="cohort_attribute_cohort_fk" references="cohort(cohort_id)"/>
             </column>
-            <column name="value" type="varchar(255)">
+            <column name="value_reference" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="cohort_attribute_type_id" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortattcohortattributetype_fk"
-                             references="cohort_attributes_type(cohort_attribute_type_id)"/>
+            <column name="attribute_type_id" type="int(11)">
+                <constraints nullable="false" foreignKeyName="cohort_attribute_type_fk"
+                             references="cohort_attribute_type(attribute_type_id)"/>
             </column>
 
             <column name="date_created" type="datetime">
                 <constraints nullable="false"/>
             </column>
             <column name="creator" type="int(11)">
-                <constraints nullable="false" foreignKeyName="cohortattributecreator_fk" references="users(user_id)"/>
+                <constraints nullable="false" foreignKeyName="cohort_attribute_creator_fk" references="users(user_id)"/>
             </column>
             <column name="changed_by" type="int(11)">
-                <constraints foreignKeyName="cohortattributeeditor_fk" references="users(user_id)"/>
+                <constraints foreignKeyName="cohort_attribute_editor_fk" references="users(user_id)"/>
             </column>
             <column name="date_changed" type="datetime"/>
             <column name="voided" type="tinyint(1)" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="voided_by" type="int(11)">
-                <constraints foreignKeyName="cohortattributevoider_fk" references="users(user_id)"/>
+                <constraints foreignKeyName="cohort_attribute_void_fk" references="users(user_id)"/>
             </column>
             <column name="date_voided" type="datetime"/>
             <column name="void_reason" type="varchar(255)"/>

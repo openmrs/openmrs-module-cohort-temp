@@ -10,7 +10,6 @@
 package org.openmrs.module.cohort.web.resource;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortAttributeType;
@@ -18,19 +17,15 @@ import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
-import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
-import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
-import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
-import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
-import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
+import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.BaseAttributeTypeCrudResource1_9;
 
 @SuppressWarnings("unused")
 @Resource(name = RestConstants.VERSION_1 + CohortMainRestController.COHORT_NAMESPACE
         + "/cohortattributetype", supportedClass = CohortAttributeType.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
-public class CohortAttributeTypeResource extends DataDelegatingCrudResource<CohortAttributeType> {
+public class CohortAttributeTypeResource extends BaseAttributeTypeCrudResource1_9<CohortAttributeType> {
 	
 	private final CohortService cohortService;
 	
@@ -39,49 +34,8 @@ public class CohortAttributeTypeResource extends DataDelegatingCrudResource<Coho
 	}
 	
 	@Override
-	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
-		if (Context.isAuthenticated()) {
-			if (rep instanceof DefaultRepresentation) {
-				final DelegatingResourceDescription description = new DelegatingResourceDescription();
-				description.addProperty("name");
-				description.addProperty("description");
-				description.addProperty("format");
-				description.addProperty("uuid");
-				description.addSelfLink();
-				description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
-				return description;
-			} else if (rep instanceof FullRepresentation) {
-				final DelegatingResourceDescription description = new DelegatingResourceDescription();
-				description.addProperty("name");
-				description.addProperty("description");
-				description.addProperty("format");
-				description.addProperty("uuid");
-				description.addProperty("auditInfo");
-				description.addSelfLink();
-				return description;
-			}
-		}
-		return null;
-	}
-	
-	@Override
-	public DelegatingResourceDescription getCreatableProperties() {
-		DelegatingResourceDescription description = new DelegatingResourceDescription();
-		description.addRequiredProperty("name");
-		description.addProperty("description");
-		description.addRequiredProperty("format");
-		return description;
-	}
-	
-	@Override
 	public CohortAttributeType save(CohortAttributeType cohortAttributeType) {
 		return cohortService.createAttributeType(cohortAttributeType);
-	}
-	
-	@Override
-	protected void delete(CohortAttributeType cohortAttributeType, String reason, RequestContext context)
-	        throws ResponseException {
-		cohortService.deleteAttributeType(cohortAttributeType, reason);
 	}
 	
 	@Override
@@ -101,7 +55,6 @@ public class CohortAttributeTypeResource extends DataDelegatingCrudResource<Coho
 	
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
-		Collection<CohortAttributeType> allCohortAttributeTypes = cohortService.findAllAttributeTypes();
-		return new NeedsPaging<>(new ArrayList<>(allCohortAttributeTypes), context);
+		return new NeedsPaging<>(new ArrayList<>(cohortService.findAllAttributeTypes()), context);
 	}
 }

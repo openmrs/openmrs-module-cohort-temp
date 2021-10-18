@@ -83,8 +83,8 @@ public class CohortAttributeGenericDaoTest extends BaseModuleContextSensitiveTes
 	
 	@Test
 	public void shouldFindMatchingVoidedCohortAttributes() {
-		Collection<CohortAttribute> results = dao.findBy(
-		    PropValue.builder().property("value").value(VOIDED_COHORT_ATTRIBUTE).associationPath(Optional.empty()).build(),
+		Collection<CohortAttribute> results = dao.findBy(PropValue.builder().property("valueReference")
+		        .value(VOIDED_COHORT_ATTRIBUTE).associationPath(Optional.empty()).build(),
 		    true);
 		assertThat(results, notNullValue());
 		assertThat(results, not(Matchers.empty()));
@@ -93,7 +93,7 @@ public class CohortAttributeGenericDaoTest extends BaseModuleContextSensitiveTes
 	
 	@Test
 	public void shouldFindMatchingUnVoidedCohortAttributes() {
-		Collection<CohortAttribute> results = dao.findBy(PropValue.builder().property("value")
+		Collection<CohortAttribute> results = dao.findBy(PropValue.builder().property("valueReference")
 		        .value(UN_VOIDED_COHORT_ATTRIBUTE).associationPath(Optional.empty()).build());
 		assertThat(results, notNullValue());
 		assertThat(results, not(Matchers.empty()));
