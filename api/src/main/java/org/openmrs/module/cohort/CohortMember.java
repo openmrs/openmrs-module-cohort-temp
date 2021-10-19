@@ -111,4 +111,8 @@ public class CohortMember extends BaseCustomizableData<CohortMemberAttribute> {
 		this.cohort = cohort;
 	}
 	
+	public boolean isActive() {
+		return (!getVoided() && getEndDate() == null && getStartDate() != null);
+	}
+	
 }

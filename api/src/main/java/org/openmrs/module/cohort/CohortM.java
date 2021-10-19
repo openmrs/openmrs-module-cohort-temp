@@ -19,15 +19,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.BatchSize;
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.Location;
 import org.openmrs.api.APIException;
@@ -69,6 +72,8 @@ public class CohortM extends BaseOpenmrsData {
 	@OneToMany(mappedBy = "cohort", cascade = CascadeType.ALL)
 	private List<CohortAttribute> attributes = new ArrayList<>();
 	
+	@BatchSize(size = 100)
+	@OrderBy("voided asc ")
 	@OneToMany(mappedBy = "cohort", cascade = CascadeType.ALL)
 	private List<CohortMember> cohortMembers = new ArrayList<>();
 	
@@ -145,14 +150,12 @@ public class CohortM extends BaseOpenmrsData {
 		return cohortMembers;
 	}
 	
+	public List<CohortMember> getNonVoidedCohortMembers() {
+		return getCohortMembers().stream().filter(c -> !c.getVoided()).collect(Collectors.toList());
+	}
+	
 	public List<CohortMember> getActiveCohortMembers() {
-		List<CohortMember> members = new ArrayList<>();
-		for (CohortMember member : getCohortMembers()) {
-			if (!member.getVoided()) {
-				members.add(member);
-			}
-		}
-		return members;
+		return this.getNonVoidedCohortMembers().stream().filter(cm -> cm.getEndDate() == null).collect(Collectors.toList());
 	}
 	
 	public List<CohortAttribute> getAttributes() {
@@ -504,6 +507,6 @@ public class CohortM extends BaseOpenmrsData {
 	}
 	
 	public int size() {
-		return (int) getCohortMembers().stream().filter(cm -> !cm.getVoided()).count();
+		return this.getActiveCohortMembers().size();
 	}
 }

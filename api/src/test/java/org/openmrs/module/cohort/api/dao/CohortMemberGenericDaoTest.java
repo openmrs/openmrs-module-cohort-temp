@@ -26,6 +26,10 @@ public class CohortMemberGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String COHORT_MEMBER_UUID = "23517bf9-d8d7-4726-b4f1-a2dff6b36w32";
 	
+	private static final String ACTIVE_COHORT_MEMBER_UUID = "45617bf9-d8d7-9087-b4f1-a2dff6b36w19";
+	
+	private static final String INACTIVE_COHORT_MEMBER_UUID = "89717bf9-d8d7-9765-b4f1-a2dff6b36w32";
+	
 	private static final String COHORT_UUID = "7f9a2479-c14a-4bfc-bcaa-632860258519";
 	
 	private static final String BAD_COHORT_UUID = "cxx90e-c14a-4bfc-xx56xx-ui8s860258xxx";
@@ -34,7 +38,7 @@ public class CohortMemberGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String FAMILY_NAME = "Doe";
 	
-	private static final String GIVEN_NAME = "John";
+	private static final String GIVEN_NAME = "Morty2021";
 	
 	@Autowired
 	@Qualifier("cohort.genericDao")
@@ -61,7 +65,7 @@ public class CohortMemberGenericDaoTest extends BaseModuleContextSensitiveTest {
 		Collection<CohortMember> cohortMembers = dao.getSearchHandler().findCohortMembersByPatientNames(GIVEN_NAME);
 		
 		assertThat(cohortMembers, notNullValue());
-		assertThat(cohortMembers, hasSize(2));
+		assertThat(cohortMembers, hasSize(3));
 		
 		for (CohortMember member : cohortMembers) {
 			assertThat(member.getPatient().getGivenName(), is(GIVEN_NAME));
@@ -73,7 +77,7 @@ public class CohortMemberGenericDaoTest extends BaseModuleContextSensitiveTest {
 		Collection<CohortMember> cohortMembers = dao.getSearchHandler().findCohortMembersByPatientNames(FAMILY_NAME);
 		
 		assertThat(cohortMembers, notNullValue());
-		assertThat(cohortMembers, hasSize(1));
+		assertThat(cohortMembers, hasSize(3));
 		
 		for (CohortMember member : cohortMembers) {
 			assertThat(member.getPatient().getFamilyName(), is(FAMILY_NAME));
@@ -86,7 +90,7 @@ public class CohortMemberGenericDaoTest extends BaseModuleContextSensitiveTest {
 		    NAME);
 		
 		assertThat(cohortMembers, notNullValue());
-		assertThat(cohortMembers, hasSize(1));
+		assertThat(cohortMembers, hasSize(3));
 		
 		for (CohortMember member : cohortMembers) {
 			assertThat(member.getPatient().getFamilyName(), is(FAMILY_NAME));
@@ -104,5 +108,21 @@ public class CohortMemberGenericDaoTest extends BaseModuleContextSensitiveTest {
 		for (CohortMember member : cohortMembers) {
 			assertThat(member.getPatient().getFamilyName(), is(FAMILY_NAME));
 		}
+	}
+	
+	@Test
+	public void shouldReturnTrueForActiveCohortMembership() {
+		CohortMember cohortMember = dao.get(ACTIVE_COHORT_MEMBER_UUID);
+		
+		assertThat(cohortMember, notNullValue());
+		assertThat(cohortMember.isActive(), is(true));
+	}
+	
+	@Test
+	public void shouldReturnFalseForInActiveCohortMembership() {
+		CohortMember cohortMember = dao.get(INACTIVE_COHORT_MEMBER_UUID);
+		
+		assertThat(cohortMember, notNullValue());
+		assertThat(cohortMember.isActive(), is(false));
 	}
 }

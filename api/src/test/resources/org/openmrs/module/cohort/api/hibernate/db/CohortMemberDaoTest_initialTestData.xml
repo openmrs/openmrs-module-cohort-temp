@@ -16,7 +16,7 @@
                              uuid="c5576187-9a67-43a7-9b7c-04db22851211"/>
     <person person_id="2" gender="M" dead="false" creator="1" date_created="2005-01-01 00:00:00.0" voided="false"
             uuid="61b38324-e2fd-4feb-95b7-9e9a2a4400df"/>
-    <person_name person_name_id="2" preferred="true" person_id="2" given_name="John" middle_name="F" family_name="Doe"
+    <person_name person_name_id="2" preferred="true" person_id="2" given_name="Morty2021" middle_name="F" family_name="Doe"
                  creator="1" date_created="2005-01-01 00:00:00.0" voided="false"
                  uuid="7e2acadc-5073-4a39-914a-debcbec8c1c9"/>
     <patient patient_id="2" creator="1" date_created="2005-01-01 00:00:00.0" voided="false"/>
@@ -28,4 +28,11 @@
                  date_created="2005-01-01 00:00:00.0" voided="false" uuid="94517bf9-d8d7-4726-b4f1-a2dff6b36e2d"/>
     <cohort_member cohort_member_id="1" patient_id="2" cohort_id="12" creator="1"
                    date_created="2021-06-07 00:00:00.0" voided="false" uuid="23517bf9-d8d7-4726-b4f1-a2dff6b36w32"/>
+    <!--    Active membership-->
+    <cohort_member cohort_member_id="2" patient_id="2" cohort_id="12" creator="1" start_date="2021-10-01 00:00:00.0"
+                   date_created="2021-06-07 00:00:00.0" voided="false" uuid="45617bf9-d8d7-9087-b4f1-a2dff6b36w19"/>
+    <!--    Inactive membership-->
+    <cohort_member cohort_member_id="3" patient_id="2" cohort_id="12" creator="1" start_date="2021-08-01 00:00:00.0"
+                   end_date="2021-08-30 00:00:00.0"
+                   date_created="2021-06-07 00:00:00.0" voided="false" uuid="89717bf9-d8d7-9765-b4f1-a2dff6b36w32"/>
 </dataset>

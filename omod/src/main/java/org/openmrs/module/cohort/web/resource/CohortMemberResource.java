@@ -53,11 +53,12 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 		if (Context.isAuthenticated()) {
 			if (rep instanceof DefaultRepresentation) {
 				final DelegatingResourceDescription description = new DelegatingResourceDescription();
-				description.addProperty("patient", Representation.REF);
+				description.addProperty("uuid");
+				description.addProperty("display");
 				description.addProperty("startDate");
 				description.addProperty("endDate");
-				description.addProperty("uuid");
-				description.addProperty("voided");
+				description.addProperty("active");
+				description.addProperty("patient", Representation.REF);
 				description.addProperty("attributes", "activeAttributes", Representation.REF);
 				description.addProperty("cohort", Representation.REF);
 				description.addSelfLink();
@@ -65,11 +66,11 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 				return description;
 			} else if (rep instanceof FullRepresentation) {
 				final DelegatingResourceDescription description = new DelegatingResourceDescription();
+				description.addProperty("uuid");
 				description.addProperty("display");
 				description.addProperty("startDate");
 				description.addProperty("endDate");
-				description.addProperty("uuid");
-				description.addProperty("voided");
+				description.addProperty("active");
 				description.addProperty("patient", Representation.FULL);
 				description.addProperty("cohort", Representation.DEFAULT);
 				description.addProperty("attributes", "activeAttributes", Representation.DEFAULT);
@@ -165,6 +166,11 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 		}
 		
 		return null;
+	}
+	
+	@PropertyGetter("active")
+	public boolean IsMemberActive(CohortMember cohortMember) {
+		return cohortMember.isActive();
 	}
 	
 	@Override

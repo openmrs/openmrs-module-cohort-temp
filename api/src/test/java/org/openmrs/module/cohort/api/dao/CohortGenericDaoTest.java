@@ -75,7 +75,9 @@ public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohort, notNullValue());
 		assertThat(cohort.getCohortId(), notNullValue());
 		assertThat(cohort.getCohortId(), equalTo(COHORT_ID));
-		assertThat(cohort.size(), equalTo(1));
+		
+		//Active members only
+		assertThat(cohort.size(), equalTo(2));
 	}
 	
 	@Test
@@ -86,7 +88,8 @@ public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohort.getCohortId(), equalTo(COHORT_ID));
 		assertThat(cohort.getUuid(), notNullValue());
 		assertThat(cohort.getUuid(), equalTo(COHORT_UUID));
-		assertThat(cohort.size(), equalTo(1));
+		//Active members only
+		assertThat(cohort.size(), equalTo(2));
 	}
 	
 	@Test
