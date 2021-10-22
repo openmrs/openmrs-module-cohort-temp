@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -236,5 +237,10 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	@PropertyGetter("size")
 	public int size(CohortM cohort) {
 		return cohort.size();
+	}
+
+	@PropertyGetter("cohortMembers")
+	public Set<CohortMember> getCohortMembers(CohortM cohort) {
+		return cohort.getActiveCohortMembers();
 	}
 }

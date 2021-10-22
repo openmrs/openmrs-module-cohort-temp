@@ -21,12 +21,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Where;
 import org.openmrs.Auditable;
 import org.openmrs.BaseCustomizableData;
 import org.openmrs.Location;
@@ -66,7 +68,11 @@ public class CohortM extends BaseCustomizableData<CohortAttribute> implements Au
 	private CohortType cohortType;
 	
 	@OneToMany(mappedBy = "cohort", cascade = CascadeType.ALL)
-	private List<CohortMember> cohortMembers = new ArrayList<>();
+	private Set<CohortMember> cohortMembers = new HashSet<>();
+	
+	@OneToMany(mappedBy = "cohort", cascade = CascadeType.ALL)
+	@Where(clause = "voided = 0 and (start_date is null or start_date <= current_timestamp()) and (end_date is null or end_date >= current_timestamp())")
+	private Set<CohortMember> activeCohortMembers;
 	
 	@Column(name = "is_group_cohort", nullable = false)
 	private Boolean groupCohort;
@@ -134,21 +140,18 @@ public class CohortM extends BaseCustomizableData<CohortAttribute> implements Au
 		this.cohortType = cohortType;
 	}
 	
-	public List<CohortMember> getCohortMembers() {
+	public Set<CohortMember> getCohortMembers() {
 		if (cohortMembers == null) {
-			cohortMembers = new ArrayList<>();
+			cohortMembers = new HashSet<>();
 		}
 		return cohortMembers;
 	}
 	
-	public List<CohortMember> getActiveCohortMembers() {
-		List<CohortMember> members = new ArrayList<>();
-		for (CohortMember member : getCohortMembers()) {
-			if (!member.getVoided()) {
-				members.add(member);
-			}
+	public Set<CohortMember> getActiveCohortMembers() {
+		if (activeCohortMembers == null) {
+			activeCohortMembers = new HashSet<>();
 		}
-		return members;
+		return activeCohortMembers;
 	}
 	
 	/**
@@ -265,6 +268,6 @@ public class CohortM extends BaseCustomizableData<CohortAttribute> implements Au
 	}
 	
 	public int size() {
-		return (int) getCohortMembers().stream().filter(cm -> !cm.getVoided()).count();
+		return getActiveCohortMembers().size();
 	}
 }

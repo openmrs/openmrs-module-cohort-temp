@@ -69,4 +69,41 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="index_cohort_member_dates_20211015" author="ibacher">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="cohort_member" columnName="start_date"/>
+            <not>
+                <indexExists indexName="cohort_member_dates"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="cohort_member" indexName="cohort_member_dates">
+            <column name="start_date" />
+            <column name="end_date" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="index_cohort_member_start_date_20211015" author="ibacher">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="cohort_member" columnName="start_date"/>
+            <not>
+                <indexExists indexName="cohort_member_start_date"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="cohort_member" indexName="cohort_member_start_date">
+            <column name="start_date" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="index_cohort_member_end_date_20211015" author="ibacher">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="cohort_member" columnName="end_date"/>
+            <not>
+                <indexExists indexName="cohort_member_end_date"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="cohort_member" indexName="cohort_member_end_date">
+            <column name="end_date" />
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>
