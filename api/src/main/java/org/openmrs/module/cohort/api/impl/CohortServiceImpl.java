@@ -28,6 +28,7 @@ import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.cohort.api.dao.IGenericDao;
 import org.openmrs.module.cohort.api.dao.PropValue;
+import org.openmrs.module.cohort.api.dao.search.CohortSearchHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,15 +45,18 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	
 	private final IGenericDao<CohortAttributeType> cohortAttributeTypeDao;
 	
+	private final CohortSearchHandler searchHandler;
+	
 	@Autowired
 	public CohortServiceImpl(IGenericDao<CohortM> cohortDao, IGenericDao<CohortAttribute> cohortAttributeDao,
-	    IGenericDao<CohortAttributeType> cohortAttributeTypeDao) {
+	    IGenericDao<CohortAttributeType> cohortAttributeTypeDao, CohortSearchHandler searchHandler) {
 		this.cohortDao = cohortDao;
 		this.cohortDao.setClazz(CohortM.class);
 		this.cohortAttributeDao = cohortAttributeDao;
 		this.cohortAttributeDao.setClazz(CohortAttribute.class);
 		this.cohortAttributeTypeDao = cohortAttributeTypeDao;
 		this.cohortAttributeTypeDao.setClazz(CohortAttributeType.class);
+		this.searchHandler = searchHandler;
 	}
 	
 	@Override
@@ -178,5 +182,10 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	public List<CohortM> findMatchingCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType,
 	        boolean includeVoided) {
 		return cohortDao.getSearchHandler().findCohorts(nameMatching, attributes, cohortType, includeVoided);
+	}
+	
+	@Override
+	public Collection<CohortM> findCohortsByPatientUuid(String patientUuid) {
+		return searchHandler.findCohortsByPatientUuid(patientUuid);
 	}
 }

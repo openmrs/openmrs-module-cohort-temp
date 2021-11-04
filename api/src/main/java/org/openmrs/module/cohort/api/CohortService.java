@@ -68,4 +68,6 @@ public interface CohortService extends OpenmrsService {
 	//Search
 	List<CohortM> findMatchingCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType,
 	        boolean includeVoided);
+	
+	Collection<CohortM> findCohortsByPatientUuid(String patientUuid);
 }
