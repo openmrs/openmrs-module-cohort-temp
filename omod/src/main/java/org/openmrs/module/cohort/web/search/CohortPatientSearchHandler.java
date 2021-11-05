@@ -11,11 +11,12 @@ package org.openmrs.module.cohort.web.search;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Date;
 
 import lombok.extern.slf4j.Slf4j;
 import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.cohort.web.resource.CohortMainRestController;
+import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
@@ -47,8 +48,13 @@ public class CohortPatientSearchHandler implements SearchHandler {
 		return new SearchConfig("default", RestConstants.VERSION_1 + CohortMainRestController.COHORT_NAMESPACE + "/cohort",
 		        Arrays.asList("1.8.*", "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*", "2.3.*", "2.4.*",
 		            "2.5.*"),
-		        Collections.singleton(new SearchQuery.Builder("Allows you to find cohorts by patient uuid")
-		                .withRequiredParameters("patient.uuid").build()));
+		        Arrays.asList(
+		            new SearchQuery.Builder("Allows you to find cohorts by patient uuid")
+		                    .withRequiredParameters("patient.uuid").build(),
+		            new SearchQuery.Builder("Allow you to find cohort by cohort membership period")
+		                    .withOptionalParameters("fromStartDate", "toEndDate").build(),
+		            new SearchQuery.Builder("Include/exclude inactive cohorts").withOptionalParameters("includeInactive")
+		                    .build()));
 	}
 	
 	/**
@@ -57,8 +63,18 @@ public class CohortPatientSearchHandler implements SearchHandler {
 	@Override
 	public PageableResult search(RequestContext context) throws ResponseException {
 		String patientUuid = context.getParameter("patient.uuid");
-		if (!patientUuid.isEmpty()) {
-			return new NeedsPaging<>(new ArrayList<>(cohortService.findCohortsByPatientUuid(patientUuid)), context);
+		String fromStartDate = context.getParameter("fromStartDate");
+		String toEndDate = context.getParameter("toEndDate");
+		String includeInactive = context.getParameter("includeInactive");
+		
+		if (patientUuid != null || fromStartDate != null || toEndDate != null || includeInactive != null) {
+			Date startDate = fromStartDate != null ? (Date) ConversionUtil.convert(fromStartDate, Date.class) : null;
+			Date endDate = toEndDate != null ? (Date) ConversionUtil.convert(toEndDate, Date.class) : null;
+			boolean includeVoided = includeInactive != null && Boolean.getBoolean(includeInactive);
+			
+			return new NeedsPaging<>(
+			        new ArrayList<>(cohortService.findCohortsByMembership(patientUuid, startDate, endDate, includeVoided)),
+			        context);
 		}
 		return new NeedsPaging<>(new ArrayList<>(), context);
 	}

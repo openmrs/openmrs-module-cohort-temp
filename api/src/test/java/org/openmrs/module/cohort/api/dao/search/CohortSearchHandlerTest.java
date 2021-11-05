@@ -48,7 +48,7 @@ public class CohortSearchHandlerTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void findCohortsByPatientUuid_shouldReturnCollectionOfCohorts() {
-		Collection<CohortM> cohorts = searchHandler.findCohortsByPatientUuid(PATIENT_UUID);
+		Collection<CohortM> cohorts = searchHandler.findCohortsByMemberships(PATIENT_UUID, null, null, false);
 		
 		assertThat(cohorts, notNullValue());
 		assertThat(cohorts, hasSize(1));
@@ -61,7 +61,7 @@ public class CohortSearchHandlerTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void findCohortsByBadPatientUuid_shouldReturnEmptyCollection() {
-		Collection<CohortM> cohorts = searchHandler.findCohortsByPatientUuid(BAD_PATIENT_UUID);
+		Collection<CohortM> cohorts = searchHandler.findCohortsByMemberships(BAD_PATIENT_UUID, null, null, false);
 		
 		assertThat(cohorts, notNullValue());
 		assertThat(cohorts.isEmpty(), is(true));

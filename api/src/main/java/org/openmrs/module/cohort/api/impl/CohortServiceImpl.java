@@ -185,7 +185,8 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public Collection<CohortM> findCohortsByPatientUuid(String patientUuid) {
-		return searchHandler.findCohortsByPatientUuid(patientUuid);
+	public Collection<CohortM> findCohortsByMembership(String patientUuid, Date startDate, Date endDate,
+	        boolean includeVoided) {
+		return searchHandler.findCohortsByMemberships(patientUuid, startDate, endDate, includeVoided);
 	}
 }

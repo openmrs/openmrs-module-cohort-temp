@@ -9,7 +9,10 @@
  */
 package org.openmrs.module.cohort.api.dao.search;
 
+import javax.validation.constraints.NotNull;
+
 import java.util.Collection;
+import java.util.Date;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Criteria;
@@ -22,9 +25,19 @@ import org.springframework.stereotype.Component;
 @SuppressWarnings("unchecked")
 public class CohortSearchHandler extends AbstractSearchHandler {
 	
-	public Collection<CohortM> findCohortsByPatientUuid(String patientUuid) {
-		Criteria criteria = getCurrentSession().createCriteria(CohortM.class).createCriteria("cohortMembers", "cm")
-		        .createCriteria("cm.patient", "cmp").add(Restrictions.eq("cmp.uuid", patientUuid));
+	public Collection<CohortM> findCohortsByMemberships(@NotNull String patientUuid, Date startDate, Date endDate,
+	        boolean includeVoided) {
+		Criteria criteria = getCurrentSession().createCriteria(CohortM.class, "c");
+		//Exclude/include voided cohorts
+		if (!includeVoided) {
+			criteria.add(Restrictions.eq("c.voided", false));
+		}
+		if (patientUuid != null) {
+			criteria.createCriteria("cohortMembers", "cm").createCriteria("cm.patient", "cmp")
+			        .add(Restrictions.eq("cmp.uuid", patientUuid));
+		}
+		//Fixme handle startDate & endDate
+		
 		return criteria.list();
 	}
 	
