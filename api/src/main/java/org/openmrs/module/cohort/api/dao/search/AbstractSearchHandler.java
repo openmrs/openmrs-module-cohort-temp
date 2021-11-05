@@ -22,7 +22,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-public abstract class AbstractSearchHandler implements ISearchQuery {
+public abstract class AbstractSearchHandler {
 	
 	@Autowired
 	@Qualifier("sessionFactory")

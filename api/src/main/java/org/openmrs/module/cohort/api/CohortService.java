@@ -12,6 +12,7 @@ package org.openmrs.module.cohort.api;
 import javax.validation.constraints.NotNull;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -68,4 +69,6 @@ public interface CohortService extends OpenmrsService {
 	//Search
 	List<CohortM> findMatchingCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType,
 	        boolean includeVoided);
+	
+	Collection<CohortM> findCohortsByMembership(String patientUuid, Date startDate, Date endDate, boolean includeVoided);
 }

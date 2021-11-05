@@ -32,6 +32,7 @@ import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.api.dao.IGenericDao;
 import org.openmrs.module.cohort.api.dao.PropValue;
+import org.openmrs.module.cohort.api.dao.search.CohortSearchHandler;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CohortServiceImplTest {
@@ -49,11 +50,14 @@ public class CohortServiceImplTest {
 	@Mock
 	private IGenericDao<CohortAttributeType> cohortAttributeTypeDao;
 	
+	@Mock
+	private CohortSearchHandler searchHandler;
+	
 	private CohortServiceImpl cohortService;
 	
 	@Before
 	public void setup() {
-		cohortService = new CohortServiceImpl(cohortDao, cohortAttributeDao, cohortAttributeTypeDao);
+		cohortService = new CohortServiceImpl(cohortDao, cohortAttributeDao, cohortAttributeTypeDao, searchHandler);
 	}
 	
 	@Test
