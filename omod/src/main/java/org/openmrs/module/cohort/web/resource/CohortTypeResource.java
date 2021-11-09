@@ -33,12 +33,6 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
         + "/cohorttype", supportedClass = CohortType.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
 public class CohortTypeResource extends DataDelegatingCrudResource<CohortType> {
 	
-	private final CohortTypeService cohortTypeService;
-	
-	public CohortTypeResource() {
-		this.cohortTypeService = Context.getService(CohortTypeService.class);
-	}
-	
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
 		if (Context.isAuthenticated()) {
@@ -80,19 +74,17 @@ public class CohortTypeResource extends DataDelegatingCrudResource<CohortType> {
 	
 	@Override
 	public CohortType save(CohortType cohortType) {
-		return cohortTypeService.createOrUpdate(cohortType);
+		return Context.getService(CohortTypeService.class).saveCohortType(cohortType);
 	}
 	
 	@Override
 	protected void delete(CohortType cohortType, String reason, RequestContext request) throws ResponseException {
-		cohortType.setVoided(true);
-		cohortType.setVoidReason(reason);
-		cohortTypeService.createOrUpdate(cohortType);
+		Context.getService(CohortTypeService.class).voidCohortType(cohortType, reason);
 	}
 	
 	@Override
 	public void purge(CohortType cohortType, RequestContext request) throws ResponseException {
-		cohortTypeService.purge(cohortType);
+		Context.getService(CohortTypeService.class).purgeCohortType(cohortType);
 	}
 	
 	@Override
@@ -102,17 +94,17 @@ public class CohortTypeResource extends DataDelegatingCrudResource<CohortType> {
 	
 	@Override
 	public CohortType getByUniqueId(String uuidOrName) {
-		CohortType cohortType = cohortTypeService.getByUuid(uuidOrName);
+		CohortType cohortType = Context.getService(CohortTypeService.class).getByUuid(uuidOrName);
 		//If getByUuid is null. Try searching by name
 		if (cohortType == null) {
-			cohortType = cohortTypeService.getByName(uuidOrName);
+			cohortType = Context.getService(CohortTypeService.class).getByName(uuidOrName);
 		}
 		return cohortType;
 	}
 	
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
-		return new NeedsPaging<>((List<CohortType>) cohortTypeService.findAll(), context);
+		return new NeedsPaging<>((List<CohortType>) Context.getService(CohortTypeService.class).findAll(), context);
 	}
 	
 	@PropertyGetter("display")

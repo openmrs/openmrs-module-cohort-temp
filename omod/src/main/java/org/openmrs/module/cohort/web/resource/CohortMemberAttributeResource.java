@@ -29,12 +29,6 @@ import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.BaseAttr
         "1.8 - 2.*" })
 public class CohortMemberAttributeResource extends BaseAttributeCrudResource1_9<CohortMemberAttribute, CohortMember, CohortMemberResource> {
 	
-	private final CohortMemberService cohortMemberService;
-	
-	public CohortMemberAttributeResource() {
-		this.cohortMemberService = Context.getRegisteredComponent("cohort.cohortMemberService", CohortMemberService.class);
-	}
-	
 	@Override
 	public CohortMember getParent(CohortMemberAttribute cohortMemberAttribute) {
 		return cohortMemberAttribute.getCohortMember();
@@ -52,18 +46,18 @@ public class CohortMemberAttributeResource extends BaseAttributeCrudResource1_9<
 	
 	@Override
 	public CohortMemberAttribute getByUniqueId(String uuid) {
-		return cohortMemberService.getAttributeByUuid(uuid);
+		return Context.getService(CohortMemberService.class).getAttributeByUuid(uuid);
 	}
 	
 	@Override
 	public CohortMemberAttribute save(CohortMemberAttribute cohortMemberAttribute) {
-		return cohortMemberService.createAttribute(cohortMemberAttribute);
+		return Context.getService(CohortMemberService.class).createAttribute(cohortMemberAttribute);
 	}
 	
 	@Override
 	protected void delete(CohortMemberAttribute cohortMemberAttribute, String reason, RequestContext requestContext)
 	        throws ResponseException {
-		cohortMemberService.deleteAttribute(cohortMemberAttribute, reason);
+		Context.getService(CohortMemberService.class).deleteAttribute(cohortMemberAttribute, reason);
 	}
 	
 	@Override
@@ -75,7 +69,7 @@ public class CohortMemberAttributeResource extends BaseAttributeCrudResource1_9<
 	public void purge(CohortMemberAttribute cohortMemberAttribute, RequestContext requestContext) throws ResponseException {
 		boolean purge = Boolean.getBoolean(requestContext.getParameter("purge"));
 		if (purge) {
-			cohortMemberService.purgeAttribute(cohortMemberAttribute);
+			Context.getService(CohortMemberService.class).purgeAttribute(cohortMemberAttribute);
 		}
 	}
 	

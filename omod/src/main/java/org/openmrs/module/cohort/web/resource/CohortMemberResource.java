@@ -42,12 +42,6 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
         + "/cohortmember", supportedClass = CohortMember.class, supportedOpenmrsVersions = { "1.8 - 2.*" })
 public class CohortMemberResource extends DataDelegatingCrudResource<CohortMember> {
 	
-	private final CohortMemberService cohortMemberService;
-	
-	public CohortMemberResource() {
-		this.cohortMemberService = Context.getRegisteredComponent("cohort.cohortMemberService", CohortMemberService.class);
-	}
-	
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
 		if (Context.isAuthenticated()) {
@@ -125,26 +119,26 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 				}
 			}
 		}
-		return cohortMemberService.createOrUpdate(cohortMember);
+		return Context.getService(CohortMemberService.class).createOrUpdate(cohortMember);
 	}
 	
 	@Override
 	public void delete(CohortMember cohortMember, String reason, RequestContext context) throws ResponseException {
-		cohortMemberService.voidCohortMember(cohortMember, reason);
+		Context.getService(CohortMemberService.class).voidCohortMember(cohortMember, reason);
 	}
 	
 	@Override
 	public CohortMember getByUniqueId(String uuid) {
-		return cohortMemberService.getByUuid(uuid);
+		return Context.getService(CohortMemberService.class).getByUuid(uuid);
 	}
 	
 	@Override
 	public void purge(CohortMember cohortMember, RequestContext context) throws ResponseException {
 		boolean purge = Boolean.getBoolean(context.getParameter("purge"));
 		if (purge) {
-			cohortMemberService.purge(cohortMember);
+			Context.getService(CohortMemberService.class).purge(cohortMember);
 		} else {
-			cohortMemberService.voidCohortMember(cohortMember, "");
+			Context.getService(CohortMemberService.class).voidCohortMember(cohortMember, "");
 		}
 	}
 	
@@ -174,14 +168,17 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 		String patientUuid = context.getParameter("patient");
 		
 		if (isNotBlank(cohortUuid) && isNotBlank(query)) {
-			Collection<CohortMember> cohortMembers = cohortMemberService.findCohortMembersByCohortAndPatient(cohortUuid,
-			    query);
+			Collection<CohortMember> cohortMembers = Context.getService(CohortMemberService.class)
+			        .findCohortMembersByCohortAndPatient(cohortUuid, query);
 			return new NeedsPaging<>(new ArrayList<>(cohortMembers), context);
 		} else if (isNotBlank(cohortUuid)) {
-			return new NeedsPaging<>(new ArrayList<>(cohortMemberService.findCohortMembersByCohortUuid(cohortUuid)),
+			return new NeedsPaging<>(
+			        new ArrayList<>(Context.getService(CohortMemberService.class).findCohortMembersByCohortUuid(cohortUuid)),
 			        context);
 		} else if (isNotBlank(patientUuid)) {
-			return new NeedsPaging<>(new ArrayList<>(cohortMemberService.findCohortMembersByPatientUuid(patientUuid)),
+			return new NeedsPaging<>(
+			        new ArrayList<>(
+			                Context.getService(CohortMemberService.class).findCohortMembersByPatientUuid(patientUuid)),
 			        context);
 		} else {
 			throw new InvalidSearchException("No valid value specified for params query(q), cohort and/or patient");

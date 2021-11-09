@@ -46,8 +46,7 @@ public class CohortTypeResourceTest extends BaseCohortResourceTest<CohortType, C
 		
 		//Mocks
 		this.prepareMocks();
-		when(Context.getRegisteredComponent("cohort.cohortTypeService", CohortTypeService.class))
-		        .thenReturn(cohortTypeService);
+		when(Context.getService(CohortTypeService.class)).thenReturn(cohortTypeService);
 		
 		this.setResource(new CohortTypeResource());
 		this.setObject(cohortType);
@@ -97,7 +96,7 @@ public class CohortTypeResourceTest extends BaseCohortResourceTest<CohortType, C
 	
 	@Test
 	public void shouldCreateNewResource() {
-		when(cohortTypeService.createOrUpdate(getObject())).thenReturn(getObject());
+		when(cohortTypeService.saveCohortType(getObject())).thenReturn(getObject());
 		
 		CohortType newlyCreatedObject = getResource().save(getObject());
 		assertThat(newlyCreatedObject, notNullValue());

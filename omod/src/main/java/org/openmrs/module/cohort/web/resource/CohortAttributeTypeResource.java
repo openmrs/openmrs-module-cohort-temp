@@ -27,20 +27,14 @@ import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.BaseAttr
         + "/cohortattributetype", supportedClass = CohortAttributeType.class, supportedOpenmrsVersions = { "1.9 - 2.*" })
 public class CohortAttributeTypeResource extends BaseAttributeTypeCrudResource1_9<CohortAttributeType> {
 	
-	private final CohortService cohortService;
-	
-	public CohortAttributeTypeResource() {
-		this.cohortService = Context.getRegisteredComponent("cohort.cohortService", CohortService.class);
-	}
-	
 	@Override
 	public CohortAttributeType save(CohortAttributeType cohortAttributeType) {
-		return cohortService.saveAttributeType(cohortAttributeType);
+		return Context.getService(CohortService.class).saveAttributeType(cohortAttributeType);
 	}
 	
 	@Override
 	public void purge(CohortAttributeType cohortAttributeType, RequestContext context) throws ResponseException {
-		cohortService.purgeAttributeType(cohortAttributeType);
+		Context.getService(CohortService.class).purgeAttributeType(cohortAttributeType);
 	}
 	
 	@Override
@@ -50,11 +44,11 @@ public class CohortAttributeTypeResource extends BaseAttributeTypeCrudResource1_
 	
 	@Override
 	public CohortAttributeType getByUniqueId(String uuid) {
-		return cohortService.getAttributeTypeByUuid(uuid);
+		return Context.getService(CohortService.class).getAttributeTypeByUuid(uuid);
 	}
 	
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
-		return new NeedsPaging<>(new ArrayList<>(cohortService.findAllAttributeTypes()), context);
+		return new NeedsPaging<>(new ArrayList<>(Context.getService(CohortService.class).findAllAttributeTypes()), context);
 	}
 }

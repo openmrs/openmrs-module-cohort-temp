@@ -15,10 +15,10 @@ public interface CohortTypeService extends OpenmrsService {
 	
 	Collection<CohortType> findAll();
 	
-	CohortType createOrUpdate(@NotNull CohortType cohortType);
+	CohortType saveCohortType(@NotNull CohortType cohortType);
 	
-	CohortType delete(@NotNull String uuid, String voidedReason);
+	void voidCohortType(@NotNull CohortType cohortType, String voidedReason);
 	
-	void purge(@NotNull CohortType cohortType);
+	void purgeCohortType(@NotNull CohortType cohortType);
 	
 }

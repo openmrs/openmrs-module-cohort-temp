@@ -6,6 +6,7 @@ import java.util.Collection;
 
 import lombok.AccessLevel;
 import lombok.Setter;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.api.CohortTypeService;
@@ -43,23 +44,21 @@ public class CohortTypeServiceImpl extends BaseOpenmrsService implements CohortT
 	}
 	
 	@Override
-	public CohortType createOrUpdate(CohortType cohortType) {
+	public CohortType saveCohortType(CohortType cohortType) {
 		return dao.createOrUpdate(cohortType);
 	}
 	
 	@Override
-	public CohortType delete(@NotNull String uuid, String voidedReason) {
-		CohortType cohortTypeToBeVoided = this.getByUuid(uuid);
-		if (cohortTypeToBeVoided != null) {
-			cohortTypeToBeVoided.setVoided(true);
-			cohortTypeToBeVoided.setVoidReason(voidedReason);
-			return createOrUpdate(cohortTypeToBeVoided);
+	public void voidCohortType(@NotNull CohortType cohortType, String voidedReason) {
+		if (cohortType == null) {
+			return;
 		}
-		return null;
+		
+		Context.getService(CohortTypeService.class).saveCohortType(cohortType);
 	}
 	
 	@Override
-	public void purge(CohortType cohortType) {
+	public void purgeCohortType(CohortType cohortType) {
 		dao.delete(cohortType);
 	}
 }

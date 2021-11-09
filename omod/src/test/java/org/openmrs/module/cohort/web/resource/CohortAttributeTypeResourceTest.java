@@ -53,7 +53,7 @@ public class CohortAttributeTypeResourceTest extends BaseCohortResourceTest<Coho
 		
 		//Mocks
 		this.prepareMocks();
-		when(Context.getRegisteredComponent("cohort.cohortService", CohortService.class)).thenReturn(cohortService);
+		when(Context.getService(CohortService.class)).thenReturn(cohortService);
 		
 		this.setResource(new CohortAttributeTypeResource());
 		this.setObject(cohortAttributeType);
