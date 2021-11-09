@@ -35,7 +35,7 @@ public class CohortAttributeTypeResource extends BaseAttributeTypeCrudResource1_
 	
 	@Override
 	public CohortAttributeType save(CohortAttributeType cohortAttributeType) {
-		return cohortService.createAttributeType(cohortAttributeType);
+		return cohortService.saveAttributeType(cohortAttributeType);
 	}
 	
 	@Override

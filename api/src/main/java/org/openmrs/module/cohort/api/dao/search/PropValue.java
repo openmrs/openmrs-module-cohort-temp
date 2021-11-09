@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.cohort.api.dao;
+package org.openmrs.module.cohort.api.dao.search;
 
 import javax.validation.constraints.NotNull;
 

@@ -25,7 +25,7 @@ public class CohortTypeValidator implements Validator {
 	private final CohortTypeService cohortTypeService;
 	
 	@Autowired
-	public CohortTypeValidator(CohortTypeService cohortTypeService) {
+	public CohortTypeValidator(@Qualifier("cohort.cohortTypeService") CohortTypeService cohortTypeService) {
 		this.cohortTypeService = cohortTypeService;
 	}
 	

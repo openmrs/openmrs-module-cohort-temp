@@ -21,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Set;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Where;
 import org.openmrs.Auditable;
 import org.openmrs.BaseCustomizableData;
@@ -37,6 +39,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.customdatatype.Customizable;
 import org.openmrs.module.cohort.definition.CohortDefinitionHandler;
 import org.openmrs.module.cohort.definition.ManualCohortDefinitionHandler;
+import org.openmrs.module.cohort.definition.handler.DefaultCohortDefinitionHandler;
 import org.openmrs.module.cohort.exceptions.ManualChangeNotSupportedException;
 
 @Slf4j
@@ -68,17 +71,17 @@ public class CohortM extends BaseCustomizableData<CohortAttribute> implements Au
 	private CohortType cohortType;
 	
 	@OneToMany(mappedBy = "cohort", cascade = CascadeType.ALL)
-	private Set<CohortMember> cohortMembers = new HashSet<>();
+	private Set<CohortMember> cohortMembers;
 	
 	@OneToMany(mappedBy = "cohort", cascade = CascadeType.ALL)
 	@Where(clause = "voided = 0 and (start_date is null or start_date <= current_timestamp()) and (end_date is null or end_date >= current_timestamp())")
 	private Set<CohortMember> activeCohortMembers;
 	
 	@Column(name = "is_group_cohort", nullable = false)
-	private Boolean groupCohort;
+	private boolean groupCohort = false;
 	
 	@Column(name = "definition_handler", nullable = false)
-	private String definitionHandlerClassname;
+	private String definitionHandlerClassname = DefaultCohortDefinitionHandler.class.getName();
 	
 	@Lob
 	@Column(name = "definition_handler_config")
@@ -157,8 +160,8 @@ public class CohortM extends BaseCustomizableData<CohortAttribute> implements Au
 	/**
 	 * Returns whether this cohort is a group
 	 *
-	 * @deprecated since 3.0.0
 	 * @see {{@link #getGroupCohort()}}
+	 * @deprecated since 3.0.0
 	 */
 	@Deprecated
 	public Boolean isGroupCohort() {
@@ -204,22 +207,19 @@ public class CohortM extends BaseCustomizableData<CohortAttribute> implements Au
 		this.definitionHandlerConfig = definitionHandlerConfig;
 	}
 	
-	public void addMembership(CohortMember cohortMember) {
+	public void addMemberships(CohortMember... cohortMembers) {
 		CohortDefinitionHandler cohortDefinition = getDefinitionHandler();
 		if (cohortDefinition instanceof ManualCohortDefinitionHandler) {
-			((ManualCohortDefinitionHandler) cohortDefinition).addMember(this, cohortMember);
+			((ManualCohortDefinitionHandler) cohortDefinition).addMembers(this, cohortMembers);
 		} else {
 			throw new ManualChangeNotSupportedException("Manual changes to this cohort aren't supported");
 		}
 	}
 	
-	public void removeMembership(CohortMember cohortMember) {
-		if (getDefinitionHandlerClassname().isEmpty()) {
-			throw new APIException("CohortDefinitionHandler is null");
-		}
+	public void removeMemberships(CohortMember... cohortMembers) {
 		CohortDefinitionHandler cohortDefinition = getDefinitionHandler();
 		if (cohortDefinition instanceof ManualCohortDefinitionHandler) {
-			((ManualCohortDefinitionHandler) cohortDefinition).removeMember(this, cohortMember);
+			((ManualCohortDefinitionHandler) cohortDefinition).removeMembers(this, cohortMembers);
 		} else {
 			throw new ManualChangeNotSupportedException("Manual changes to this cohort aren't supported");
 		}
@@ -235,9 +235,14 @@ public class CohortM extends BaseCustomizableData<CohortAttribute> implements Au
 	@SneakyThrows
 	@SuppressWarnings("unchecked")
 	public CohortDefinitionHandler getDefinitionHandler() {
+		String definitionHandlerClassname = getDefinitionHandlerClassname();
+		if (StringUtils.isBlank(definitionHandlerClassname)) {
+			definitionHandlerClassname = DefaultCohortDefinitionHandler.class.getName();
+		}
+		
 		Class<?> definitionHandlerClass;
 		try {
-			definitionHandlerClass = Context.loadClass(getDefinitionHandlerClassname());
+			definitionHandlerClass = Context.loadClass(definitionHandlerClassname);
 		}
 		catch (ClassNotFoundException e) {
 			log.error("Failed to load class {}", getDefinitionHandlerClassname(), e);
@@ -251,8 +256,14 @@ public class CohortM extends BaseCustomizableData<CohortAttribute> implements Au
 			        new Object[] { getDefinitionHandlerClassname() });
 		}
 		
-		List<? extends CohortDefinitionHandler> handlers = (List<? extends CohortDefinitionHandler>) Context
-		        .getRegisteredComponents(definitionHandlerClass);
+		List<? extends CohortDefinitionHandler> handlers;
+		
+		try {
+			handlers = (List<? extends CohortDefinitionHandler>) Context.getRegisteredComponents(definitionHandlerClass);
+		}
+		catch (NullPointerException e) {
+			handlers = Collections.emptyList();
+		}
 		
 		if (!handlers.isEmpty()) {
 			if (log.isWarnEnabled()) {

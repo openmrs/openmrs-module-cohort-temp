@@ -10,13 +10,10 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortMember;
-import org.openmrs.module.cohort.api.SpringTestConfiguration;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = SpringTestConfiguration.class, inheritLocations = false)
 public class CohortMemberGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	//Order of the array is salient
@@ -37,12 +34,11 @@ public class CohortMemberGenericDaoTest extends BaseModuleContextSensitiveTest {
 	private static final String GIVEN_NAME = "John";
 	
 	@Autowired
-	@Qualifier("cohort.genericDao")
-	private IGenericDao<CohortMember> dao;
+	@Qualifier("cohortMemberDao")
+	private GenericDao<CohortMember> dao;
 	
 	@Before
 	public void setup() throws Exception {
-		dao.setClazz(CohortMember.class);
 		for (String data : COHORT_MEMBER_INITIAL_TEST_DATA_XML) {
 			executeDataSet(data);
 		}

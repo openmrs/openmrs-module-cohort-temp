@@ -24,15 +24,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortMemberAttributeType;
-import org.openmrs.module.cohort.api.SpringTestConfiguration;
 import org.openmrs.module.cohort.api.TestDataUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
 
 @Ignore
-@ContextConfiguration(classes = SpringTestConfiguration.class, inheritLocations = false)
 public class CohortMemberAttributeTypeGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	String COHORT_MEMBER_ATTRIBUTE_TYPE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortMemberAttributeTypeDaoTest_initialTestData.xml";
@@ -44,13 +41,11 @@ public class CohortMemberAttributeTypeGenericDaoTest extends BaseModuleContextSe
 	private final String COHORT_MEMBER_ATTRIBUTE_TYPE_UUID = "9eb7fe43-2813-4ebc-80dc-2e5d30251bb7";
 	
 	@Autowired
-	@Qualifier("cohort.genericDao")
-	private IGenericDao<CohortMemberAttributeType> dao;
+	@Qualifier("cohortMemberAttributeTypeDao")
+	private GenericDao<CohortMemberAttributeType> dao;
 	
 	@Before
 	public void setup() throws Exception {
-		dao.setClazz(CohortMemberAttributeType.class);
-		
 		executeDataSet(COHORT_MEMBER_ATTRIBUTE_TYPE_INITIAL_TEST_DATA_XML);
 	}
 	

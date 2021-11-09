@@ -9,14 +9,53 @@
  */
 package org.openmrs.module.cohort.api.dao;
 
+import java.util.Collection;
+
+import org.hibernate.criterion.Criterion;
 import org.openmrs.Auditable;
 import org.openmrs.OpenmrsObject;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.openmrs.module.cohort.api.dao.search.ISearchQuery;
+import org.openmrs.module.cohort.api.dao.search.PropValue;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component(value = "cohort.genericDao")
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class GenericDao<W extends OpenmrsObject & Auditable> extends AbstractHibernateDao<W> implements IGenericDao<W> {
-	// Reusable Data Access Layer for any openmrs entity
+public interface GenericDao<W extends OpenmrsObject & Auditable> {
+	
+	ISearchQuery getSearchHandler();
+	
+	@Transactional(readOnly = true)
+	W get(final int id);
+	
+	@Transactional(readOnly = true)
+	W get(final String uuid);
+	
+	W createOrUpdate(W object);
+	
+	void delete(W object);
+	
+	void delete(String uuid);
+	
+	@Transactional(readOnly = true)
+	Collection<W> findAll();
+	
+	@Transactional(readOnly = true)
+	Collection<W> findAll(boolean includeRetired);
+	
+	@Transactional(readOnly = true)
+	Collection<W> findBy(PropValue propValue);
+	
+	@Transactional(readOnly = true)
+	Collection<W> findBy(PropValue propValue, boolean includeRetired);
+	
+	@Transactional(readOnly = true)
+	W findByUniqueProp(PropValue propValue);
+	
+	@Transactional(readOnly = true)
+	W findByUniqueProp(PropValue propValue, boolean includeRetired);
+	
+	@Transactional(readOnly = true)
+	Collection<W> findByOr(Criterion... predicates);
+	
+	@Transactional(readOnly = true)
+	Collection<W> findByAnd(Criterion... predicates);
+	
 }

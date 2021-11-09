@@ -22,13 +22,11 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortM;
-import org.openmrs.module.cohort.api.SpringTestConfiguration;
+import org.openmrs.module.cohort.api.dao.search.PropValue;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = SpringTestConfiguration.class, inheritLocations = false)
 public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String[] COHORT_INITIAL_TEST_DATA_XML = {
@@ -48,12 +46,11 @@ public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 	private static final String COHORT_DESCRIPTION = "Cohort description";
 	
 	@Autowired
-	@Qualifier("cohort.genericDao")
-	private IGenericDao<CohortM> dao;
+	@Qualifier("cohortDao")
+	private GenericDao<CohortM> dao;
 	
 	@Before
 	public void setup() throws Exception {
-		dao.setClazz(CohortM.class);
 		for (String data : COHORT_INITIAL_TEST_DATA_XML) {
 			executeDataSet(data);
 		}

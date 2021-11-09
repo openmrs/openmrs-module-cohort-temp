@@ -18,24 +18,4 @@ import org.openmrs.module.BaseModuleActivator;
 @Slf4j
 public class CohortModuleActivator extends BaseModuleActivator {
 	
-	@Override
-	public void willStart() {
-		log.info("Starting cohort Module");
-	}
-	
-	@Override
-	public void started() {
-		log.info("cohort Module started");
-	}
-	
-	@Override
-	public void willStop() {
-		log.info("Stopping cohort Module");
-	}
-	
-	@Override
-	public void stopped() {
-		log.info("cohort Module stopped");
-	}
-	
 }

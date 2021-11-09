@@ -9,23 +9,22 @@ import lombok.Setter;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.api.CohortTypeService;
-import org.openmrs.module.cohort.api.dao.IGenericDao;
-import org.openmrs.module.cohort.api.dao.PropValue;
+import org.openmrs.module.cohort.api.dao.GenericDao;
+import org.openmrs.module.cohort.api.dao.search.PropValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Setter(AccessLevel.PACKAGE)
-@Component(value = "cohort.cohortTypeService")
+@Component(value = "cohort.cohortTypeServiceImpl")
 public class CohortTypeServiceImpl extends BaseOpenmrsService implements CohortTypeService {
 	
-	private final IGenericDao<CohortType> dao;
+	private final GenericDao<CohortType> dao;
 	
 	@Autowired
-	public CohortTypeServiceImpl(IGenericDao<CohortType> dao) {
+	public CohortTypeServiceImpl(GenericDao<CohortType> dao) {
 		this.dao = dao;
-		this.dao.setClazz(CohortType.class);
 	}
 	
 	@Override

@@ -23,25 +23,27 @@ import org.openmrs.module.cohort.CohortType;
 
 public interface CohortService extends OpenmrsService {
 	
-	CohortM getByUuid(@NotNull String uuid);
+	CohortM getCohort(@NotNull String name);
 	
-	CohortM findByName(@NotNull String name);
+	CohortM getCohort(@NotNull int id);
 	
-	Collection<CohortM> findByLocationUuid(@NotNull String locationUuid);
+	CohortM getCohortByUuid(@NotNull String uuid);
 	
-	Collection<CohortM> findByPatientUuid(@NotNull String patientUuid);
+	Collection<CohortM> findCohortByLocationUuid(@NotNull String locationUuid);
+	
+	Collection<CohortM> findCohortByPatientUuid(@NotNull String patientUuid);
 	
 	Collection<CohortM> findAll();
 	
-	CohortM createOrUpdate(@NotNull CohortM cohortType);
+	CohortM saveCohort(@NotNull CohortM cohortType);
 	
-	CohortM delete(@NotNull CohortM cohort, String reason);
+	void voidCohort(@NotNull CohortM cohort, String reason);
 	
-	void purge(@NotNull CohortM cohortType);
+	void purgeCohort(@NotNull CohortM cohortType);
 	
 	CohortAttribute getAttributeByUuid(@NotNull String uuid);
 	
-	CohortAttribute createAttribute(@NotNull CohortAttribute attribute);
+	CohortAttribute saveAttribute(@NotNull CohortAttribute attribute);
 	
 	Collection<CohortAttribute> findAttributesByCohortUuid(@NotNull String cohortUuid);
 	
@@ -49,9 +51,9 @@ public interface CohortService extends OpenmrsService {
 	
 	Collection<CohortAttribute> findAttributesByTypeName(@NotNull String attributeTypeName);
 	
-	CohortAttribute deleteAttribute(@NotNull CohortAttribute attribute, String retiredReason);
+	void voidCohortAttribute(@NotNull CohortAttribute attribute, String retiredReason);
 	
-	void purgeAttribute(@NotNull CohortAttribute attribute);
+	void purgeCohortAttribute(@NotNull CohortAttribute attribute);
 	
 	CohortAttributeType getAttributeTypeByUuid(@NotNull String uuid);
 	
@@ -59,9 +61,9 @@ public interface CohortService extends OpenmrsService {
 	
 	Collection<CohortAttributeType> findAllAttributeTypes();
 	
-	CohortAttributeType createAttributeType(@NotNull CohortAttributeType attributeType);
+	CohortAttributeType saveAttributeType(@NotNull CohortAttributeType attributeType);
 	
-	CohortAttributeType deleteAttributeType(@NotNull CohortAttributeType attributeType, String retiredReason);
+	void voidAttributeType(@NotNull CohortAttributeType attributeType, String retiredReason);
 	
 	void purgeAttributeType(@NotNull CohortAttributeType attributeType);
 	

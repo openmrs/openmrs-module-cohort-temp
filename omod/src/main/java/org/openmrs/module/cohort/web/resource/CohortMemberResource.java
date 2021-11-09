@@ -130,7 +130,7 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 	
 	@Override
 	public void delete(CohortMember cohortMember, String reason, RequestContext context) throws ResponseException {
-		cohortMemberService.delete(cohortMember, reason);
+		cohortMemberService.voidCohortMember(cohortMember, reason);
 	}
 	
 	@Override
@@ -144,7 +144,7 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 		if (purge) {
 			cohortMemberService.purge(cohortMember);
 		} else {
-			cohortMemberService.delete(cohortMember, "");
+			cohortMemberService.voidCohortMember(cohortMember, "");
 		}
 	}
 	

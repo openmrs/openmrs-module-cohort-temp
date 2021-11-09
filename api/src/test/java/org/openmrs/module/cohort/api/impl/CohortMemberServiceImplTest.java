@@ -23,7 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortMemberAttribute;
 import org.openmrs.module.cohort.CohortMemberAttributeType;
-import org.openmrs.module.cohort.api.dao.IGenericDao;
+import org.openmrs.module.cohort.api.dao.GenericDao;
 import org.openmrs.module.cohort.api.dao.search.SearchQueryHandler;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -34,13 +34,13 @@ public class CohortMemberServiceImplTest {
 	private final String COHORT_MEMBER_ATTRIBUTE_UUID = "32816782-d578-401c-8475-8ccbb26ce001";
 	
 	@Mock
-	private IGenericDao<CohortMemberAttribute> cohortMemberAttributeDao;
+	private GenericDao<CohortMemberAttribute> cohortMemberAttributeDao;
 	
 	@Mock
-	private IGenericDao<CohortMemberAttributeType> cohortMemberAttributeTypeDao;
+	private GenericDao<CohortMemberAttributeType> cohortMemberAttributeTypeDao;
 	
 	@Mock
-	private IGenericDao<CohortMember> cohortMemberDao;
+	private GenericDao<CohortMember> cohortMemberDao;
 	
 	@Mock
 	private SearchQueryHandler searchHandler;

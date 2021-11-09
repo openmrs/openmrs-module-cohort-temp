@@ -13,6 +13,7 @@ import static org.hibernate.criterion.Restrictions.and;
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.or;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 
 import lombok.Getter;
@@ -26,55 +27,68 @@ import org.openmrs.Auditable;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.Retireable;
 import org.openmrs.Voidable;
+import org.openmrs.module.cohort.api.dao.search.PropValue;
 import org.openmrs.module.cohort.api.dao.search.SearchQueryHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 @Slf4j
 @SuppressWarnings("unchecked")
 @Getter
 @Setter
-public abstract class AbstractHibernateDao<W extends OpenmrsObject & Auditable> {
+public abstract class AbstractGenericDao<W extends OpenmrsObject & Auditable> implements GenericDao<W> {
 	
-	private Class<W> clazz;
+	private final SessionFactory sessionFactory;
 	
-	@Autowired
-	@Qualifier("sessionFactory")
-	private SessionFactory sessionFactory;
+	private final SearchQueryHandler searchHandler;
 	
-	@Autowired
-	@Qualifier("cohort.search.cohortSearchHandler")
-	private SearchQueryHandler searchHandler;
+	private final Class<W> clazz;
+	
+	public AbstractGenericDao(SessionFactory sessionFactory, SearchQueryHandler searchHandler) {
+		this.sessionFactory = sessionFactory;
+		this.searchHandler = searchHandler;
+		
+		clazz = (Class<W>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+	}
 	
 	protected Session getCurrentSession() {
 		return sessionFactory.getCurrentSession();
 	}
 	
+	@Override
+	public W get(int id) {
+		return (W) getCurrentSession().get(clazz, id);
+	}
+	
+	@Override
 	public W get(String uuid) {
 		Criteria criteria = getCurrentSession().createCriteria(clazz);
 		includeRetiredObjects(criteria, false);
 		return (W) criteria.add(eq("uuid", uuid)).uniqueResult();
 	}
 	
+	@Override
 	public Collection<W> findAll() {
 		return this.findAll(false);
 	}
 	
+	@Override
 	public Collection<W> findAll(boolean includeRetired) {
 		Criteria criteria = getCurrentSession().createCriteria(clazz);
 		includeRetiredObjects(criteria, includeRetired);
 		return criteria.list();
 	}
 	
+	@Override
 	public W createOrUpdate(W entity) {
 		getCurrentSession().saveOrUpdate(entity);
 		return entity;
 	}
 	
+	@Override
 	public void delete(W entity) {
 		getCurrentSession().delete(entity);
 	}
 	
+	@Override
 	public void delete(String uuid) {
 		this.delete(this.get(uuid));
 	}
@@ -85,10 +99,12 @@ public abstract class AbstractHibernateDao<W extends OpenmrsObject & Auditable> 
 	 * @param propValue Property and value
 	 * @return A Collection of W objects
 	 */
+	@Override
 	public Collection<W> findBy(PropValue propValue) {
 		return this.findBy(propValue, false);
 	}
 	
+	@Override
 	public Collection<W> findBy(PropValue propValue, boolean includeRetired) {
 		Criteria criteria = getCurrentSession().createCriteria(clazz);
 		includeRetiredObjects(criteria, includeRetired);
@@ -98,10 +114,12 @@ public abstract class AbstractHibernateDao<W extends OpenmrsObject & Auditable> 
 		        : criteria.add(eq(propValue.getProperty(), propValue.getValue())).list();
 	}
 	
+	@Override
 	public W findByUniqueProp(PropValue propValue) {
 		return this.findByUniqueProp(propValue, false);
 	}
 	
+	@Override
 	public W findByUniqueProp(PropValue propValue, boolean includeRetired) {
 		Criteria criteria = getCurrentSession().createCriteria(clazz);
 		includeRetiredObjects(criteria, includeRetired);
@@ -111,11 +129,13 @@ public abstract class AbstractHibernateDao<W extends OpenmrsObject & Auditable> 
 		        : criteria.add(eq(propValue.getProperty(), propValue.getValue())).uniqueResult());
 	}
 	
+	@Override
 	public Collection<W> findByOr(Criterion... predicates) {
 		Criteria orByCriteria = getCurrentSession().createCriteria(clazz);
 		return orByCriteria.add(or(predicates)).list();
 	}
 	
+	@Override
 	public Collection<W> findByAnd(Criterion... predicates) {
 		Criteria andByCriteria = getCurrentSession().createCriteria(clazz);
 		return andByCriteria.add(and(predicates)).list();
@@ -125,7 +145,7 @@ public abstract class AbstractHibernateDao<W extends OpenmrsObject & Auditable> 
 		return Voidable.class.isAssignableFrom(clazz);
 	}
 	
-	protected boolean isRetirable() {
+	protected boolean isRetireable() {
 		return Retireable.class.isAssignableFrom(clazz);
 	}
 	
@@ -133,7 +153,7 @@ public abstract class AbstractHibernateDao<W extends OpenmrsObject & Auditable> 
 		criteria.add(eq("voided", false));
 	}
 	
-	protected void handleRetirable(Criteria criteria) {
+	protected void handleRetireable(Criteria criteria) {
 		criteria.add(eq("retired", false));
 	}
 	
@@ -141,8 +161,8 @@ public abstract class AbstractHibernateDao<W extends OpenmrsObject & Auditable> 
 		if (!includeRetired) {
 			if (isVoidable()) {
 				handleVoidable(criteria);
-			} else if (isRetirable()) {
-				handleRetirable(criteria);
+			} else if (isRetireable()) {
+				handleRetireable(criteria);
 			}
 		}
 	}

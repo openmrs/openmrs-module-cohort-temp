@@ -30,8 +30,8 @@ import org.openmrs.module.cohort.CohortAttribute;
 import org.openmrs.module.cohort.CohortAttributeType;
 import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortType;
-import org.openmrs.module.cohort.api.dao.IGenericDao;
-import org.openmrs.module.cohort.api.dao.PropValue;
+import org.openmrs.module.cohort.api.dao.GenericDao;
+import org.openmrs.module.cohort.api.dao.search.PropValue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CohortServiceImplTest {
@@ -41,13 +41,13 @@ public class CohortServiceImplTest {
 	private static final String COHORT_ATTRIBUTE_UUID = "06036a52-cf51-4182-9283-dedb15fea65a";
 	
 	@Mock
-	private IGenericDao<CohortM> cohortDao;
+	private GenericDao<CohortM> cohortDao;
 	
 	@Mock
-	private IGenericDao<CohortAttribute> cohortAttributeDao;
+	private GenericDao<CohortAttribute> cohortAttributeDao;
 	
 	@Mock
-	private IGenericDao<CohortAttributeType> cohortAttributeTypeDao;
+	private GenericDao<CohortAttributeType> cohortAttributeTypeDao;
 	
 	private CohortServiceImpl cohortService;
 	
@@ -57,7 +57,7 @@ public class CohortServiceImplTest {
 	}
 	
 	@Test
-	public void shouldCreateNewCohort() {
+	public void createOrUpdate_shouldCreateNewCohort() {
 		CohortType cohortType = mock(CohortType.class);
 		CohortM cohortM = new CohortM();
 		cohortM.setCohortId(12);
@@ -65,7 +65,7 @@ public class CohortServiceImplTest {
 		
 		when(cohortDao.createOrUpdate(cohortM)).thenReturn(cohortM);
 		
-		CohortM result = cohortService.createOrUpdate(cohortM);
+		CohortM result = cohortService.saveCohort(cohortM);
 		assertThat(result, notNullValue());
 		assertThat(result.getId(), equalTo(12));
 	}
@@ -99,7 +99,7 @@ public class CohortServiceImplTest {
 		when(cohortAttribute.getCohortAttributeId()).thenReturn(345);
 		when(cohortAttributeDao.createOrUpdate(cohortAttribute)).thenReturn(cohortAttribute);
 		
-		CohortAttribute attribute = cohortService.createAttribute(cohortAttribute);
+		CohortAttribute attribute = cohortService.saveAttribute(cohortAttribute);
 		assertThat(attribute, notNullValue());
 		assertThat(attribute.getCohortAttributeId(), equalTo(345));
 	}
@@ -111,7 +111,7 @@ public class CohortServiceImplTest {
 		when(cohortM.getUuid()).thenReturn(COHORT_UUID);
 		when(cohortDao.get(COHORT_UUID)).thenReturn(cohortM);
 		
-		CohortM result = cohortService.getByUuid(COHORT_UUID);
+		CohortM result = cohortService.getCohortByUuid(COHORT_UUID);
 		assertThat(result, notNullValue());
 		assertThat(result.getUuid(), equalTo(COHORT_UUID));
 	}
@@ -141,7 +141,7 @@ public class CohortServiceImplTest {
 		    PropValue.builder().associationPath(Optional.of("location")).property("uuid").value(locationUuid).build()))
 		            .thenReturn(Collections.singletonList(cohort));
 		
-		Collection<CohortM> cohortsByLocationUuid = cohortService.findByLocationUuid(locationUuid);
+		Collection<CohortM> cohortsByLocationUuid = cohortService.findCohortByLocationUuid(locationUuid);
 		assertThat(cohortsByLocationUuid, notNullValue());
 		assertThat(cohortsByLocationUuid, hasSize(1));
 		

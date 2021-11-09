@@ -12,7 +12,6 @@ package org.openmrs.module.cohort.api.impl;
 import javax.validation.constraints.NotNull;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.Optional;
 
 import lombok.AccessLevel;
@@ -22,47 +21,46 @@ import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortMemberAttribute;
 import org.openmrs.module.cohort.CohortMemberAttributeType;
 import org.openmrs.module.cohort.api.CohortMemberService;
-import org.openmrs.module.cohort.api.dao.IGenericDao;
-import org.openmrs.module.cohort.api.dao.PropValue;
+import org.openmrs.module.cohort.api.dao.GenericDao;
+import org.openmrs.module.cohort.api.dao.search.PropValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Setter(AccessLevel.PACKAGE)
-@Component(value = "cohort.cohortMemberService")
+@Component(value = "cohort.cohortMemberServiceImpl")
 public class CohortMemberServiceImpl extends BaseOpenmrsService implements CohortMemberService {
 	
-	private final IGenericDao<CohortMember> cohortMemberDao;
+	private final GenericDao<CohortMember> cohortMemberDao;
 	
-	private final IGenericDao<CohortMemberAttributeType> cohortMemberAttributeTypeDao;
+	private final GenericDao<CohortMemberAttributeType> cohortMemberAttributeTypeDao;
 	
-	private final IGenericDao<CohortMemberAttribute> cohortMemberAttributeDao;
+	private final GenericDao<CohortMemberAttribute> cohortMemberAttributeDao;
 	
 	@Autowired
-	public CohortMemberServiceImpl(IGenericDao<CohortMember> cohortMemberDao,
-	    IGenericDao<CohortMemberAttributeType> cohortMemberAttributeTypeDao,
-	    IGenericDao<CohortMemberAttribute> cohortMemberAttributeDao) {
+	public CohortMemberServiceImpl(GenericDao<CohortMember> cohortMemberDao,
+	    GenericDao<CohortMemberAttributeType> cohortMemberAttributeTypeDao,
+	    GenericDao<CohortMemberAttribute> cohortMemberAttributeDao) {
 		this.cohortMemberDao = cohortMemberDao;
 		this.cohortMemberAttributeTypeDao = cohortMemberAttributeTypeDao;
 		this.cohortMemberAttributeDao = cohortMemberAttributeDao;
-		
-		this.cohortMemberDao.setClazz(CohortMember.class);
-		this.cohortMemberAttributeDao.setClazz(CohortMemberAttribute.class);
-		this.cohortMemberAttributeTypeDao.setClazz(CohortMemberAttributeType.class);
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public CohortMember getByUuid(@NotNull String uuid) {
 		return cohortMemberDao.get(uuid);
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public CohortMember getByName(String name) {
 		return cohortMemberDao.findByUniqueProp(PropValue.builder().property("name").value(name).build());
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Collection<CohortMember> findAll() {
 		return cohortMemberDao.findAll();
 	}
@@ -73,14 +71,12 @@ public class CohortMemberServiceImpl extends BaseOpenmrsService implements Cohor
 	}
 	
 	@Override
-	public CohortMember delete(CohortMember cohortMember, String retireReason) {
-		if (cohortMember != null) {
-			cohortMember.setVoided(true);
-			cohortMember.setVoidReason(retireReason);
-			cohortMember.setDateVoided(new Date());
-			return cohortMemberDao.createOrUpdate(cohortMember);
+	public CohortMember voidCohortMember(CohortMember cohortMember, String voidReason) {
+		if (cohortMember == null) {
+			return null;
 		}
-		return null;
+		
+		return cohortMemberDao.createOrUpdate(cohortMember);
 	}
 	
 	@Override
@@ -89,11 +85,13 @@ public class CohortMemberServiceImpl extends BaseOpenmrsService implements Cohor
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public CohortMemberAttributeType getAttributeTypeByUuid(String uuid) {
 		return cohortMemberAttributeTypeDao.get(uuid);
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Collection<CohortMemberAttributeType> findAllAttributeTypes() {
 		return cohortMemberAttributeTypeDao.findAll();
 	}
@@ -117,11 +115,13 @@ public class CohortMemberServiceImpl extends BaseOpenmrsService implements Cohor
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public CohortMemberAttribute getAttributeByUuid(@NotNull String uuid) {
 		return cohortMemberAttributeDao.get(uuid);
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Collection<CohortMemberAttribute> getAttributeByTypeUuid(@NotNull String uuid) {
 		return cohortMemberAttributeDao.findBy(
 		    PropValue.builder().property("uuid").associationPath(Optional.of("attributeType")).value(uuid).build());
@@ -145,23 +145,27 @@ public class CohortMemberServiceImpl extends BaseOpenmrsService implements Cohor
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Collection<CohortMember> findCohortMembersByCohortUuid(String cohortUuid) {
 		return cohortMemberDao.findBy(
 		    PropValue.builder().property("uuid").associationPath(Optional.of("cohort")).value(cohortUuid).build());
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Collection<CohortMember> findCohortMembersByPatientUuid(String patientUuid) {
 		return cohortMemberDao.findBy(
 		    PropValue.builder().property("uuid").associationPath(Optional.of("patient")).value(patientUuid).build());
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Collection<CohortMember> findCohortMembersByPatientName(@NotNull String patientName) {
 		return cohortMemberDao.getSearchHandler().findCohortMembersByPatientNames(patientName);
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Collection<CohortMember> findCohortMembersByCohortAndPatient(@NotNull String cohortUuid,
 	        @NotNull String patientName) {
 		return cohortMemberDao.getSearchHandler().findCohortMembersByCohortAndPatient(cohortUuid, patientName);

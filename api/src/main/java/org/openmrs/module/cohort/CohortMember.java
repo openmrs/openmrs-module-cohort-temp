@@ -36,7 +36,7 @@ public class CohortMember extends BaseCustomizableData<CohortMemberAttribute> {
 	private Integer cohortMemberId;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "patient_id")
+	@JoinColumn(name = "patient_id", nullable = false)
 	private Patient patient;
 	
 	@ManyToOne(cascade = CascadeType.ALL)

@@ -36,7 +36,7 @@ public class CohortTypeResource extends DataDelegatingCrudResource<CohortType> {
 	private final CohortTypeService cohortTypeService;
 	
 	public CohortTypeResource() {
-		this.cohortTypeService = Context.getRegisteredComponent("cohort.cohortTypeService", CohortTypeService.class);
+		this.cohortTypeService = Context.getService(CohortTypeService.class);
 	}
 	
 	@Override

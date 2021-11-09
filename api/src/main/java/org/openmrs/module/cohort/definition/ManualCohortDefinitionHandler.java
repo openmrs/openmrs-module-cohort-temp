@@ -14,7 +14,12 @@ import org.openmrs.module.cohort.CohortMember;
 
 public interface ManualCohortDefinitionHandler extends CohortDefinitionHandler {
 	
-	void addMember(CohortM cohort, CohortMember cohortMember);
+	@Override
+	default void update(CohortM cohort) {
+		// Manual cohorts don't generally need to do anything to update themselves
+	}
 	
-	void removeMember(CohortM cohort, CohortMember cohortMember);
+	void addMembers(CohortM cohort, CohortMember... cohortMembers);
+	
+	void removeMembers(CohortM cohort, CohortMember... cohortMembers);
 }

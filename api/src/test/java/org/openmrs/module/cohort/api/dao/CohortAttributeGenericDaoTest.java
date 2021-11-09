@@ -22,14 +22,12 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortAttribute;
-import org.openmrs.module.cohort.api.SpringTestConfiguration;
 import org.openmrs.module.cohort.api.TestDataUtils;
+import org.openmrs.module.cohort.api.dao.search.PropValue;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = SpringTestConfiguration.class, inheritLocations = false)
 public class CohortAttributeGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String COHORT_ATTRIBUTE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortAttributeDaoTest_initialTestData.xml";
@@ -49,12 +47,11 @@ public class CohortAttributeGenericDaoTest extends BaseModuleContextSensitiveTes
 	private static final String COHORT_ATTRIBUTE_VALUE = "cohortAttribute";
 	
 	@Autowired
-	@Qualifier("cohort.genericDao")
-	private IGenericDao<CohortAttribute> dao;
+	@Qualifier("cohortAttributeDao")
+	private GenericDao<CohortAttribute> dao;
 	
 	@Before
 	public void setup() throws Exception {
-		dao.setClazz(CohortAttribute.class);
 		executeDataSet(COHORT_ATTRIBUTE_INITIAL_TEST_DATA_XML);
 	}
 	

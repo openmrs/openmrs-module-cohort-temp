@@ -28,7 +28,7 @@ public interface CohortMemberService extends OpenmrsService {
 	
 	CohortMember createOrUpdate(@NotNull CohortMember cohortMember);
 	
-	CohortMember delete(@NotNull CohortMember cohortMember, String retireReason);
+	CohortMember voidCohortMember(@NotNull CohortMember cohortMember, String voidReason);
 	
 	void purge(@NotNull CohortMember cohortMember);
 	

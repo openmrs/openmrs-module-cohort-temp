@@ -52,8 +52,8 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	private final CohortTypeService cohortTypeService;
 	
 	public CohortResource() {
-		this.cohortService = Context.getRegisteredComponent("cohort.cohortService", CohortService.class);
-		this.cohortTypeService = Context.getRegisteredComponent("cohort.cohortTypeService", CohortTypeService.class);
+		this.cohortService = Context.getService(CohortService.class);
+		this.cohortTypeService = Context.getService(CohortTypeService.class);
 	}
 	
 	@Override
@@ -138,17 +138,17 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 				cohortMember.setEndDate(cohort.getEndDate());
 			}
 		}
-		return cohortService.createOrUpdate(cohort);
+		return cohortService.saveCohort(cohort);
 	}
 	
 	@Override
 	protected void delete(CohortM cohort, String reason, RequestContext request) throws ResponseException {
-		cohortService.delete(cohort, reason);
+		cohortService.voidCohort(cohort, reason);
 	}
 	
 	@Override
 	public void purge(CohortM cohort, RequestContext request) throws ResponseException {
-		cohortService.purge(cohort);
+		cohortService.purgeCohort(cohort);
 	}
 	
 	@Override
@@ -158,7 +158,7 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	
 	@Override
 	public CohortM getByUniqueId(String uuid) {
-		return cohortService.getByUuid(uuid);
+		return cohortService.getCohortByUuid(uuid);
 	}
 	
 	@Override
@@ -198,7 +198,7 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 		}
 		
 		if (StringUtils.isNotBlank(location)) {
-			Collection<CohortM> cohorts = cohortService.findByLocationUuid(location);
+			Collection<CohortM> cohorts = cohortService.findCohortByLocationUuid(location);
 			return new NeedsPaging<>(new ArrayList<>(cohorts), context);
 		}
 		

@@ -23,15 +23,13 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortMemberAttribute;
-import org.openmrs.module.cohort.api.SpringTestConfiguration;
 import org.openmrs.module.cohort.api.TestDataUtils;
+import org.openmrs.module.cohort.api.dao.search.PropValue;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
 
 @Ignore
-@ContextConfiguration(classes = SpringTestConfiguration.class, inheritLocations = false)
 public class CohortMemberAttributeGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	//The order is salient
@@ -52,13 +50,11 @@ public class CohortMemberAttributeGenericDaoTest extends BaseModuleContextSensit
 	private static final String COHORT_MEMBER_ATTRIBUTE_VALUE = "cohortMemberAttribute";
 	
 	@Autowired
-	@Qualifier("cohort.genericDao")
-	private IGenericDao<CohortMemberAttribute> dao;
+	@Qualifier("cohortMemberAttributeDao")
+	private GenericDao<CohortMemberAttribute> dao;
 	
 	@Before
 	public void setup() throws Exception {
-		dao.setClazz(CohortMemberAttribute.class);
-		
 		for (String dataset : COHORT_MEMBER_ATTRIBUTE_INITIAL_TEST_DATA_XML) {
 			executeDataSet(dataset);
 		}

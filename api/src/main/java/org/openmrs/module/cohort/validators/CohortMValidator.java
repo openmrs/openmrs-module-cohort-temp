@@ -25,7 +25,7 @@ public class CohortMValidator implements Validator {
 	private final CohortService cohortService;
 	
 	@Autowired
-	public CohortMValidator(CohortService cohortService) {
+	public CohortMValidator(@Qualifier("cohort.cohortService") CohortService cohortService) {
 		this.cohortService = cohortService;
 	}
 	
@@ -51,7 +51,7 @@ public class CohortMValidator implements Validator {
 		}
 		
 		//Cohort should have a unique name
-		CohortM cohortByName = cohortService.findByName(cohort.getName());
+		CohortM cohortByName = cohortService.getCohort(cohort.getName());
 		if (cohortByName != null) {
 			errors.rejectValue("name", "A cohort with this name already exists");
 		}

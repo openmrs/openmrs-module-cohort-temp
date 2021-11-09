@@ -12,7 +12,6 @@ package org.openmrs.module.cohort.api.impl;
 import javax.validation.constraints.NotNull;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,8 +25,8 @@ import org.openmrs.module.cohort.CohortAttributeType;
 import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.api.CohortService;
-import org.openmrs.module.cohort.api.dao.IGenericDao;
-import org.openmrs.module.cohort.api.dao.PropValue;
+import org.openmrs.module.cohort.api.dao.GenericDao;
+import org.openmrs.module.cohort.api.dao.search.PropValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,44 +34,46 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Transactional
 @Setter(AccessLevel.PACKAGE)
-@Component(value = "cohort.cohortService")
+@Component(value = "cohort.cohortServiceImpl")
 public class CohortServiceImpl extends BaseOpenmrsService implements CohortService {
 	
-	private final IGenericDao<CohortM> cohortDao;
+	private final GenericDao<CohortM> cohortDao;
 	
-	private final IGenericDao<CohortAttribute> cohortAttributeDao;
+	private final GenericDao<CohortAttribute> cohortAttributeDao;
 	
-	private final IGenericDao<CohortAttributeType> cohortAttributeTypeDao;
+	private final GenericDao<CohortAttributeType> cohortAttributeTypeDao;
 	
 	@Autowired
-	public CohortServiceImpl(IGenericDao<CohortM> cohortDao, IGenericDao<CohortAttribute> cohortAttributeDao,
-	    IGenericDao<CohortAttributeType> cohortAttributeTypeDao) {
+	public CohortServiceImpl(GenericDao<CohortM> cohortDao, GenericDao<CohortAttribute> cohortAttributeDao,
+	    GenericDao<CohortAttributeType> cohortAttributeTypeDao) {
 		this.cohortDao = cohortDao;
-		this.cohortDao.setClazz(CohortM.class);
 		this.cohortAttributeDao = cohortAttributeDao;
-		this.cohortAttributeDao.setClazz(CohortAttribute.class);
 		this.cohortAttributeTypeDao = cohortAttributeTypeDao;
-		this.cohortAttributeTypeDao.setClazz(CohortAttributeType.class);
 	}
 	
 	@Override
-	public CohortM getByUuid(@NotNull String uuid) {
+	public CohortM getCohortByUuid(@NotNull String uuid) {
 		return cohortDao.get(uuid);
 	}
 	
 	@Override
-	public CohortM findByName(@NotNull String name) {
+	public CohortM getCohort(@NotNull String name) {
 		return cohortDao.findByUniqueProp(PropValue.builder().property("name").value(name).build());
 	}
 	
 	@Override
-	public Collection<CohortM> findByLocationUuid(@NotNull String locationUuid) {
+	public CohortM getCohort(int id) {
+		return cohortDao.get(id);
+	}
+	
+	@Override
+	public Collection<CohortM> findCohortByLocationUuid(@NotNull String locationUuid) {
 		return cohortDao.findBy(
 		    PropValue.builder().property("uuid").associationPath(Optional.of("location")).value(locationUuid).build());
 	}
 	
 	@Override
-	public Collection<CohortM> findByPatientUuid(@NotNull String patientUuid) {
+	public Collection<CohortM> findCohortByPatientUuid(@NotNull String patientUuid) {
 		return cohortDao.findBy(
 		    PropValue.builder().property("uuid").associationPath(Optional.of("patient")).value(patientUuid).build());
 	}
@@ -83,20 +84,21 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public CohortM createOrUpdate(@NotNull CohortM cohortM) {
+	public CohortM saveCohort(@NotNull CohortM cohortM) {
 		return cohortDao.createOrUpdate(cohortM);
 	}
 	
 	@Override
-	public CohortM delete(@NotNull CohortM cohort, String reason) {
-		cohort.setVoided(true);
-		cohort.setVoidReason(reason);
-		cohort.setDateVoided(new Date());
-		return cohortDao.createOrUpdate(cohort);
+	public void voidCohort(CohortM cohort, String reason) {
+		if (cohort == null) {
+			return;
+		}
+		
+		cohortDao.createOrUpdate(cohort);
 	}
 	
 	@Override
-	public void purge(@NotNull CohortM cohort) {
+	public void purgeCohort(@NotNull CohortM cohort) {
 		cohortDao.delete(cohort);
 	}
 	
@@ -106,7 +108,7 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public CohortAttribute createAttribute(@NotNull CohortAttribute attribute) {
+	public CohortAttribute saveAttribute(@NotNull CohortAttribute attribute) {
 		return cohortAttributeDao.createOrUpdate(attribute);
 	}
 	
@@ -129,15 +131,16 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public CohortAttribute deleteAttribute(@NotNull CohortAttribute attribute, String retiredReason) {
-		attribute.setVoided(true);
-		attribute.setDateVoided(new Date());
-		attribute.setVoidReason(retiredReason);
-		return cohortAttributeDao.createOrUpdate(attribute);
+	public void voidCohortAttribute(@NotNull CohortAttribute attribute, String retiredReason) {
+		if (attribute == null) {
+			return;
+		}
+		
+		cohortAttributeDao.createOrUpdate(attribute);
 	}
 	
 	@Override
-	public void purgeAttribute(@NotNull CohortAttribute attribute) {
+	public void purgeCohortAttribute(@NotNull CohortAttribute attribute) {
 		cohortAttributeDao.delete(attribute);
 	}
 	
@@ -157,16 +160,17 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public CohortAttributeType createAttributeType(@NotNull CohortAttributeType attributeType) {
+	public CohortAttributeType saveAttributeType(@NotNull CohortAttributeType attributeType) {
 		return cohortAttributeTypeDao.createOrUpdate(attributeType);
 	}
 	
 	@Override
-	public CohortAttributeType deleteAttributeType(@NotNull CohortAttributeType attributeType, String retiredReason) {
-		attributeType.setRetired(true);
-		attributeType.setDateRetired(new Date());
-		attributeType.setRetireReason(retiredReason);
-		return cohortAttributeTypeDao.createOrUpdate(attributeType);
+	public void voidAttributeType(@NotNull CohortAttributeType attributeType, String retiredReason) {
+		if (attributeType == null) {
+			return;
+		}
+		
+		cohortAttributeTypeDao.createOrUpdate(attributeType);
 	}
 	
 	@Override

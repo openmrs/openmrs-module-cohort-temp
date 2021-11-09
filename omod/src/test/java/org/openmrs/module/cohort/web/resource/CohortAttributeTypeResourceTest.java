@@ -98,7 +98,7 @@ public class CohortAttributeTypeResourceTest extends BaseCohortResourceTest<Coho
 	
 	@Test
 	public void shouldCreateNewResource() {
-		when(cohortService.createAttributeType(getObject())).thenReturn(getObject());
+		when(cohortService.saveAttributeType(getObject())).thenReturn(getObject());
 		
 		CohortAttributeType newlyCreatedObject = getResource().save(getObject());
 		assertThat(newlyCreatedObject, notNullValue());

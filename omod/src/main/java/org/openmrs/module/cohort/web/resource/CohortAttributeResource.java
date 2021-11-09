@@ -85,17 +85,17 @@ public class CohortAttributeResource extends BaseAttributeCrudResource1_9<Cohort
 	
 	@Override
 	public CohortAttribute save(CohortAttribute cohortAttribute) {
-		return cohortService.createAttribute(cohortAttribute);
+		return cohortService.saveAttribute(cohortAttribute);
 	}
 	
 	@Override
 	protected void delete(CohortAttribute cohortAttribute, String reason, RequestContext request) throws ResponseException {
-		cohortService.deleteAttribute(cohortAttribute, reason);
+		cohortService.voidCohortAttribute(cohortAttribute, reason);
 	}
 	
 	@Override
 	public void purge(CohortAttribute cohortAttribute, RequestContext request) throws ResponseException {
-		cohortService.purgeAttribute(cohortAttribute);
+		cohortService.purgeCohortAttribute(cohortAttribute);
 	}
 	
 	@Override

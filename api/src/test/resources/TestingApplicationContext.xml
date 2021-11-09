@@ -18,15 +18,17 @@
      Needed to override and add hibernate mappings to the classpath since OMOD is not packaged yet
      -->
     <bean id="sessionFactory" class="org.openmrs.api.db.hibernate.HibernateSessionFactoryBean">
+        <property name="configLocations">
+            <list>
+                <value>classpath:test-hibernate.cfg.xml</value>
+            </list>
+        </property>
+        <property name="mappingJarLocations">
+            <ref bean="mappingJarResources"/>
+        </property>
         <property name="packagesToScan">
             <list>
                 <value>org.openmrs</value>
-                <value>org.openmrs.module.cohort</value>
-            </list>
-        </property>
-        <property name="configLocations">
-            <list>
-                <value>classpath:testHibernate.cfg.xml</value>
             </list>
         </property>
     </bean>

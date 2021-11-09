@@ -18,4 +18,49 @@
 
     <context:annotation-config />
     <context:component-scan base-package="org.openmrs.module.cohort"/>
+
+    <bean id="cohort.cohortService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="target" ref="cohort.cohortServiceImpl"/>
+        <property name="preInterceptors" ref="serviceInterceptors"/>
+        <property name="transactionAttributeSource" ref="transactionAttributeSource"/>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="false">
+                <value>org.openmrs.module.cohort.api.CohortService</value>
+                <ref bean="cohort.cohortService"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cohort.cohortMemberService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="target" ref="cohort.cohortMemberServiceImpl"/>
+        <property name="preInterceptors" ref="serviceInterceptors"/>
+        <property name="transactionAttributeSource" ref="transactionAttributeSource"/>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>org.openmrs.module.cohort.api.CohortMemberService</value>
+                <ref bean="cohort.cohortMemberService"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cohort.cohortTypeService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="target" ref="cohort.cohortTypeServiceImpl"/>
+        <property name="preInterceptors" ref="serviceInterceptors"/>
+        <property name="transactionAttributeSource" ref="transactionAttributeSource"/>
+    </bean>
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>org.openmrs.module.cohort.api.CohortTypeService</value>
+                <ref bean="cohort.cohortTypeService"/>
+            </list>
+        </property>
+    </bean>
 </beans>
