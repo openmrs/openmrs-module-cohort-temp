@@ -238,7 +238,7 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	public int size(CohortM cohort) {
 		return cohort.size();
 	}
-
+	
 	@PropertyGetter("cohortMembers")
 	public Set<CohortMember> getCohortMembers(CohortM cohort) {
 		return cohort.getActiveCohortMembers();

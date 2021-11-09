@@ -75,4 +75,11 @@ public class BaseCohortResourceTest<K extends OpenmrsObject, T extends Delegatin
 		assertThat(creatableProperties, notNullValue());
 		assertThat(creatableProperties.getProperties().keySet(), contains(properties));
 	}
+	
+	public void verifyUpdatableProperties(String... properties) {
+		DelegatingResourceDescription updatableProperties = resource.getUpdatableProperties();
+		
+		assertThat(updatableProperties, notNullValue());
+		assertThat(updatableProperties.getProperties().keySet(), contains(properties));
+	}
 }
