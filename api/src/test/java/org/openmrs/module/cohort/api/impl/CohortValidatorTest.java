@@ -20,7 +20,7 @@ public class CohortValidatorTest extends BaseModuleContextSensitiveTest {
 	CohortMValidator validator;
 
 	@Test
-	public void saveCohort_shouldFailValidationOnExixtingName() {
+	public void saveCohort_shouldFailValidationOnExistingName() {
 		CohortM cohort = new CohortM();
 		cohort.setCohortType(new CohortType());
 		cohort.setName("Test Cohort");
