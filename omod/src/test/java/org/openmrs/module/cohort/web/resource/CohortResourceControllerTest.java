@@ -49,6 +49,28 @@ public class CohortResourceControllerTest extends MainResourceControllerTest {
 		assertEquals(1, members.size());
 		assertEquals("da7f524f-27ce-4bb2-86d6-6d1d05312bd5", members.iterator().next().getPatient().getUuid());
 	}
+
+	@Test
+	public void shouldUpdateCohortWhileKeepingName() throws Exception {
+
+		CohortM cohort = Context.getService(CohortService.class).getCohort("cohort name");
+		assertNull(cohort);
+
+		String createJson = "{ \"name\":\"cohort name\", \"description\":\"cohort description\"," + "\"cohortMembers\": [ {"
+				+ "\"patient\":\"da7f524f-27ce-4bb2-86d6-6d1d05312bd5\"" + " } ]" + "}";
+
+		handle(newPostRequest(getURI(), createJson));
+		cohort = Context.getService(CohortService.class).getCohort("cohort name");
+
+		String updateJson = "{ \"name\":\"cohort name\", \"description\":\"updated cohort description\"," + "\"cohortMembers\": [ {"
+				+ "\"patient\":\"da7f524f-27ce-4bb2-86d6-6d1d05312bd5\"" + " } ]" + "}";
+
+		handle(newPostRequest(getURI() + "/" + cohort.getUuid(), updateJson));
+		cohort = Context.getService(CohortService.class).getCohort("cohort name");
+
+		assertNotNull(cohort);
+		assertEquals("updated cohort description", cohort.getDescription());
+	}
 	
 	@Override
 	public void shouldGetDefaultByUuid() throws Exception {
