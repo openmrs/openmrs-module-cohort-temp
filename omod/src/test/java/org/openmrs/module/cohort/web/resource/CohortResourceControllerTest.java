@@ -62,8 +62,7 @@ public class CohortResourceControllerTest extends MainResourceControllerTest {
 		handle(newPostRequest(getURI(), createJson));
 		cohort = Context.getService(CohortService.class).getCohort("cohort name");
 
-		String updateJson = "{ \"name\":\"cohort name\", \"description\":\"updated cohort description\"," + "\"cohortMembers\": [ {"
-				+ "\"patient\":\"da7f524f-27ce-4bb2-86d6-6d1d05312bd5\"" + " } ]" + "}";
+		String updateJson = "{ \"name\":\"cohort name\", \"description\":\"updated cohort description\" } ]" + "}";
 
 		handle(newPostRequest(getURI() + "/" + cohort.getUuid(), updateJson));
 		cohort = Context.getService(CohortService.class).getCohort("cohort name");
