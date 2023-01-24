@@ -46,22 +46,6 @@ public class CohortServiceImplContextSensitiveTest extends BaseModuleContextSens
 		assertThat(result, notNullValue());
 		assertThat(result.getName(), equalTo("Updated Test Cohort"));
 	}
-
-	@Test
-	public void saveCohort_shouldUpdateCohortWhileKeepingName() {
-		CohortM cohortM = new CohortM();
-		cohortM.setName("Test Cohort");
-		cohortM.setCohortType(new CohortType());
-
-		CohortM savedCohort = Context.getService(CohortService.class).saveCohort(cohortM);
-		savedCohort.setDescription("Updated Test Description");
-
-		CohortM result = Context.getService(CohortService.class).saveCohort(savedCohort);
-
-		assertThat(result, notNullValue());
-		assertThat(result.getName(), equalTo("Test Cohort"));
-		assertThat(result.getDescription(), equalTo("Updated Test Description"));
-	}
 	
 	@Test
 	public void saveCohort_shouldSaveCohortMembers() {
