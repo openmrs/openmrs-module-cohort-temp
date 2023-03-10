@@ -6,7 +6,6 @@ import java.util.Collection;
 
 import lombok.AccessLevel;
 import lombok.Setter;
-import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.api.CohortTypeService;
@@ -59,8 +58,7 @@ public class CohortTypeServiceImpl extends BaseOpenmrsService implements CohortT
 		if (cohortType == null) {
 			return;
 		}
-		
-		Context.getService(CohortTypeService.class).saveCohortType(cohortType);
+		dao.createOrUpdate(cohortType);
 	}
 	
 	@Override

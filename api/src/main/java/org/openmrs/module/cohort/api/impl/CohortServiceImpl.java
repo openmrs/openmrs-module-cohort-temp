@@ -89,7 +89,8 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 		if (cohort == null) {
 			return;
 		}
-		
+		cohort.setVoided(true);
+		cohort.setVoidReason(reason);
 		cohortDao.createOrUpdate(cohort);
 	}
 	
