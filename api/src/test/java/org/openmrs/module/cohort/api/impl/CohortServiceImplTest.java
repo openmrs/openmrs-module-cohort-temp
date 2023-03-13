@@ -13,8 +13,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,12 +25,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openmrs.Location;
-import org.openmrs.module.cohort.CohortAttribute;
-import org.openmrs.module.cohort.CohortAttributeType;
-import org.openmrs.module.cohort.CohortM;
-import org.openmrs.module.cohort.CohortType;
+import org.openmrs.Patient;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.cohort.*;
+import org.openmrs.module.cohort.api.CohortMemberService;
 import org.openmrs.module.cohort.api.dao.GenericDao;
 import org.openmrs.module.cohort.api.dao.search.PropValue;
+import org.powermock.api.mockito.PowerMockito;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CohortServiceImplTest {
@@ -48,13 +49,18 @@ public class CohortServiceImplTest {
 	
 	@Mock
 	private GenericDao<CohortAttributeType> cohortAttributeTypeDao;
+
+	@Mock
+	@Qualifier("cohort.cohortMemberService")
+	private CohortMemberService cohortMemberService;
 	
 	private CohortServiceImpl cohortService;
+
+
 	
 	@Before
 	public void setup() {
-		cohortService = new CohortServiceImpl(cohortDao, cohortAttributeDao, cohortAttributeTypeDao);
-	}
+		cohortService = new CohortServiceImpl(cohortDao, cohortAttributeDao, cohortAttributeTypeDao);}
 	
 	@Test
 	public void createOrUpdate_shouldCreateNewCohort() {
@@ -148,5 +154,26 @@ public class CohortServiceImplTest {
 		cohortsByLocationUuid.forEach(cohortM -> {
 			assertThat(cohortM.getLocation(), equalTo(location));
 		});
+	}
+
+	@Test
+	public void shouldVoidCohort(){
+		String reason = "delete cohort";
+		CohortType cohortType = mock(CohortType.class);
+		Patient patient = mock(Patient.class);
+
+		CohortM cohortM = new CohortM();
+		cohortM.setUuid("4834jk3-n34nm30-34nm34-348nl");
+		cohortM.setCohortId(12);
+		cohortM.setCohortType(cohortType);
+
+		CohortMember cohortMember = new CohortMember();
+		cohortMember.setPatient(patient);
+		cohortMember.setUuid("4834jk3-n34nm30-34nm34-348nl");
+		cohortMember.setCohort(cohortM);
+
+		when(cohortDao.createOrUpdate(cohortM)).thenReturn(cohortM);
+		cohortService.voidCohort(cohortM,reason);
+		assertThat(cohortM.getVoided(),equalTo(true));
 	}
 }
