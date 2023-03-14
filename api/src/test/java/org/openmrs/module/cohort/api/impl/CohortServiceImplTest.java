@@ -13,7 +13,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,13 +27,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openmrs.Location;
 import org.openmrs.Patient;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.cohort.*;
-import org.openmrs.module.cohort.api.CohortMemberService;
+import org.openmrs.module.cohort.CohortAttribute;
+import org.openmrs.module.cohort.CohortAttributeType;
+import org.openmrs.module.cohort.CohortM;
+import org.openmrs.module.cohort.CohortMember;
+import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.api.dao.GenericDao;
 import org.openmrs.module.cohort.api.dao.search.PropValue;
-import org.powermock.api.mockito.PowerMockito;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CohortServiceImplTest {
@@ -50,10 +51,6 @@ public class CohortServiceImplTest {
 	@Mock
 	private GenericDao<CohortAttributeType> cohortAttributeTypeDao;
 
-	@Mock
-	@Qualifier("cohort.cohortMemberService")
-	private CohortMemberService cohortMemberService;
-	
 	private CohortServiceImpl cohortService;
 
 
