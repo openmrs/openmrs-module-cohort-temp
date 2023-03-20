@@ -50,14 +50,13 @@ public class CohortServiceImplTest {
 	
 	@Mock
 	private GenericDao<CohortAttributeType> cohortAttributeTypeDao;
-
+	
 	private CohortServiceImpl cohortService;
-
-
 	
 	@Before
 	public void setup() {
-		cohortService = new CohortServiceImpl(cohortDao, cohortAttributeDao, cohortAttributeTypeDao);}
+		cohortService = new CohortServiceImpl(cohortDao, cohortAttributeDao, cohortAttributeTypeDao);
+	}
 	
 	@Test
 	public void createOrUpdate_shouldCreateNewCohort() {
@@ -152,25 +151,25 @@ public class CohortServiceImplTest {
 			assertThat(cohortM.getLocation(), equalTo(location));
 		});
 	}
-
+	
 	@Test
-	public void shouldVoidCohort(){
+	public void shouldVoidCohort() {
 		String reason = "delete cohort";
 		CohortType cohortType = mock(CohortType.class);
 		Patient patient = mock(Patient.class);
-
+		
 		CohortM cohortM = new CohortM();
 		cohortM.setUuid("4834jk3-n34nm30-34nm34-348nl");
 		cohortM.setCohortId(12);
 		cohortM.setCohortType(cohortType);
-
+		
 		CohortMember cohortMember = new CohortMember();
 		cohortMember.setPatient(patient);
 		cohortMember.setUuid("4834jk3-n34nm30-34nm34-348nl");
 		cohortMember.setCohort(cohortM);
-
+		
 		when(cohortDao.createOrUpdate(cohortM)).thenReturn(cohortM);
-		cohortService.voidCohort(cohortM,reason);
-		assertThat(cohortM.getVoided(),equalTo(true));
+		cohortService.voidCohort(cohortM, reason);
+		assertThat(cohortM.getVoided(), equalTo(true));
 	}
 }
