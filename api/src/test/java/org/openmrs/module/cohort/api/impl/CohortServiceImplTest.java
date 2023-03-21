@@ -167,9 +167,11 @@ public class CohortServiceImplTest {
 		cohortMember.setPatient(patient);
 		cohortMember.setUuid("4834jk3-n34nm30-34nm34-348nl");
 		cohortMember.setCohort(cohortM);
+		cohortM.addMemberships(cohortMember);
 		
 		when(cohortDao.createOrUpdate(cohortM)).thenReturn(cohortM);
 		cohortService.voidCohort(cohortM, reason);
 		assertThat(cohortM.getVoided(), equalTo(true));
+		assertThat(cohortMember.getVoided(), equalTo(true));
 	}
 }

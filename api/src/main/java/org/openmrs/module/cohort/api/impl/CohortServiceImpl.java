@@ -19,14 +19,12 @@ import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cohort.CohortAttribute;
 import org.openmrs.module.cohort.CohortAttributeType;
 import org.openmrs.module.cohort.CohortM;
-import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.CohortMember;
-import org.openmrs.module.cohort.api.CohortMemberService;
+import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.cohort.api.dao.GenericDao;
 import org.openmrs.module.cohort.api.dao.search.PropValue;
@@ -94,9 +92,10 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 		}
 		cohort.setVoided(true);
 		cohort.setVoidReason(reason);
-
+		
 		for (CohortMember cohortMember : cohort.getCohortMembers()) {
-			Context.getService(CohortMemberService.class).voidCohortMember(cohortMember, "Cohort voided");
+			cohortMember.setVoided(true);
+			cohortMember.setVoidReason("Cohort voided");
 		}
 		cohortDao.createOrUpdate(cohort);
 	}
