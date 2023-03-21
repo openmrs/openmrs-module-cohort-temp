@@ -147,4 +147,15 @@ public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 		
 		assertThat(dao.get(COHORT_UUID), nullValue());
 	}
+
+	@Test
+	public void shouldVoidCohortM(){
+		CohortM cohortToVoid = dao.get(COHORT_UUID);
+		cohortToVoid.setVoided(true);
+		cohortToVoid.setVoidReason("Voided by cohort test");
+		dao.createOrUpdate(cohortToVoid);
+
+		CohortM voidedCohort = dao.createOrUpdate(cohortToVoid);
+		assertThat(voidedCohort.getVoided(),equalTo(true));
+	}
 }
