@@ -37,7 +37,7 @@ public interface CohortService extends OpenmrsService {
 	
 	CohortM saveCohort(@NotNull CohortM cohortType);
 	
-	void voidCohort(@NotNull CohortM cohort, String reason);
+	void voidCohortM(@NotNull CohortM cohort, String reason);
 	
 	void purgeCohort(@NotNull CohortM cohortType);
 	

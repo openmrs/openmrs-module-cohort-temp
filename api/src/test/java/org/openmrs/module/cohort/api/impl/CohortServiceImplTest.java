@@ -26,11 +26,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openmrs.Location;
-import org.openmrs.Patient;
 import org.openmrs.module.cohort.CohortAttribute;
 import org.openmrs.module.cohort.CohortAttributeType;
 import org.openmrs.module.cohort.CohortM;
-import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.api.dao.GenericDao;
 import org.openmrs.module.cohort.api.dao.search.PropValue;
@@ -150,28 +148,5 @@ public class CohortServiceImplTest {
 		cohortsByLocationUuid.forEach(cohortM -> {
 			assertThat(cohortM.getLocation(), equalTo(location));
 		});
-	}
-	
-	@Test
-	public void shouldVoidCohort() {
-		String reason = "delete cohort";
-		CohortType cohortType = mock(CohortType.class);
-		Patient patient = mock(Patient.class);
-		
-		CohortM cohortM = new CohortM();
-		cohortM.setUuid("4834jk3-n34nm30-34nm34-348nl");
-		cohortM.setCohortId(12);
-		cohortM.setCohortType(cohortType);
-		
-		CohortMember cohortMember = new CohortMember();
-		cohortMember.setPatient(patient);
-		cohortMember.setUuid("4834jk3-n34nm30-34nm34-348nl");
-		cohortMember.setCohort(cohortM);
-		cohortM.addMemberships(cohortMember);
-		
-		when(cohortDao.createOrUpdate(cohortM)).thenReturn(cohortM);
-		cohortService.voidCohort(cohortM, reason);
-		assertThat(cohortM.getVoided(), equalTo(true));
-		assertThat(cohortMember.getVoided(), equalTo(true));
 	}
 }

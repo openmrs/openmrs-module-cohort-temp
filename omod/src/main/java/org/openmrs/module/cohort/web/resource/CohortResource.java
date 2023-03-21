@@ -137,7 +137,7 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	
 	@Override
 	protected void delete(CohortM cohort, String reason, RequestContext request) throws ResponseException {
-		Context.getService(CohortService.class).voidCohort(cohort, reason);
+		Context.getService(CohortService.class).voidCohortM(cohort, reason);
 	}
 	
 	@Override

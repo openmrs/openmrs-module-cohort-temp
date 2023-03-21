@@ -23,7 +23,6 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.cohort.CohortAttribute;
 import org.openmrs.module.cohort.CohortAttributeType;
 import org.openmrs.module.cohort.CohortM;
-import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortType;
 import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.cohort.api.dao.GenericDao;
@@ -86,17 +85,11 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public void voidCohort(CohortM cohort, String reason) {
+	public void voidCohortM(CohortM cohort, String reason) {
 		if (cohort == null) {
 			return;
 		}
-		cohort.setVoided(true);
-		cohort.setVoidReason(reason);
 		
-		for (CohortMember cohortMember : cohort.getCohortMembers()) {
-			cohortMember.setVoided(true);
-			cohortMember.setVoidReason("Cohort voided");
-		}
 		cohortDao.createOrUpdate(cohort);
 	}
 	
