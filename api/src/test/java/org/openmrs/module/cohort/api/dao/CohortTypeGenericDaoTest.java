@@ -12,6 +12,7 @@ package org.openmrs.module.cohort.api.dao;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -74,6 +75,8 @@ public class CohortTypeGenericDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(false, equalTo(cohortType.getVoided()));
 		Context.getService(CohortTypeService.class).voidCohortType(cohortType, "delete cohort type");
 		assertThat(true, equalTo(cohortType.getVoided()));
+		CohortType voidedCohortType = dao.get(COHORT_TYPE_UUID);
+		assertThat(voidedCohortType, nullValue());
 	}
 	
 }
