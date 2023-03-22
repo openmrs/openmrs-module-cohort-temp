@@ -15,6 +15,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Mockito.mock;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortM;
+import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.cohort.api.dao.search.PropValue;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,15 +149,15 @@ public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 		
 		assertThat(dao.get(COHORT_UUID), nullValue());
 	}
-
+	
 	@Test
-	public void shouldVoidCohortM(){
+	public void shouldVoidCohortM() {
+		CohortService cohortService = mock(CohortService.class);
 		CohortM cohortToVoid = dao.get(COHORT_UUID);
 		cohortToVoid.setVoided(true);
 		cohortToVoid.setVoidReason("Voided by cohort test");
-		dao.createOrUpdate(cohortToVoid);
-
+		cohortService.voidCohortM(cohortToVoid, "delete cohort");
 		CohortM voidedCohort = dao.createOrUpdate(cohortToVoid);
-		assertThat(voidedCohort.getVoided(),equalTo(true));
+		assertThat(true, equalTo(voidedCohort.getVoided()));
 	}
 }

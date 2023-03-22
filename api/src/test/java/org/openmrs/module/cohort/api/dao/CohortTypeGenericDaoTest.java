@@ -12,10 +12,12 @@ package org.openmrs.module.cohort.api.dao;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortType;
+import org.openmrs.module.cohort.api.CohortTypeService;
 import org.openmrs.module.cohort.api.dao.search.PropValue;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,15 +67,16 @@ public class CohortTypeGenericDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(cohortType.getName(), equalTo(COHORT_TYPE_NAME));
 		
 	}
-
+	
 	@Test
-	public void shouldVoidCohortType(){
+	public void shouldVoidCohortType() {
+		CohortTypeService cohortTypeService = mock(CohortTypeService.class);
 		CohortType cohortType = dao.get(COHORT_TYPE_UUID);
 		cohortType.setVoided(true);
 		cohortType.setVoidReason("cohort type set voided");
-
+		cohortTypeService.voidCohortType(cohortType, "cohort type voided");
 		CohortType voidedCohortType = dao.createOrUpdate(cohortType);
-		assertThat(true,equalTo(voidedCohortType.getVoided()));
+		assertThat(true, equalTo(voidedCohortType.getVoided()));
 	}
 	
 }
