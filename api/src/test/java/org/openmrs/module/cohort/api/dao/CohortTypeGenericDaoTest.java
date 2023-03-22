@@ -72,8 +72,7 @@ public class CohortTypeGenericDaoTest extends BaseModuleContextSensitiveTest {
 	public void shouldVoidCohortType() {
 		CohortType cohortType = dao.get(COHORT_TYPE_UUID);
 		Context.getService(CohortTypeService.class).voidCohortType(cohortType, "delete cohort type");
-		CohortType voidedCohortType = dao.createOrUpdate(cohortType);
-		assertThat(true, equalTo(voidedCohortType.getVoided()));
+		assertThat(true, equalTo(cohortType.getVoided()));
 	}
 	
 }
