@@ -15,13 +15,13 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.mock;
 
 import java.util.Collection;
 import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.cohort.api.dao.search.PropValue;
@@ -152,11 +152,10 @@ public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void shouldVoidCohortM() {
-		CohortService cohortService = mock(CohortService.class);
 		CohortM cohortToVoid = dao.get(COHORT_UUID);
 		cohortToVoid.setVoided(true);
 		cohortToVoid.setVoidReason("Voided by cohort test");
-		cohortService.voidCohortM(cohortToVoid, "delete cohort");
+		Context.getService(CohortService.class).voidCohortM(cohortToVoid, "delete cohort");
 		CohortM voidedCohort = dao.createOrUpdate(cohortToVoid);
 		assertThat(true, equalTo(voidedCohort.getVoided()));
 	}
