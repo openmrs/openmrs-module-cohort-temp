@@ -224,16 +224,8 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	 */
 	@PropertySetter("attributes")
 	public void setAttributes(CohortM cohort, List<CohortAttribute> attributes) {
-		if (attributes != null) {
-			User authenticatedUser = Context.getAuthenticatedUser();
-			Set<CohortAttribute> attributeSet = new HashSet<>(attributes);
-			cohort.getActiveAttributes().stream().filter(a -> !attributeSet.contains(a)).forEach(a -> {
-				a.setVoided(true);
-				a.setVoidReason("Attribute voided by API");
-				a.setVoidedBy(authenticatedUser);
-			});
-			
-			cohort.getActiveAttributes().addAll(attributeSet);
+		for (CohortAttribute attribute : attributes) {
+			cohort.addAttribute(attribute);
 		}
 	}
 	
