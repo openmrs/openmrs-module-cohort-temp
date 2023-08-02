@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.customdatatype.CustomDatatypeUtil;
 import org.openmrs.module.cohort.CohortAttribute;
 import org.openmrs.module.cohort.CohortAttributeType;
 import org.openmrs.module.cohort.CohortM;
@@ -81,6 +82,7 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	
 	@Override
 	public CohortM saveCohort(@NotNull CohortM cohortM) {
+		CustomDatatypeUtil.saveAttributesIfNecessary(cohortM);
 		return cohortDao.createOrUpdate(cohortM);
 	}
 	
