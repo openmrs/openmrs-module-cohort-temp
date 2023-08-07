@@ -15,6 +15,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Mockito.mock;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -22,6 +23,8 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.cohort.CohortAttribute;
+import org.openmrs.module.cohort.CohortAttributeType;
 import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.cohort.api.dao.search.PropValue;
@@ -50,6 +53,10 @@ public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 	@Autowired
 	@Qualifier("cohortDao")
 	private GenericDao<CohortM> dao;
+
+	@Autowired
+	@Qualifier("cohort.cohortService")
+	private CohortService service;
 	
 	@Before
 	public void setup() throws Exception {
@@ -104,11 +111,28 @@ public class CohortGenericDaoTest extends BaseModuleContextSensitiveTest {
 		cohortM.setName(COHORT_NAME1);
 		cohortM.setGroupCohort(false);
 		cohortM.setDescription(COHORT_DESCRIPTION);
+
+		CohortAttributeType attributeType = new CohortAttributeType();
+		attributeType.setName("testAttributeType");
+		attributeType.setMinOccurs(0);
+		attributeType.setDatatypeClassname("org.openmrs.customdatatype.datatype.FreeTextDatatype");
+		service.saveAttributeType(attributeType);
+
+		CohortAttribute attribute1 = new CohortAttribute();
+		attribute1.setAttributeType(attributeType);
+		attribute1.setValue("Test group");
+		cohortM.addAttribute(attribute1);
+		CohortAttribute attribute2 = new CohortAttribute();
+		attribute2.setAttributeType(attributeType);
+		attribute2.setValue("Control group");
+		cohortM.addAttribute(attribute2);
 		
-		CohortM createdCohort = dao.createOrUpdate(cohortM);
+		dao.createOrUpdate(cohortM);
+		CohortM createdCohort = service.getCohort(1);
 		assertThat(createdCohort, notNullValue());
 		assertThat(createdCohort.getCohortId(), equalTo(cohortM.getCohortId()));
 		assertThat(createdCohort.getName(), is(cohortM.getName()));
+		assertThat(createdCohort.getAttributes().size(), is(2));
 	}
 	
 	@Test

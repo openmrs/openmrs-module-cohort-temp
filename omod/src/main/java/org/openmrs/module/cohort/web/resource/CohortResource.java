@@ -20,7 +20,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortAttribute;
@@ -224,16 +223,8 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	 */
 	@PropertySetter("attributes")
 	public void setAttributes(CohortM cohort, List<CohortAttribute> attributes) {
-		if (attributes != null) {
-			User authenticatedUser = Context.getAuthenticatedUser();
-			Set<CohortAttribute> attributeSet = new HashSet<>(attributes);
-			cohort.getActiveAttributes().stream().filter(a -> !attributeSet.contains(a)).forEach(a -> {
-				a.setVoided(true);
-				a.setVoidReason("Attribute voided by API");
-				a.setVoidedBy(authenticatedUser);
-			});
-			
-			cohort.getActiveAttributes().addAll(attributeSet);
+		for (CohortAttribute attribute : attributes) {
+			cohort.addAttribute(attribute);
 		}
 	}
 	
