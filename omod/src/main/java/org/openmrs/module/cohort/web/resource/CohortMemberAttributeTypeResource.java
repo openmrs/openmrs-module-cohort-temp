@@ -41,33 +41,34 @@ public class CohortMemberAttributeTypeResource extends BaseAttributeTypeCrudReso
 	
 	@Override
 	public CohortMemberAttributeType getByUniqueId(String uuid) {
-		return cohortMemberService.getAttributeTypeByUuid(uuid);
+		return cohortMemberService.getCohortMemberAttributeTypeByUuid(uuid);
 	}
 	
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
-		return new NeedsPaging<>((List<CohortMemberAttributeType>) cohortMemberService.findAllAttributeTypes(), context);
+		return new NeedsPaging<>((List<CohortMemberAttributeType>) cohortMemberService.findAllCohortMemberAttributeTypes(),
+		        context);
 	}
 	
 	@Override
 	public CohortMemberAttributeType save(CohortMemberAttributeType cohortMemberAttributeType) {
-		return cohortMemberService.createAttributeType(cohortMemberAttributeType);
+		return cohortMemberService.saveCohortMemberAttributeType(cohortMemberAttributeType);
 	}
 	
 	@Override
 	public void delete(String uuid, String reason, RequestContext context) throws ResponseException {
-		cohortMemberService.voidAttributeType(getByUniqueId(uuid), reason);
+		cohortMemberService.voidCohortMemberAttributeType(getByUniqueId(uuid), reason);
 	}
 	
 	@Override
 	public void delete(CohortMemberAttributeType cohortMemberAttributeType, String voidReason, RequestContext requestContext)
 	        throws ResponseException {
-		cohortMemberService.voidAttributeType(cohortMemberAttributeType, voidReason);
+		cohortMemberService.voidCohortMemberAttributeType(cohortMemberAttributeType, voidReason);
 	}
 	
 	@Override
 	public void purge(CohortMemberAttributeType cohortMemberAttributeType, RequestContext requestContext)
 	        throws ResponseException {
-		cohortMemberService.purgeAttributeType(cohortMemberAttributeType);
+		cohortMemberService.purgeCohortMemberAttributeType(cohortMemberAttributeType);
 	}
 }

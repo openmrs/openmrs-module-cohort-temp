@@ -82,7 +82,8 @@ public class CohortMemberAttributeResourceTest extends BaseCohortResourceTest<Co
 	
 	@Test
 	public void shouldGetResourceByUniqueUuid() {
-		when(cohortMemberService.getAttributeByUuid(COHORT_MEMBER_ATTRIBUTE_UUID)).thenReturn(cohortMemberAttribute);
+		when(cohortMemberService.getCohortMemberAttributeByUuid(COHORT_MEMBER_ATTRIBUTE_UUID))
+		        .thenReturn(cohortMemberAttribute);
 		
 		CohortMemberAttribute result = getResource().getByUniqueId(COHORT_MEMBER_ATTRIBUTE_UUID);
 		assertThat(result, notNullValue());
@@ -91,7 +92,7 @@ public class CohortMemberAttributeResourceTest extends BaseCohortResourceTest<Co
 	
 	@Test
 	public void shouldCreateNewResource() {
-		when(cohortMemberService.createAttribute(getObject())).thenReturn(getObject());
+		when(cohortMemberService.saveCohortMemberAttribute(getObject())).thenReturn(getObject());
 		
 		CohortMemberAttribute newlyCreatedObject = getResource().save(getObject());
 		assertThat(newlyCreatedObject, notNullValue());

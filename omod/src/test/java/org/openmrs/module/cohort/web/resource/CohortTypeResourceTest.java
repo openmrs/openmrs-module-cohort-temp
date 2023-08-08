@@ -79,7 +79,7 @@ public class CohortTypeResourceTest extends BaseCohortResourceTest<CohortType, C
 	
 	@Test
 	public void shouldGetAllResource() {
-		when(cohortTypeService.findAll()).thenReturn(Collections.singletonList(cohortType));
+		when(cohortTypeService.findAllCohortTypes()).thenReturn(Collections.singletonList(cohortType));
 		
 		PageableResult result = getResource().doGetAll(new RequestContext());
 		assertThat(result, notNullValue());
@@ -87,7 +87,7 @@ public class CohortTypeResourceTest extends BaseCohortResourceTest<CohortType, C
 	
 	@Test
 	public void shouldGetResourceByUniqueUuid() {
-		when(cohortTypeService.getByUuid(COHORT_TYPE_UUID)).thenReturn(cohortType);
+		when(cohortTypeService.getCohortTypeByUuid(COHORT_TYPE_UUID)).thenReturn(cohortType);
 		
 		CohortType result = getResource().getByUniqueId(COHORT_TYPE_UUID);
 		assertThat(result, notNullValue());

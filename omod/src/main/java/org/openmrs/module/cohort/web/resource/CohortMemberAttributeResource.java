@@ -46,18 +46,18 @@ public class CohortMemberAttributeResource extends BaseAttributeCrudResource1_9<
 	
 	@Override
 	public CohortMemberAttribute getByUniqueId(String uuid) {
-		return Context.getService(CohortMemberService.class).getAttributeByUuid(uuid);
+		return Context.getService(CohortMemberService.class).getCohortMemberAttributeByUuid(uuid);
 	}
 	
 	@Override
 	public CohortMemberAttribute save(CohortMemberAttribute cohortMemberAttribute) {
-		return Context.getService(CohortMemberService.class).createAttribute(cohortMemberAttribute);
+		return Context.getService(CohortMemberService.class).saveCohortMemberAttribute(cohortMemberAttribute);
 	}
 	
 	@Override
 	protected void delete(CohortMemberAttribute cohortMemberAttribute, String reason, RequestContext requestContext)
 	        throws ResponseException {
-		Context.getService(CohortMemberService.class).deleteAttribute(cohortMemberAttribute, reason);
+		Context.getService(CohortMemberService.class).voidCohortMemberAttribute(cohortMemberAttribute, reason);
 	}
 	
 	@Override
@@ -67,10 +67,7 @@ public class CohortMemberAttributeResource extends BaseAttributeCrudResource1_9<
 	
 	@Override
 	public void purge(CohortMemberAttribute cohortMemberAttribute, RequestContext requestContext) throws ResponseException {
-		boolean purge = Boolean.getBoolean(requestContext.getParameter("purge"));
-		if (purge) {
-			Context.getService(CohortMemberService.class).purgeAttribute(cohortMemberAttribute);
-		}
+		Context.getService(CohortMemberService.class).purgeCohortMemberAttribute(cohortMemberAttribute);
 	}
 	
 	@PropertySetter("attributeType")

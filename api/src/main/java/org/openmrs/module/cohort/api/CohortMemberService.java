@@ -20,37 +20,37 @@ import org.openmrs.module.cohort.CohortMemberAttributeType;
 
 public interface CohortMemberService extends OpenmrsService {
 	
-	CohortMember getByUuid(@NotNull String uuid);
+	CohortMember getCohortMemberByUuid(@NotNull String uuid);
 	
-	CohortMember getByName(@NotNull String name);
+	CohortMember getCohortMemberByName(@NotNull String name);
 	
-	Collection<CohortMember> findAll();
+	Collection<CohortMember> findAllCohortMembers();
 	
-	CohortMember createOrUpdate(@NotNull CohortMember cohortMember);
+	CohortMember saveCohortMember(@NotNull CohortMember cohortMember);
 	
-	CohortMember voidCohortMember(@NotNull CohortMember cohortMember, String voidReason);
+	void voidCohortMember(@NotNull CohortMember cohortMember, String voidReason);
 	
-	void purge(@NotNull CohortMember cohortMember);
+	void purgeCohortMember(@NotNull CohortMember cohortMember);
 	
-	CohortMemberAttributeType getAttributeTypeByUuid(@NotNull String uuid);
+	CohortMemberAttributeType getCohortMemberAttributeTypeByUuid(@NotNull String uuid);
 	
-	Collection<CohortMemberAttributeType> findAllAttributeTypes();
+	Collection<CohortMemberAttributeType> findAllCohortMemberAttributeTypes();
 	
-	CohortMemberAttributeType createAttributeType(CohortMemberAttributeType cohortMemberAttributeType);
+	CohortMemberAttribute saveCohortMemberAttribute(CohortMemberAttribute cohortMemberAttributeType);
 	
-	CohortMemberAttributeType voidAttributeType(CohortMemberAttributeType cohortMemberAttributeType, String voidReason);
+	void voidCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute, String voidReason);
 	
-	void purgeAttributeType(CohortMemberAttributeType cohortMemberAttributeType);
+	void purgeCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute);
 	
-	CohortMemberAttribute getAttributeByUuid(@NotNull String uuid);
+	CohortMemberAttribute getCohortMemberAttributeByUuid(@NotNull String uuid);
 	
-	Collection<CohortMemberAttribute> getAttributeByTypeUuid(@NotNull String attributeTypeUuid);
+	Collection<CohortMemberAttribute> getCohortMemberAttributesByTypeUuid(@NotNull String attributeTypeUuid);
 	
-	CohortMemberAttribute createAttribute(CohortMemberAttribute cohortMemberAttribute);
+	CohortMemberAttributeType saveCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType);
 	
-	CohortMemberAttribute deleteAttribute(CohortMemberAttribute attribute, String voidReason);
+	void voidCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType, String voidReason);
 	
-	void purgeAttribute(CohortMemberAttribute cohortMemberAttribute);
+	void purgeCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType);
 	
 	//Search methods
 	Collection<CohortMember> findCohortMembersByCohortUuid(@NotNull String cohortUuid);
@@ -59,5 +59,6 @@ public interface CohortMemberService extends OpenmrsService {
 	
 	Collection<CohortMember> findCohortMembersByPatientName(@NotNull String patientName);
 	
-	Collection<CohortMember> findCohortMembersByCohortAndPatient(@NotNull String cohortUuid, @NotNull String patientName);
+	Collection<CohortMember> findCohortMembersByCohortAndPatientName(@NotNull String cohortUuid,
+	        @NotNull String patientName);
 }

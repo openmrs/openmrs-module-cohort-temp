@@ -29,12 +29,12 @@ public class CohortAttributeTypeResource extends BaseAttributeTypeCrudResource1_
 	
 	@Override
 	public CohortAttributeType save(CohortAttributeType cohortAttributeType) {
-		return Context.getService(CohortService.class).saveAttributeType(cohortAttributeType);
+		return Context.getService(CohortService.class).saveCohortAttributeType(cohortAttributeType);
 	}
 	
 	@Override
 	public void purge(CohortAttributeType cohortAttributeType, RequestContext context) throws ResponseException {
-		Context.getService(CohortService.class).purgeAttributeType(cohortAttributeType);
+		Context.getService(CohortService.class).purgeCohortAttributeType(cohortAttributeType);
 	}
 	
 	@Override
@@ -44,11 +44,12 @@ public class CohortAttributeTypeResource extends BaseAttributeTypeCrudResource1_
 	
 	@Override
 	public CohortAttributeType getByUniqueId(String uuid) {
-		return Context.getService(CohortService.class).getAttributeTypeByUuid(uuid);
+		return Context.getService(CohortService.class).getCohortAttributeTypeByUuid(uuid);
 	}
 	
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
-		return new NeedsPaging<>(new ArrayList<>(Context.getService(CohortService.class).findAllAttributeTypes()), context);
+		return new NeedsPaging<>(new ArrayList<>(Context.getService(CohortService.class).findAllCohortAttributeTypes()),
+		        context);
 	}
 }

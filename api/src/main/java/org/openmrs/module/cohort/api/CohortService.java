@@ -23,51 +23,51 @@ import org.openmrs.module.cohort.CohortType;
 
 public interface CohortService extends OpenmrsService {
 	
-	CohortM getCohort(@NotNull String name);
+	CohortM getCohortM(@NotNull String name);
 	
-	CohortM getCohort(@NotNull int id);
+	CohortM getCohortM(@NotNull int id);
 	
-	CohortM getCohortByUuid(@NotNull String uuid);
+	CohortM getCohortMByUuid(@NotNull String uuid);
 	
-	Collection<CohortM> findCohortByLocationUuid(@NotNull String locationUuid);
+	Collection<CohortM> findCohortMByLocationUuid(@NotNull String locationUuid);
 	
-	Collection<CohortM> findCohortByPatientUuid(@NotNull String patientUuid);
+	Collection<CohortM> findCohortMByPatientUuid(@NotNull String patientUuid);
 	
 	Collection<CohortM> findAll();
 	
-	CohortM saveCohort(@NotNull CohortM cohortType);
+	CohortM saveCohortM(@NotNull CohortM cohortType);
 	
 	void voidCohortM(@NotNull CohortM cohort, String reason);
 	
-	void purgeCohort(@NotNull CohortM cohortType);
+	void purgeCohortM(@NotNull CohortM cohortType);
 	
 	CohortAttribute getAttributeByUuid(@NotNull String uuid);
 	
 	CohortAttribute saveAttribute(@NotNull CohortAttribute attribute);
 	
-	Collection<CohortAttribute> findAttributesByCohortUuid(@NotNull String cohortUuid);
+	Collection<CohortAttribute> findCohortAttributesByCohortUuid(@NotNull String cohortUuid);
 	
-	Collection<CohortAttribute> findAttributesByTypeUuid(@NotNull String attributeTypeUuid);
+	Collection<CohortAttribute> findCohortAttributesByTypeUuid(@NotNull String attributeTypeUuid);
 	
-	Collection<CohortAttribute> findAttributesByTypeName(@NotNull String attributeTypeName);
+	Collection<CohortAttribute> findCohortAttributesByTypeName(@NotNull String attributeTypeName);
 	
 	void voidCohortAttribute(@NotNull CohortAttribute attribute, String retiredReason);
 	
 	void purgeCohortAttribute(@NotNull CohortAttribute attribute);
 	
-	CohortAttributeType getAttributeTypeByUuid(@NotNull String uuid);
+	CohortAttributeType getCohortAttributeTypeByUuid(@NotNull String uuid);
 	
-	CohortAttributeType getAttributeTypeByName(@NotNull String name);
+	CohortAttributeType getCohortAttributeTypeByName(@NotNull String name);
 	
-	Collection<CohortAttributeType> findAllAttributeTypes();
+	Collection<CohortAttributeType> findAllCohortAttributeTypes();
 	
-	CohortAttributeType saveAttributeType(@NotNull CohortAttributeType attributeType);
+	CohortAttributeType saveCohortAttributeType(@NotNull CohortAttributeType attributeType);
 	
-	void voidAttributeType(@NotNull CohortAttributeType attributeType, String retiredReason);
+	void voidCohortAttributeType(@NotNull CohortAttributeType attributeType, String retiredReason);
 	
-	void purgeAttributeType(@NotNull CohortAttributeType attributeType);
+	void purgeCohortAttributeType(@NotNull CohortAttributeType attributeType);
 	
 	//Search
-	List<CohortM> findMatchingCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType,
+	List<CohortM> findMatchingCohortMs(String nameMatching, Map<String, String> attributes, CohortType cohortType,
 	        boolean includeVoided);
 }

@@ -35,7 +35,7 @@ public class CohortAttributeTypeValidator extends BaseAttributeTypeValidator<Coh
 		
 		CohortAttributeType cohortAttributeType = (CohortAttributeType) command;
 		CohortAttributeType attributeType = Context.getService(CohortService.class)
-		        .getAttributeTypeByName(cohortAttributeType.getName());
+		        .getCohortAttributeTypeByName(cohortAttributeType.getName());
 		
 		if (attributeType != null) {
 			errors.rejectValue("name", " A cohort attribute type with the same name already exists");

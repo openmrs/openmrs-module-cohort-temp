@@ -88,7 +88,7 @@ public class CohortAttributeTypeResourceTest extends BaseCohortResourceTest<Coho
 	
 	@Test
 	public void shouldGetResourceByUniqueUuid() {
-		when(cohortService.getAttributeTypeByUuid(COHORT_ATTRIBUTE_TYPE_UUID)).thenReturn(cohortAttributeType);
+		when(cohortService.getCohortAttributeTypeByUuid(COHORT_ATTRIBUTE_TYPE_UUID)).thenReturn(cohortAttributeType);
 		
 		CohortAttributeType result = getResource().getByUniqueId(COHORT_ATTRIBUTE_TYPE_UUID);
 		assertThat(result, notNullValue());
@@ -98,7 +98,7 @@ public class CohortAttributeTypeResourceTest extends BaseCohortResourceTest<Coho
 	
 	@Test
 	public void shouldCreateNewResource() {
-		when(cohortService.saveAttributeType(getObject())).thenReturn(getObject());
+		when(cohortService.saveCohortAttributeType(getObject())).thenReturn(getObject());
 		
 		CohortAttributeType newlyCreatedObject = getResource().save(getObject());
 		assertThat(newlyCreatedObject, notNullValue());
@@ -108,7 +108,7 @@ public class CohortAttributeTypeResourceTest extends BaseCohortResourceTest<Coho
 	
 	@Test
 	public void shouldGetAllResources() {
-		when(cohortService.findAllAttributeTypes()).thenReturn(Collections.singletonList(getObject()));
+		when(cohortService.findAllCohortAttributeTypes()).thenReturn(Collections.singletonList(getObject()));
 		
 		PageableResult results = getResource().doGetAll(new RequestContext());
 		

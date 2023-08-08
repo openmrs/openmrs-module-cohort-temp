@@ -13,6 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -59,7 +60,8 @@ public class CohortMemberServiceImplTest {
 		when(cohortMemberAttributeTypeDao.get(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID)).thenReturn(cohortMemberAttributeType);
 		when(cohortMemberAttributeType.getUuid()).thenReturn(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID);
 		
-		CohortMemberAttributeType result = cohortMemberService.getAttributeTypeByUuid(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID);
+		CohortMemberAttributeType result = cohortMemberService
+		        .getCohortMemberAttributeTypeByUuid(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID);
 		assertThat(result, notNullValue());
 		assertThat(result.getUuid(), is(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID));
 	}
@@ -74,13 +76,19 @@ public class CohortMemberServiceImplTest {
 		when(cohortMemberAttributeTypeDao.createOrUpdate(cohortMemberAttributeType)).thenReturn(cohortMemberAttributeType);
 		when(cohortMemberAttributeType.getId()).thenReturn(1);
 		
-		CohortMemberAttributeType result = cohortMemberService.createAttributeType(cohortMemberAttributeType);
+		CohortMemberAttributeType result = cohortMemberService.saveCohortMemberAttributeType(cohortMemberAttributeType);
+		
 		assertThat(result, notNullValue());
 		assertThat(result.getId(), is(1));
 	}
 	
 	@Test
 	public void purgeCohortMemberAttributeType() {
+		CohortMemberAttributeType cohortMemberAttributeType = mock(CohortMemberAttributeType.class);
+		
+		cohortMemberService.purgeCohortMemberAttributeType(cohortMemberAttributeType);
+		
+		verify(cohortMemberAttributeTypeDao).delete(cohortMemberAttributeType);
 	}
 	
 	@Test
@@ -89,7 +97,7 @@ public class CohortMemberServiceImplTest {
 		when(cohortMemberAttributeDao.get(COHORT_MEMBER_ATTRIBUTE_UUID)).thenReturn(cohortMemberAttribute);
 		when(cohortMemberAttribute.getUuid()).thenReturn(COHORT_MEMBER_ATTRIBUTE_UUID);
 		
-		CohortMemberAttribute result = cohortMemberService.getAttributeByUuid(COHORT_MEMBER_ATTRIBUTE_UUID);
+		CohortMemberAttribute result = cohortMemberService.getCohortMemberAttributeByUuid(COHORT_MEMBER_ATTRIBUTE_UUID);
 		assertThat(result, notNullValue());
 		assertThat(result.getUuid(), is(COHORT_MEMBER_ATTRIBUTE_UUID));
 	}
@@ -100,7 +108,8 @@ public class CohortMemberServiceImplTest {
 		when(cohortMemberAttributeDao.createOrUpdate(cohortMemberAttribute)).thenReturn(cohortMemberAttribute);
 		when(cohortMemberAttribute.getId()).thenReturn(1);
 		
-		CohortMemberAttribute result = cohortMemberService.createAttribute(cohortMemberAttribute);
+		CohortMemberAttribute result = cohortMemberService.saveCohortMemberAttribute(cohortMemberAttribute);
+		
 		assertThat(result, notNullValue());
 		assertThat(result.getId(), is(1));
 	}

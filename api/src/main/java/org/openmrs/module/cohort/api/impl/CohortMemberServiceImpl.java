@@ -45,98 +45,97 @@ public class CohortMemberServiceImpl extends BaseOpenmrsService implements Cohor
 	
 	@Override
 	@Transactional(readOnly = true)
-	public CohortMember getByUuid(@NotNull String uuid) {
+	public CohortMember getCohortMemberByUuid(@NotNull String uuid) {
 		return cohortMemberDao.get(uuid);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public CohortMember getByName(String name) {
+	public CohortMember getCohortMemberByName(String name) {
 		return cohortMemberDao.findByUniqueProp(PropValue.builder().property("name").value(name).build());
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Collection<CohortMember> findAll() {
+	public Collection<CohortMember> findAllCohortMembers() {
 		return cohortMemberDao.findAll();
 	}
 	
 	@Override
-	public CohortMember createOrUpdate(CohortMember cohortMember) {
+	public CohortMember saveCohortMember(CohortMember cohortMember) {
 		return cohortMemberDao.createOrUpdate(cohortMember);
 	}
 	
 	@Override
-	public CohortMember voidCohortMember(CohortMember cohortMember, String voidReason) {
+	public void voidCohortMember(CohortMember cohortMember, String voidReason) {
 		if (cohortMember == null) {
-			return null;
+			return;
 		}
 		
-		return cohortMemberDao.createOrUpdate(cohortMember);
+		cohortMemberDao.createOrUpdate(cohortMember);
 	}
 	
 	@Override
-	public void purge(CohortMember cohortMember) {
+	public void purgeCohortMember(CohortMember cohortMember) {
 		cohortMemberDao.delete(cohortMember);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public CohortMemberAttributeType getAttributeTypeByUuid(String uuid) {
+	public CohortMemberAttributeType getCohortMemberAttributeTypeByUuid(String uuid) {
 		return cohortMemberAttributeTypeDao.get(uuid);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Collection<CohortMemberAttributeType> findAllAttributeTypes() {
+	public Collection<CohortMemberAttributeType> findAllCohortMemberAttributeTypes() {
 		return cohortMemberAttributeTypeDao.findAll();
 	}
 	
 	@Override
-	public CohortMemberAttributeType createAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
+	public CohortMemberAttributeType saveCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
 		return cohortMemberAttributeTypeDao.createOrUpdate(cohortMemberAttributeType);
 	}
 	
 	@Override
-	public CohortMemberAttributeType voidAttributeType(CohortMemberAttributeType cohortMemberAttributeType,
-	        String voidReason) {
+	public void voidCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType, String voidReason) {
 		cohortMemberAttributeType.setRetired(true);
 		cohortMemberAttributeType.setRetireReason(voidReason);
-		return cohortMemberAttributeTypeDao.createOrUpdate(cohortMemberAttributeType);
+		cohortMemberAttributeTypeDao.createOrUpdate(cohortMemberAttributeType);
 	}
 	
 	@Override
-	public void purgeAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
+	public void purgeCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType) {
 		cohortMemberAttributeTypeDao.delete(cohortMemberAttributeType);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public CohortMemberAttribute getAttributeByUuid(@NotNull String uuid) {
+	public CohortMemberAttribute getCohortMemberAttributeByUuid(@NotNull String uuid) {
 		return cohortMemberAttributeDao.get(uuid);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Collection<CohortMemberAttribute> getAttributeByTypeUuid(@NotNull String uuid) {
+	public Collection<CohortMemberAttribute> getCohortMemberAttributesByTypeUuid(@NotNull String uuid) {
 		return cohortMemberAttributeDao.findBy(
 		    PropValue.builder().property("uuid").associationPath(Optional.of("attributeType")).value(uuid).build());
 	}
 	
 	@Override
-	public CohortMemberAttribute createAttribute(CohortMemberAttribute cohortMemberAttribute) {
+	public CohortMemberAttribute saveCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute) {
 		return cohortMemberAttributeDao.createOrUpdate(cohortMemberAttribute);
 	}
 	
 	@Override
-	public CohortMemberAttribute deleteAttribute(CohortMemberAttribute attribute, String voidReason) {
+	public void voidCohortMemberAttribute(CohortMemberAttribute attribute, String voidReason) {
 		attribute.setVoided(true);
 		attribute.setVoidReason(voidReason);
-		return cohortMemberAttributeDao.createOrUpdate(attribute);
+		cohortMemberAttributeDao.createOrUpdate(attribute);
 	}
 	
 	@Override
-	public void purgeAttribute(CohortMemberAttribute cohortMemberAttribute) {
+	public void purgeCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute) {
 		cohortMemberAttributeDao.delete(cohortMemberAttribute);
 	}
 	
@@ -162,7 +161,7 @@ public class CohortMemberServiceImpl extends BaseOpenmrsService implements Cohor
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Collection<CohortMember> findCohortMembersByCohortAndPatient(@NotNull String cohortUuid,
+	public Collection<CohortMember> findCohortMembersByCohortAndPatientName(@NotNull String cohortUuid,
 	        @NotNull String patientName) {
 		return cohortMemberDao.getSearchHandler().findCohortMembersByCohortAndPatient(cohortUuid, patientName);
 	}

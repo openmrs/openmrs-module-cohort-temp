@@ -30,7 +30,7 @@ public interface GenericDao<W extends OpenmrsObject & Auditable> {
 	W get(final String uuid);
 	
 	@Transactional(readOnly = true)
-	W get(final String uuid, boolean includeRetired);
+	W get(final String uuid, boolean includeDeleted);
 	
 	W createOrUpdate(W object);
 	

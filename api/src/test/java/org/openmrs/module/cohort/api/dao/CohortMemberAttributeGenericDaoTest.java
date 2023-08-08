@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortMemberAttribute;
 import org.openmrs.module.cohort.api.TestDataUtils;
@@ -29,7 +28,6 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-@Ignore
 public class CohortMemberAttributeGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	//The order is salient
@@ -81,6 +79,7 @@ public class CohortMemberAttributeGenericDaoTest extends BaseModuleContextSensit
 	@Test
 	public void shouldCreateNewCohortMemberAttribute() {
 		CohortMemberAttribute cohortAttribute = dao.createOrUpdate(TestDataUtils.COHORT_MEMBER_ATTRIBUTE());
+		
 		assertThat(cohortAttribute, notNullValue());
 		assertThat(cohortAttribute.getId(), notNullValue());
 		assertThat(cohortAttribute.getId(), equalTo(TEST_COHORT_MEMBER_ATTRIBUTE_ID));
@@ -94,7 +93,7 @@ public class CohortMemberAttributeGenericDaoTest extends BaseModuleContextSensit
 		attributeToVoid.setVoidReason("Voided via cohort rest call");
 		dao.createOrUpdate(attributeToVoid);
 		
-		CohortMemberAttribute attribute = dao.get(COHORT_MEMBER_ATTRIBUTE_UUID);
+		CohortMemberAttribute attribute = dao.get(COHORT_MEMBER_ATTRIBUTE_UUID, true);
 		
 		assertThat(attribute, notNullValue());
 		assertThat(attribute.getVoided(), is(true));

@@ -22,34 +22,36 @@ public class CohortServiceImplContextSensitiveTest extends BaseModuleContextSens
 	}
 	
 	@Test
-	public void saveCohort_shouldSaveCohort() {
+	public void saveCohortM_shouldSaveCohort() {
 		CohortM cohortM = new CohortM();
+		cohortM.setName("Test Cohort");
 		cohortM.setCohortType(new CohortType());
 		
-		CohortM result = Context.getService(CohortService.class).saveCohort(cohortM);
+		CohortM result = Context.getService(CohortService.class).saveCohortM(cohortM);
 		
 		assertThat(result, notNullValue());
 		assertThat(result.getId(), notNullValue());
 	}
 	
 	@Test
-	public void saveCohort_shouldUpdateCohort() {
+	public void saveCohortM_shouldUpdateCohort() {
 		CohortM cohortM = new CohortM();
 		cohortM.setName("Test Cohort");
 		cohortM.setCohortType(new CohortType());
 		
-		CohortM savedCohort = Context.getService(CohortService.class).saveCohort(cohortM);
+		CohortM savedCohort = Context.getService(CohortService.class).saveCohortM(cohortM);
 		savedCohort.setName("Updated Test Cohort");
 		
-		CohortM result = Context.getService(CohortService.class).saveCohort(savedCohort);
+		CohortM result = Context.getService(CohortService.class).saveCohortM(savedCohort);
 		
 		assertThat(result, notNullValue());
 		assertThat(result.getName(), equalTo("Updated Test Cohort"));
 	}
 	
 	@Test
-	public void saveCohort_shouldSaveCohortMembers() {
+	public void saveCohortM_shouldSaveCohortMembers() {
 		CohortM cohortM = new CohortM();
+		cohortM.setName("Test Cohort");
 		cohortM.setCohortType(new CohortType());
 		
 		Patient patient = Context.getPatientService().getPatient(7);
@@ -57,7 +59,7 @@ public class CohortServiceImplContextSensitiveTest extends BaseModuleContextSens
 		
 		cohortM.addMemberships(cm);
 		
-		CohortM result = Context.getService(CohortService.class).saveCohort(cohortM);
+		CohortM result = Context.getService(CohortService.class).saveCohortM(cohortM);
 		
 		assertThat(result, notNullValue());
 		assertThat(result.size(), equalTo(1));
@@ -66,20 +68,21 @@ public class CohortServiceImplContextSensitiveTest extends BaseModuleContextSens
 	}
 	
 	@Test
-	public void saveCohort_shouldSaveCohortMembersForExistingCohort() {
+	public void saveCohortM_shouldSaveCohortMembersForExistingCohort() {
 		CohortM cohortM = new CohortM();
+		cohortM.setName("Test Cohort");
 		cohortM.setCohortType(new CohortType());
 		
-		CohortM savedCohort = Context.getService(CohortService.class).saveCohort(cohortM);
+		CohortM savedCohort = Context.getService(CohortService.class).saveCohortM(cohortM);
 		
 		Patient patient = Context.getPatientService().getPatient(7);
 		CohortMember cm = new CohortMember(patient);
 		savedCohort.addMemberships(cm);
 		
-		Context.getService(CohortService.class).saveCohort(savedCohort);
+		Context.getService(CohortService.class).saveCohortM(savedCohort);
 		Context.getRegisteredComponent("sessionFactory", SessionFactory.class).getCurrentSession().flush();
 		
-		CohortM result = Context.getService(CohortService.class).getCohort(savedCohort.getCohortId());
+		CohortM result = Context.getService(CohortService.class).getCohortM(savedCohort.getCohortId());
 		
 		assertThat(result, notNullValue());
 		assertThat(result.size(), equalTo(1));
@@ -88,8 +91,9 @@ public class CohortServiceImplContextSensitiveTest extends BaseModuleContextSens
 	}
 	
 	@Test
-	public void saveCohort_shouldRemoveMembersForExistingCohort() {
+	public void saveCohortM_shouldRemoveMembersForExistingCohort() {
 		CohortM cohortM = new CohortM();
+		cohortM.setName("Test Cohort");
 		cohortM.setCohortType(new CohortType());
 		
 		Patient patient = Context.getPatientService().getPatient(7);
@@ -97,11 +101,11 @@ public class CohortServiceImplContextSensitiveTest extends BaseModuleContextSens
 		
 		cohortM.addMemberships(cm);
 		
-		CohortM existingCohort = Context.getService(CohortService.class).saveCohort(cohortM);
+		CohortM existingCohort = Context.getService(CohortService.class).saveCohortM(cohortM);
 		
 		existingCohort.removeMemberships(existingCohort.getActiveCohortMembers().iterator().next());
 		
-		CohortM result = Context.getService(CohortService.class).saveCohort(existingCohort);
+		CohortM result = Context.getService(CohortService.class).saveCohortM(existingCohort);
 		
 		assertThat(result, notNullValue());
 		assertThat(result.size(), equalTo(0));

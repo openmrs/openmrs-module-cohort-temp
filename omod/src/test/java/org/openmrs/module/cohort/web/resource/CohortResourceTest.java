@@ -79,7 +79,7 @@ public class CohortResourceTest extends BaseCohortResourceTest<CohortM, CohortRe
 	
 	@Test
 	public void shouldGetResourceByUniqueUuid() {
-		when(cohortService.getCohortByUuid(COHORT_UUID)).thenReturn(cohort);
+		when(cohortService.getCohortMByUuid(COHORT_UUID)).thenReturn(cohort);
 		
 		CohortM result = getResource().getByUniqueId(COHORT_UUID);
 		
@@ -90,7 +90,7 @@ public class CohortResourceTest extends BaseCohortResourceTest<CohortM, CohortRe
 	
 	@Test
 	public void shouldCreateNewResource() {
-		when(cohortService.saveCohort(getObject())).thenReturn(getObject());
+		when(cohortService.saveCohortM(getObject())).thenReturn(getObject());
 		
 		CohortM newlyCreatedObject = getResource().save(getObject());
 		

@@ -48,28 +48,28 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public CohortM getCohortByUuid(@NotNull String uuid) {
+	public CohortM getCohortMByUuid(@NotNull String uuid) {
 		return cohortDao.get(uuid);
 	}
 	
 	@Override
-	public CohortM getCohort(@NotNull String name) {
+	public CohortM getCohortM(@NotNull String name) {
 		return cohortDao.findByUniqueProp(PropValue.builder().property("name").value(name).build());
 	}
 	
 	@Override
-	public CohortM getCohort(int id) {
+	public CohortM getCohortM(int id) {
 		return cohortDao.get(id);
 	}
 	
 	@Override
-	public Collection<CohortM> findCohortByLocationUuid(@NotNull String locationUuid) {
+	public Collection<CohortM> findCohortMByLocationUuid(@NotNull String locationUuid) {
 		return cohortDao.findBy(
 		    PropValue.builder().property("uuid").associationPath(Optional.of("location")).value(locationUuid).build());
 	}
 	
 	@Override
-	public Collection<CohortM> findCohortByPatientUuid(@NotNull String patientUuid) {
+	public Collection<CohortM> findCohortMByPatientUuid(@NotNull String patientUuid) {
 		return cohortDao.findBy(
 		    PropValue.builder().property("uuid").associationPath(Optional.of("patient")).value(patientUuid).build());
 	}
@@ -80,7 +80,7 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public CohortM saveCohort(@NotNull CohortM cohortM) {
+	public CohortM saveCohortM(@NotNull CohortM cohortM) {
 		return cohortDao.createOrUpdate(cohortM);
 	}
 	
@@ -94,7 +94,7 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public void purgeCohort(@NotNull CohortM cohort) {
+	public void purgeCohortM(@NotNull CohortM cohort) {
 		cohortDao.delete(cohort);
 	}
 	
@@ -109,19 +109,19 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public Collection<CohortAttribute> findAttributesByCohortUuid(String cohortUuid) {
+	public Collection<CohortAttribute> findCohortAttributesByCohortUuid(String cohortUuid) {
 		return cohortAttributeDao.findBy(
 		    PropValue.builder().associationPath(Optional.of("cohort")).property("uuid").value(cohortUuid).build());
 	}
 	
 	@Override
-	public Collection<CohortAttribute> findAttributesByTypeUuid(String attributeTypeUuid) {
+	public Collection<CohortAttribute> findCohortAttributesByTypeUuid(String attributeTypeUuid) {
 		return cohortAttributeDao.findBy(PropValue.builder().associationPath(Optional.of("attributeType")).property("uuid")
 		        .value(attributeTypeUuid).build());
 	}
 	
 	@Override
-	public Collection<CohortAttribute> findAttributesByTypeName(String attributeTypeName) {
+	public Collection<CohortAttribute> findCohortAttributesByTypeName(String attributeTypeName) {
 		return cohortAttributeDao.findBy(PropValue.builder().associationPath(Optional.of("attributeType")).property("name")
 		        .value(attributeTypeName).build());
 	}
@@ -141,27 +141,27 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public CohortAttributeType getAttributeTypeByUuid(@NotNull String uuid) {
+	public CohortAttributeType getCohortAttributeTypeByUuid(@NotNull String uuid) {
 		return cohortAttributeTypeDao.get(uuid);
 	}
 	
 	@Override
-	public CohortAttributeType getAttributeTypeByName(String name) {
+	public CohortAttributeType getCohortAttributeTypeByName(String name) {
 		return cohortAttributeTypeDao.findByUniqueProp(PropValue.builder().property("name").value(name).build());
 	}
 	
 	@Override
-	public Collection<CohortAttributeType> findAllAttributeTypes() {
+	public Collection<CohortAttributeType> findAllCohortAttributeTypes() {
 		return cohortAttributeTypeDao.findAll();
 	}
 	
 	@Override
-	public CohortAttributeType saveAttributeType(@NotNull CohortAttributeType attributeType) {
+	public CohortAttributeType saveCohortAttributeType(@NotNull CohortAttributeType attributeType) {
 		return cohortAttributeTypeDao.createOrUpdate(attributeType);
 	}
 	
 	@Override
-	public void voidAttributeType(@NotNull CohortAttributeType attributeType, String retiredReason) {
+	public void voidCohortAttributeType(@NotNull CohortAttributeType attributeType, String retiredReason) {
 		if (attributeType == null) {
 			return;
 		}
@@ -170,12 +170,12 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public void purgeAttributeType(@NotNull CohortAttributeType attributeType) {
+	public void purgeCohortAttributeType(@NotNull CohortAttributeType attributeType) {
 		cohortAttributeTypeDao.delete(attributeType);
 	}
 	
 	@Override
-	public List<CohortM> findMatchingCohorts(String nameMatching, Map<String, String> attributes, CohortType cohortType,
+	public List<CohortM> findMatchingCohortMs(String nameMatching, Map<String, String> attributes, CohortType cohortType,
 	        boolean includeVoided) {
 		return cohortDao.getSearchHandler().findCohorts(nameMatching, attributes, cohortType, includeVoided);
 	}

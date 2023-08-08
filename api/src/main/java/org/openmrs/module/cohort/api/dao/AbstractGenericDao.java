@@ -64,9 +64,9 @@ public abstract class AbstractGenericDao<W extends OpenmrsObject & Auditable> im
 	}
 	
 	@Override
-	public W get(String uuid, boolean includeRetired) {
+	public W get(String uuid, boolean includeVoided) {
 		Criteria criteria = getCurrentSession().createCriteria(clazz);
-		includeRetiredObjects(criteria, includeRetired);
+		includeDeletedObjects(criteria, includeVoided);
 		return (W) criteria.add(eq("uuid", uuid)).uniqueResult();
 	}
 	
@@ -78,7 +78,7 @@ public abstract class AbstractGenericDao<W extends OpenmrsObject & Auditable> im
 	@Override
 	public Collection<W> findAll(boolean includeRetired) {
 		Criteria criteria = getCurrentSession().createCriteria(clazz);
-		includeRetiredObjects(criteria, includeRetired);
+		includeDeletedObjects(criteria, includeRetired);
 		return criteria.list();
 	}
 	
@@ -112,7 +112,7 @@ public abstract class AbstractGenericDao<W extends OpenmrsObject & Auditable> im
 	@Override
 	public Collection<W> findBy(PropValue propValue, boolean includeRetired) {
 		Criteria criteria = getCurrentSession().createCriteria(clazz);
-		includeRetiredObjects(criteria, includeRetired);
+		includeDeletedObjects(criteria, includeRetired);
 		return propValue.getAssociationPath().isPresent()
 		        ? criteria.createCriteria(propValue.getAssociationPath().get(), "_pv2021")
 		                .add(eq("_pv2021." + propValue.getProperty(), propValue.getValue())).list()
@@ -127,7 +127,7 @@ public abstract class AbstractGenericDao<W extends OpenmrsObject & Auditable> im
 	@Override
 	public W findByUniqueProp(PropValue propValue, boolean includeRetired) {
 		Criteria criteria = getCurrentSession().createCriteria(clazz);
-		includeRetiredObjects(criteria, includeRetired);
+		includeDeletedObjects(criteria, includeRetired);
 		return (W) (propValue.getAssociationPath().isPresent()
 		        ? criteria.createCriteria(propValue.getAssociationPath().get(), "_cu2021")
 		                .add(eq("_cu2021." + propValue.getProperty(), propValue.getValue())).uniqueResult()
@@ -162,8 +162,8 @@ public abstract class AbstractGenericDao<W extends OpenmrsObject & Auditable> im
 		criteria.add(eq("retired", false));
 	}
 	
-	protected void includeRetiredObjects(Criteria criteria, boolean includeRetired) {
-		if (!includeRetired) {
+	protected void includeDeletedObjects(Criteria criteria, boolean includeDeleted) {
+		if (!includeDeleted) {
 			if (isVoidable()) {
 				handleVoidable(criteria);
 			} else if (isRetireable()) {

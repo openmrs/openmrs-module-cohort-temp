@@ -9,15 +9,15 @@ import org.openmrs.module.cohort.CohortType;
 
 public interface CohortTypeService extends OpenmrsService {
 	
-	CohortType getByUuid(@NotNull String uuid);
+	CohortType getCohortTypeByUuid(@NotNull String uuid);
 	
-	CohortType getByUuid(@NotNull String uuid, boolean includeVoided);
+	CohortType getCohortTypeByUuid(@NotNull String uuid, boolean includeVoided);
 	
-	CohortType getByName(@NotNull String name);
+	CohortType getCohortTypeByName(@NotNull String name);
 	
-	CohortType getByName(@NotNull String name, boolean includeVoided);
+	CohortType getCohortTypeByName(@NotNull String name, boolean includeVoided);
 	
-	Collection<CohortType> findAll();
+	Collection<CohortType> findAllCohortTypes();
 	
 	CohortType saveCohortType(@NotNull CohortType cohortType);
 	

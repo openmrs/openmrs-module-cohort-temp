@@ -35,7 +35,7 @@ public class CohortTypeValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "required");
 		
 		CohortType currentType = (CohortType) command;
-		CohortType type = Context.getService(CohortTypeService.class).getByName(currentType.getName());
+		CohortType type = Context.getService(CohortTypeService.class).getCohortTypeByName(currentType.getName());
 		
 		if (type != null) {
 			errors.rejectValue("name", "A cohort type with the same name already exists");

@@ -119,7 +119,7 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 				}
 			}
 		}
-		return Context.getService(CohortMemberService.class).createOrUpdate(cohortMember);
+		return Context.getService(CohortMemberService.class).saveCohortMember(cohortMember);
 	}
 	
 	@Override
@@ -129,14 +129,14 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 	
 	@Override
 	public CohortMember getByUniqueId(String uuid) {
-		return Context.getService(CohortMemberService.class).getByUuid(uuid);
+		return Context.getService(CohortMemberService.class).getCohortMemberByUuid(uuid);
 	}
 	
 	@Override
 	public void purge(CohortMember cohortMember, RequestContext context) throws ResponseException {
 		boolean purge = Boolean.getBoolean(context.getParameter("purge"));
 		if (purge) {
-			Context.getService(CohortMemberService.class).purge(cohortMember);
+			Context.getService(CohortMemberService.class).purgeCohortMember(cohortMember);
 		} else {
 			Context.getService(CohortMemberService.class).voidCohortMember(cohortMember, "");
 		}
@@ -169,7 +169,7 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 		
 		if (isNotBlank(cohortUuid) && isNotBlank(query)) {
 			Collection<CohortMember> cohortMembers = Context.getService(CohortMemberService.class)
-			        .findCohortMembersByCohortAndPatient(cohortUuid, query);
+			        .findCohortMembersByCohortAndPatientName(cohortUuid, query);
 			return new NeedsPaging<>(new ArrayList<>(cohortMembers), context);
 		} else if (isNotBlank(cohortUuid)) {
 			return new NeedsPaging<>(

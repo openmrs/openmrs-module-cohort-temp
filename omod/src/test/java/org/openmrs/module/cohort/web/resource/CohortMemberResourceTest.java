@@ -89,7 +89,7 @@ public class CohortMemberResourceTest extends BaseCohortResourceTest<CohortMembe
 	
 	@Test
 	public void shouldGetResourceByUniqueUuid() {
-		when(cohortMemberService.getByUuid(COHORT_MEMBER_UUID)).thenReturn(cohortMember);
+		when(cohortMemberService.getCohortMemberByUuid(COHORT_MEMBER_UUID)).thenReturn(cohortMember);
 		
 		CohortMember result = getResource().getByUniqueId(COHORT_MEMBER_UUID);
 		assertThat(result, notNullValue());
@@ -101,7 +101,7 @@ public class CohortMemberResourceTest extends BaseCohortResourceTest<CohortMembe
 		CohortM cohort = mock(CohortM.class);
 		cohortMember.setCohort(cohort);
 		
-		when(cohortMemberService.createOrUpdate(getObject())).thenReturn(getObject());
+		when(cohortMemberService.saveCohortMember(getObject())).thenReturn(getObject());
 		when(cohort.getVoided()).thenReturn(false);
 		
 		CohortMember newlyCreatedObject = getResource().save(getObject());
@@ -111,7 +111,7 @@ public class CohortMemberResourceTest extends BaseCohortResourceTest<CohortMembe
 	
 	@Test(expected = ResourceDoesNotSupportOperationException.class)
 	public void shouldGetAllResources() {
-		when(cohortMemberService.findAll()).thenReturn(Collections.singletonList(getObject()));
+		when(cohortMemberService.findAllCohortMembers()).thenReturn(Collections.singletonList(getObject()));
 		
 		getResource().getAll(new RequestContext());
 	}

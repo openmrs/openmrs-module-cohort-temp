@@ -132,7 +132,7 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 				cohortMember.setEndDate(cohort.getEndDate());
 			}
 		}
-		return Context.getService(CohortService.class).saveCohort(cohort);
+		return Context.getService(CohortService.class).saveCohortM(cohort);
 	}
 	
 	@Override
@@ -142,7 +142,7 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	
 	@Override
 	public void purge(CohortM cohort, RequestContext request) throws ResponseException {
-		Context.getService(CohortService.class).purgeCohort(cohort);
+		Context.getService(CohortService.class).purgeCohortM(cohort);
 	}
 	
 	@Override
@@ -152,7 +152,7 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 	
 	@Override
 	public CohortM getByUniqueId(String uuid) {
-		return Context.getService(CohortService.class).getCohortByUuid(uuid);
+		return Context.getService(CohortService.class).getCohortMByUuid(uuid);
 	}
 	
 	@Override
@@ -184,9 +184,9 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 		
 		if (StringUtils.isNotBlank(cohortType)) {
 			CohortTypeService typeService = Context.getService(CohortTypeService.class);
-			type = typeService.getByName(cohortType);
+			type = typeService.getCohortTypeByName(cohortType);
 			if (type == null) {
-				type = typeService.getByUuid(cohortType);
+				type = typeService.getCohortTypeByUuid(cohortType);
 			}
 			
 			if (type == null) {
@@ -198,11 +198,11 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 		CohortService cohortService = Context.getService(CohortService.class);
 		
 		if (StringUtils.isNotBlank(location)) {
-			Collection<CohortM> cohorts = cohortService.findCohortByLocationUuid(location);
+			Collection<CohortM> cohorts = cohortService.findCohortMByLocationUuid(location);
 			return new NeedsPaging<>(new ArrayList<>(cohorts), context);
 		}
 		
-		List<CohortM> cohort = cohortService.findMatchingCohorts(context.getParameter("q"), attributes, type,
+		List<CohortM> cohort = cohortService.findMatchingCohortMs(context.getParameter("q"), attributes, type,
 		    context.getIncludeAll());
 		return new NeedsPaging<>(cohort, context);
 		

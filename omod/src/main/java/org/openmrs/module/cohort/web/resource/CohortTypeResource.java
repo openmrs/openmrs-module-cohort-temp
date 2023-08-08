@@ -94,17 +94,18 @@ public class CohortTypeResource extends DataDelegatingCrudResource<CohortType> {
 	
 	@Override
 	public CohortType getByUniqueId(String uuidOrName) {
-		CohortType cohortType = Context.getService(CohortTypeService.class).getByUuid(uuidOrName);
+		CohortType cohortType = Context.getService(CohortTypeService.class).getCohortTypeByUuid(uuidOrName);
 		//If getByUuid is null. Try searching by name
 		if (cohortType == null) {
-			cohortType = Context.getService(CohortTypeService.class).getByName(uuidOrName);
+			cohortType = Context.getService(CohortTypeService.class).getCohortTypeByName(uuidOrName);
 		}
 		return cohortType;
 	}
 	
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
-		return new NeedsPaging<>((List<CohortType>) Context.getService(CohortTypeService.class).findAll(), context);
+		return new NeedsPaging<>((List<CohortType>) Context.getService(CohortTypeService.class).findAllCohortTypes(),
+		        context);
 	}
 	
 	@PropertyGetter("display")

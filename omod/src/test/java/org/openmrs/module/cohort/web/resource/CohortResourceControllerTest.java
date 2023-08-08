@@ -33,7 +33,7 @@ public class CohortResourceControllerTest extends MainResourceControllerTest {
 	@Test
 	public void shouldCreateCohortWithMembers() throws Exception {
 		
-		CohortM cohort = Context.getService(CohortService.class).getCohort("cohort name");
+		CohortM cohort = Context.getService(CohortService.class).getCohortM("cohort name");
 		assertNull(cohort);
 		
 		String json = "{ \"name\":\"cohort name\", \"description\":\"cohort description\"," + "\"cohortMembers\": [ {"
@@ -41,7 +41,7 @@ public class CohortResourceControllerTest extends MainResourceControllerTest {
 		
 		handle(newPostRequest(getURI(), json));
 		
-		cohort = Context.getService(CohortService.class).getCohort("cohort name");
+		cohort = Context.getService(CohortService.class).getCohortM("cohort name");
 		assertNotNull(cohort);
 		assertEquals("cohort description", cohort.getDescription());
 		
@@ -53,19 +53,19 @@ public class CohortResourceControllerTest extends MainResourceControllerTest {
 	@Test
 	public void shouldUpdateCohortWhileKeepingName() throws Exception {
 		
-		CohortM cohort = Context.getService(CohortService.class).getCohort("cohort name");
+		CohortM cohort = Context.getService(CohortService.class).getCohortM("cohort name");
 		assertNull(cohort);
 		
 		String createJson = "{ \"name\":\"cohort name\", \"description\":\"cohort description\"," + "\"cohortMembers\": [ {"
 		        + "\"patient\":\"da7f524f-27ce-4bb2-86d6-6d1d05312bd5\"" + " } ]" + "}";
 		
 		handle(newPostRequest(getURI(), createJson));
-		cohort = Context.getService(CohortService.class).getCohort("cohort name");
+		cohort = Context.getService(CohortService.class).getCohortM("cohort name");
 		
 		String updateJson = "{ \"name\":\"cohort name\", \"description\":\"updated cohort description\" } ]" + "}";
 		
 		handle(newPostRequest(getURI() + "/" + cohort.getUuid(), updateJson));
-		cohort = Context.getService(CohortService.class).getCohort("cohort name");
+		cohort = Context.getService(CohortService.class).getCohortM("cohort name");
 		
 		assertNotNull(cohort);
 		assertEquals("updated cohort description", cohort.getDescription());

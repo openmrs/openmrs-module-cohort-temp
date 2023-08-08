@@ -21,7 +21,6 @@ import static org.hamcrest.Matchers.nullValue;
 import java.util.Collection;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.cohort.CohortMemberAttributeType;
 import org.openmrs.module.cohort.api.TestDataUtils;
@@ -29,7 +28,6 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-@Ignore
 public class CohortMemberAttributeTypeGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
 	String COHORT_MEMBER_ATTRIBUTE_TYPE_INITIAL_TEST_DATA_XML = "org/openmrs/module/cohort/api/hibernate/db/CohortMemberAttributeTypeDaoTest_initialTestData.xml";
@@ -62,7 +60,7 @@ public class CohortMemberAttributeTypeGenericDaoTest extends BaseModuleContextSe
 		Collection<CohortMemberAttributeType> attributeTypes = dao.findAll();
 		
 		assertThat(attributeTypes, notNullValue());
-		assertThat(attributeTypes, hasSize(2));
+		assertThat(attributeTypes, hasSize(1));
 		assertThat(attributeTypes, everyItem(hasProperty("name", notNullValue())));
 	}
 	
@@ -83,7 +81,8 @@ public class CohortMemberAttributeTypeGenericDaoTest extends BaseModuleContextSe
 		attributeTypeToRetire.setRetired(true);
 		dao.createOrUpdate(attributeTypeToRetire);
 		
-		CohortMemberAttributeType attributeType = dao.get(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID);
+		CohortMemberAttributeType attributeType = dao.get(COHORT_MEMBER_ATTRIBUTE_TYPE_UUID, true);
+		
 		assertThat(attributeType, notNullValue());
 		assertThat(attributeType.getRetired(), is(true));
 		assertThat(attributeType.getRetireReason(), is("Voided via cohort rest call"));
