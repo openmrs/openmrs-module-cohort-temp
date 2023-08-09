@@ -16,20 +16,15 @@ import org.openmrs.Auditable;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.module.cohort.api.dao.search.ISearchQuery;
 import org.openmrs.module.cohort.api.dao.search.PropValue;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 public interface GenericDao<W extends OpenmrsObject & Auditable> {
 	
 	ISearchQuery getSearchHandler();
 	
-	@Transactional(readOnly = true)
 	W get(final int id);
 	
-	@Transactional(readOnly = true)
 	W get(final String uuid);
 	
-	@Transactional(readOnly = true)
 	W get(final String uuid, boolean includeDeleted);
 	
 	W createOrUpdate(W object);
@@ -38,28 +33,20 @@ public interface GenericDao<W extends OpenmrsObject & Auditable> {
 	
 	void delete(String uuid);
 	
-	@Transactional(readOnly = true)
 	Collection<W> findAll();
 	
-	@Transactional(readOnly = true)
 	Collection<W> findAll(boolean includeRetired);
 	
-	@Transactional(readOnly = true)
 	Collection<W> findBy(PropValue propValue);
 	
-	@Transactional(readOnly = true)
 	Collection<W> findBy(PropValue propValue, boolean includeRetired);
 	
-	@Transactional(readOnly = true)
 	W findByUniqueProp(PropValue propValue);
 	
-	@Transactional(readOnly = true)
 	W findByUniqueProp(PropValue propValue, boolean includeRetired);
 	
-	@Transactional(readOnly = true)
 	Collection<W> findByOr(Criterion... predicates);
 	
-	@Transactional(readOnly = true)
 	Collection<W> findByAnd(Criterion... predicates);
 	
 }

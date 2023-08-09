@@ -99,12 +99,12 @@ public class CohortServiceImpl extends BaseOpenmrsService implements CohortServi
 	}
 	
 	@Override
-	public CohortAttribute getAttributeByUuid(@NotNull String uuid) {
+	public CohortAttribute getCohortAttributeByUuid(@NotNull String uuid) {
 		return cohortAttributeDao.get(uuid);
 	}
 	
 	@Override
-	public CohortAttribute saveAttribute(@NotNull CohortAttribute attribute) {
+	public CohortAttribute saveCohortAttribute(@NotNull CohortAttribute attribute) {
 		return cohortAttributeDao.createOrUpdate(attribute);
 	}
 	

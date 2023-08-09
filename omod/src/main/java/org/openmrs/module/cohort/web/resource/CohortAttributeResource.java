@@ -85,7 +85,7 @@ public class CohortAttributeResource extends BaseAttributeCrudResource1_9<Cohort
 	
 	@Override
 	public CohortAttribute save(CohortAttribute cohortAttribute) {
-		return cohortService.saveAttribute(cohortAttribute);
+		return cohortService.saveCohortAttribute(cohortAttribute);
 	}
 	
 	@Override
@@ -105,7 +105,7 @@ public class CohortAttributeResource extends BaseAttributeCrudResource1_9<Cohort
 	
 	@Override
 	public CohortAttribute getByUniqueId(@NotNull String uuid) {
-		return cohortService.getAttributeByUuid(uuid);
+		return cohortService.getCohortAttributeByUuid(uuid);
 	}
 	
 	@Override

@@ -99,7 +99,7 @@ public class CohortServiceImplTest {
 		when(cohortAttribute.getCohortAttributeId()).thenReturn(345);
 		when(cohortAttributeDao.createOrUpdate(cohortAttribute)).thenReturn(cohortAttribute);
 		
-		CohortAttribute attribute = cohortService.saveAttribute(cohortAttribute);
+		CohortAttribute attribute = cohortService.saveCohortAttribute(cohortAttribute);
 		assertThat(attribute, notNullValue());
 		assertThat(attribute.getCohortAttributeId(), equalTo(345));
 	}
@@ -124,7 +124,7 @@ public class CohortServiceImplTest {
 		when(cohortAttribute.getUuid()).thenReturn(COHORT_ATTRIBUTE_UUID);
 		when(cohortAttributeDao.get(COHORT_ATTRIBUTE_UUID)).thenReturn(cohortAttribute);
 		
-		CohortAttribute result = cohortService.getAttributeByUuid(COHORT_ATTRIBUTE_UUID);
+		CohortAttribute result = cohortService.getCohortAttributeByUuid(COHORT_ATTRIBUTE_UUID);
 		assertThat(result, notNullValue());
 		assertThat(result.getCohortAttributeId(), equalTo(12));
 		assertThat(result.getUuid(), equalTo(COHORT_ATTRIBUTE_UUID));

@@ -17,48 +17,70 @@ import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.cohort.CohortMember;
 import org.openmrs.module.cohort.CohortMemberAttribute;
 import org.openmrs.module.cohort.CohortMemberAttributeType;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface CohortMemberService extends OpenmrsService {
 	
+	@Transactional(readOnly = true)
 	CohortMember getCohortMemberByUuid(@NotNull String uuid);
 	
+	@Transactional(readOnly = true)
 	CohortMember getCohortMemberByName(@NotNull String name);
 	
+	@Transactional(readOnly = true)
 	Collection<CohortMember> findAllCohortMembers();
 	
+	@Transactional
 	CohortMember saveCohortMember(@NotNull CohortMember cohortMember);
 	
+	@Transactional
 	void voidCohortMember(@NotNull CohortMember cohortMember, String voidReason);
 	
+	@Transactional
 	void purgeCohortMember(@NotNull CohortMember cohortMember);
 	
+	@Transactional(readOnly = true)
 	CohortMemberAttributeType getCohortMemberAttributeTypeByUuid(@NotNull String uuid);
 	
+	@Transactional(readOnly = true)
 	Collection<CohortMemberAttributeType> findAllCohortMemberAttributeTypes();
 	
+	@Transactional
 	CohortMemberAttribute saveCohortMemberAttribute(CohortMemberAttribute cohortMemberAttributeType);
 	
+	@Transactional
 	void voidCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute, String voidReason);
 	
+	@Transactional
 	void purgeCohortMemberAttribute(CohortMemberAttribute cohortMemberAttribute);
 	
+	@Transactional(readOnly = true)
 	CohortMemberAttribute getCohortMemberAttributeByUuid(@NotNull String uuid);
 	
+	@Transactional(readOnly = true)
 	Collection<CohortMemberAttribute> getCohortMemberAttributesByTypeUuid(@NotNull String attributeTypeUuid);
 	
+	@Transactional
 	CohortMemberAttributeType saveCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType);
 	
+	@Transactional
 	void voidCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType, String voidReason);
 	
+	@Transactional
 	void purgeCohortMemberAttributeType(CohortMemberAttributeType cohortMemberAttributeType);
 	
 	//Search methods
+	
+	@Transactional(readOnly = true)
 	Collection<CohortMember> findCohortMembersByCohortUuid(@NotNull String cohortUuid);
 	
+	@Transactional(readOnly = true)
 	Collection<CohortMember> findCohortMembersByPatientUuid(@NotNull String patientUuid);
 	
+	@Transactional(readOnly = true)
 	Collection<CohortMember> findCohortMembersByPatientName(@NotNull String patientName);
 	
+	@Transactional(readOnly = true)
 	Collection<CohortMember> findCohortMembersByCohortAndPatientName(@NotNull String cohortUuid,
 	        @NotNull String patientName);
 }
