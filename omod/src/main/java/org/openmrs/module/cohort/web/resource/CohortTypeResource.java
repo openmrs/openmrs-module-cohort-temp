@@ -12,7 +12,9 @@ package org.openmrs.module.cohort.web.resource;
 import java.util.List;
 
 import org.openmrs.api.context.Context;
+import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortType;
+import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.cohort.api.CohortTypeService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
@@ -84,6 +86,10 @@ public class CohortTypeResource extends DataDelegatingCrudResource<CohortType> {
 	
 	@Override
 	public void purge(CohortType cohortType, RequestContext request) throws ResponseException {
+		List<CohortM> cohortList = Context.getService(CohortService.class).findMatchingCohortMs("", null, cohortType, false);
+		if (!cohortList.isEmpty()) {
+			throw new RuntimeException("There are cohorts that are associated with the cohort type");
+		}
 		Context.getService(CohortTypeService.class).purgeCohortType(cohortType);
 	}
 	

@@ -11,17 +11,25 @@ package org.openmrs.module.cohort.web.resource;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortType;
+import org.openmrs.module.cohort.api.CohortService;
 import org.openmrs.module.cohort.api.CohortTypeService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
@@ -36,6 +44,9 @@ public class CohortTypeResourceTest extends BaseCohortResourceTest<CohortType, C
 	@Mock
 	@Qualifier
 	private CohortTypeService cohortTypeService;
+
+	@Mock
+	CohortService cohortService;
 	
 	CohortType cohortType;
 	
@@ -112,4 +123,27 @@ public class CohortTypeResourceTest extends BaseCohortResourceTest<CohortType, C
 	public void verifyResourceVersion() {
 		assertThat(getResource().getResourceVersion(), is("1.8"));
 	}
+
+	@Test
+	public void shouldPurgeCohortType() {
+		when(Context.getService(CohortService.class)).thenReturn(cohortService);
+		List<CohortM> cohortMList = new ArrayList<>();
+		when(cohortService.findMatchingCohortMs("",null,cohortType,false)).thenReturn(cohortMList);
+		assertTrue(cohortMList.isEmpty());
+		getResource().purge(cohortType,new RequestContext());
+		verify(cohortTypeService,times(1)).purgeCohortType(cohortType);
+	}
+
+	@Test
+	public void shouldThrowExceptionFroPurgeCohortType() {
+		when(Context.getService(CohortService.class)).thenReturn(cohortService);
+		when(cohortService.findMatchingCohortMs("", null, cohortType, false)).thenReturn(Collections.singletonList(new CohortM()));
+		when(Context.getService(CohortTypeService.class)).thenReturn(cohortTypeService);
+		try{
+			getResource().purge(cohortType,new RequestContext());
+		}catch (RuntimeException e){
+			assertEquals("There are cohorts that are associated with the cohort type",e.getMessage());
+		}
+	}
+
 }
