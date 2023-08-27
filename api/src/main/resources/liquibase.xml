@@ -347,5 +347,14 @@
         </createIndex>
     </changeSet>
 
+    <changeSet id="add_foreignKey_constraint_to_cohort_type_id" author="manojll">
+        <preConditions>
+            <columnExists tableName="cohort" columnName="cohort_type_id"/>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="cohort" baseColumnNames="cohort_type_id"
+                constraintName="cohort_cohort_type_fk" referencedTableName="cohort_type" referencedColumnNames="cohort_type_id"
+                onDelete="RESTRICT" />
+    </changeSet>
+
     <include file="liquibase/3.x-liquibase-changeSet.xml"/>
 </databaseChangeLog>

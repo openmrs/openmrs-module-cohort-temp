@@ -13,7 +13,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
@@ -23,6 +26,7 @@ import org.openmrs.module.cohort.api.dao.search.PropValue;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
 
 public class CohortTypeGenericDaoTest extends BaseModuleContextSensitiveTest {
 	
@@ -77,6 +81,23 @@ public class CohortTypeGenericDaoTest extends BaseModuleContextSensitiveTest {
 		assertThat(true, equalTo(cohortType.getVoided()));
 		CohortType voidedCohortType = dao.get(COHORT_TYPE_UUID);
 		assertThat(voidedCohortType, nullValue());
+	}
+	
+	@Test
+	public void shouldPurgeCohortType() {
+		CohortType cohortType = dao.get(COHORT_TYPE_UUID);
+		assertNotNull(cohortType);
+		dao.delete(cohortType);
+		CohortType afterAttemptPurge = dao.get(COHORT_TYPE_UUID);
+		assertNull(afterAttemptPurge);
+	}
+	
+	@Test(expected = ConstraintViolationException.class)
+	public void shouldThrowExceptionForPurgeCohortType() {
+		CohortType cohortType = dao.get("94517bf9-d9d6-4726-b4f1-a2dff6b36e2d");
+		assertNotNull(cohortType);
+		dao.delete(cohortType);
+		Context.flushSession();
 	}
 	
 }
