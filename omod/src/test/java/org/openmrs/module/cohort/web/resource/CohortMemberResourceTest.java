@@ -13,16 +13,24 @@ import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.sql.Date;
+import java.time.Instant;
 import java.util.Collections;
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.cohort.CohortM;
 import org.openmrs.module.cohort.CohortMember;
@@ -34,6 +42,7 @@ import org.openmrs.module.webservices.rest.web.representation.RefRepresentation;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Description;
 
 @RunWith(PowerMockRunner.class)
 public class CohortMemberResourceTest extends BaseCohortResourceTest<CohortMember, CohortMemberResource> {
@@ -107,6 +116,119 @@ public class CohortMemberResourceTest extends BaseCohortResourceTest<CohortMembe
 		CohortMember newlyCreatedObject = getResource().save(getObject());
 		assertThat(newlyCreatedObject, notNullValue());
 		assertThat(newlyCreatedObject.getUuid(), is(COHORT_MEMBER_UUID));
+	}
+	
+	@Test
+	@Description("Should raise exception for duplicate member with no end date if the existing member has no endDate")
+	public void shouldRaiseRuntimeExceptionWhenSavingExistingMemberWithoutEndDate() {
+		// Mocking objects
+		CohortM cohort = mock(CohortM.class);
+		Patient currentMemberPatient = mock(Patient.class);
+		Patient newMemberPatient = mock(Patient.class);
+		CohortMember duplicateCohortMember = new CohortMember();
+		String patientUUID = UUID.randomUUID().toString();
+		
+		// Setting up existing member
+		cohortMember.setCohort(cohort);
+		cohortMember.setPatient(currentMemberPatient);
+		cohortMember.setEndDate(null);
+		
+		// Setting up new member
+		duplicateCohortMember.setUuid(COHORT_MEMBER_UUID);
+		duplicateCohortMember.setCohort(cohort);
+		duplicateCohortMember.setPatient(newMemberPatient);
+		duplicateCohortMember.setEndDate(null);
+		
+		// Mock behavior
+		when(cohort.getVoided()).thenReturn(false);
+		when(cohort.getCohortMembers()).thenReturn(Collections.singleton(cohortMember));
+		when(currentMemberPatient.getUuid()).thenReturn(patientUUID);
+		when(newMemberPatient.getUuid()).thenReturn(patientUUID);
+		
+		// Preconditions check
+		assertEquals(newMemberPatient.getUuid(), currentMemberPatient.getUuid());
+		assertEquals(duplicateCohortMember.getUuid(), cohortMember.getUuid());
+		assertNull(cohortMember.getEndDate());
+		assertNull(duplicateCohortMember.getEndDate());
+		
+		// Validate expected Exception
+		try {
+			getResource().save(duplicateCohortMember);
+			fail();
+		}
+		catch (RuntimeException e) {
+			// test passed
+		}
+	}
+	
+	@Test
+	public void shouldUpdateExistingMemberWhenEndDateIsNonNull() {
+		// Mocking objects
+		CohortM cohort = mock(CohortM.class);
+		Patient currentMemberPatient = mock(Patient.class);
+		Patient updatedMemberPatient = mock(Patient.class);
+		CohortMember updatedCohortMember = new CohortMember();
+		String patientUUID = UUID.randomUUID().toString();
+		
+		// Setting up existing member
+		cohortMember.setCohort(cohort);
+		cohortMember.setPatient(currentMemberPatient);
+		cohortMember.setEndDate(null);
+		
+		// Setting up new member
+		updatedCohortMember.setUuid(COHORT_MEMBER_UUID);
+		updatedCohortMember.setCohort(cohort);
+		updatedCohortMember.setPatient(updatedMemberPatient);
+		updatedCohortMember.setEndDate(Date.from(Instant.now()));
+		
+		// Mock behavior
+		when(cohort.getVoided()).thenReturn(false);
+		when(cohort.getCohortMembers()).thenReturn(Collections.singleton(cohortMember));
+		when(currentMemberPatient.getUuid()).thenReturn(patientUUID);
+		when(updatedMemberPatient.getUuid()).thenReturn(patientUUID);
+		when(cohortMemberService.saveCohortMember(updatedCohortMember)).thenReturn(updatedCohortMember);
+		
+		// Verify behaviour
+		CohortMember newlyCreatedObject = getResource().save(updatedCohortMember);
+		assertNotNull(newlyCreatedObject);
+		assertNotNull(newlyCreatedObject.getEndDate());
+		assertEquals(updatedCohortMember.getUuid(), newlyCreatedObject.getUuid());
+		assertEquals(updatedCohortMember.getEndDate(), newlyCreatedObject.getEndDate());
+	}
+	
+	@Test
+	public void shouldReinstateMemberWithNullEndDate() {
+		// Mocking objects
+		CohortM cohort = mock(CohortM.class);
+		Patient currentMemberPatient = mock(Patient.class);
+		Patient updatedMemberPatient = mock(Patient.class);
+		CohortMember updatedCohortMember = new CohortMember();
+		String patientUUID = UUID.randomUUID().toString();
+		
+		// Setting up existing member
+		cohortMember.setCohort(cohort);
+		cohortMember.setPatient(currentMemberPatient);
+		cohortMember.setEndDate(Date.from(Instant.now()));
+		
+		// Setting up new member
+		updatedCohortMember.setUuid(COHORT_MEMBER_UUID);
+		updatedCohortMember.setCohort(cohort);
+		updatedCohortMember.setPatient(updatedMemberPatient);
+		updatedCohortMember.setEndDate(null);
+		
+		// Mock behavior
+		when(cohort.getVoided()).thenReturn(false);
+		when(cohort.getCohortMembers()).thenReturn(Collections.singleton(cohortMember));
+		when(currentMemberPatient.getUuid()).thenReturn(patientUUID);
+		when(updatedMemberPatient.getUuid()).thenReturn(patientUUID);
+		when(cohortMemberService.saveCohortMember(updatedCohortMember)).thenReturn(updatedCohortMember);
+		
+		// Verify behaviour
+		CohortMember newlyCreatedObject = getResource().save(updatedCohortMember);
+		assertNotNull(newlyCreatedObject);
+		assertNull(newlyCreatedObject.getEndDate());
+		assertEquals(updatedCohortMember.getUuid(), newlyCreatedObject.getUuid());
+		assertEquals(updatedCohortMember.getEndDate(), newlyCreatedObject.getEndDate());
 	}
 	
 	@Test(expected = ResourceDoesNotSupportOperationException.class)

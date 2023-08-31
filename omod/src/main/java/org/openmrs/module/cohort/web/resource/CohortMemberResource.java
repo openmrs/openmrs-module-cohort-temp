@@ -108,15 +108,15 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 		if (cohort.getVoided()) {
 			throw new RuntimeException("Cannot add patient to ended group.");
 		}
-		for (CohortMember member : cohort.getCohortMembers()) {
-			if (member.getPatient().getUuid().equals(newPatient.getUuid()) && !cohortMember.getVoided()) {
-				if (member.getEndDate() == null) {
+		for (CohortMember currentMember : cohort.getCohortMembers()) {
+			if (currentMember.getPatient().getUuid().equals(newPatient.getUuid()) && !cohortMember.getVoided()) {
+				if (currentMember.getEndDate() == null && cohortMember.getEndDate() == null) {
 					throw new RuntimeException("Patient already exists in group.");
-				} else {
-					member.setVoided(false);
-					member.setEndDate(null);
-					cohortMember = member;
 				}
+				currentMember.setEndDate(cohortMember.getEndDate());
+				currentMember.setVoided(false);
+				cohortMember = currentMember;
+				break;
 			}
 		}
 		return Context.getService(CohortMemberService.class).saveCohortMember(cohortMember);
