@@ -18,6 +18,7 @@
     -->
 
     <changeSet id="cohorttype1065" author="sharon">
+        <validCheckSum>8:f587179e90716bcda0e047348f2dc7b1</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="cohort_type"/>
@@ -42,7 +43,7 @@
                 <constraints foreignKeyName="cohorttypeeditor_fk" references="users(user_id)"/>
             </column>
             <column name="date_changed" type="datetime"/>
-            <column name="voided" type="tinyint(1)" defaultValueBoolean="false">
+            <column name="voided" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="voided_by" type="int(11)">
@@ -90,7 +91,7 @@
                 <constraints foreignKeyName="cohort_attribute_type_editor_fk" references="users(user_id)"/>
             </column>
             <column name="date_changed" type="datetime"/>
-            <column name="retired" type="tinyint(1)" defaultValueBoolean="false">
+            <column name="retired" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="retired_by" type="int(11)">
@@ -137,6 +138,7 @@
         </addColumn>
     </changeSet>
     <changeSet id="cohortmodul1065_is_group_cohort" author="sharon">
+        <validCheckSum>8:5d9f35d099b2a016695f3b49358446f1</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="cohort" columnName="is_group_cohort"/>
@@ -144,7 +146,7 @@
         </preConditions>
         <comment>Creating a is_group_cohort column</comment>
         <addColumn tableName="cohort">
-            <column name="is_group_cohort" type="tinyint(1)" defaultValue="null"/>
+            <column name="is_group_cohort" type="boolean" defaultValue="null"/>
         </addColumn>
     </changeSet>
     <changeSet id="cohortmodul1065_cohort_type_id" author="sharon">
@@ -193,7 +195,7 @@
                 <constraints foreignKeyName="cohort_attribute_editor_fk" references="users(user_id)"/>
             </column>
             <column name="date_changed" type="datetime"/>
-            <column name="voided" type="tinyint(1)" defaultValueBoolean="false">
+            <column name="voided" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="voided_by" type="int(11)">
@@ -234,6 +236,7 @@
     </changeSet>
 
     <changeSet id="add_cohort_member_attribute_type_20210609" author="corneliouzbett">
+        <validCheckSum>8:e1616c9385aaddae911e3659cc30b8e8</validCheckSum>
         <preConditions onFail="MARK_RAN" onError="WARN">
             <not>
                 <tableExists tableName="cohort_member_attribute_type"/>
@@ -266,7 +269,7 @@
                 <constraints foreignKeyName="cohort_member_attribute_type_changed_by_fk" references="users(user_id)"/>
             </column>
             <column name="date_changed" type="datetime"/>
-            <column name="retired" type="tinyint(1)" defaultValueBoolean="false">
+            <column name="retired" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="retired_by" type="int(11)">
@@ -280,6 +283,7 @@
         </createTable>
     </changeSet>
     <changeSet id="add_cohort_member_attribute_20210607" author="corneliouzbett">
+        <validCheckSum>8:61e50f3257e9a6afabbfd16ddb660e8b</validCheckSum>
         <preConditions onFail="MARK_RAN" onError="WARN">
             <not>
                 <tableExists tableName="cohort_member_attribute"/>
@@ -312,7 +316,7 @@
                 <constraints foreignKeyName="cohort_member_attribute_editor_fk" references="users(user_id)"/>
             </column>
             <column name="date_changed" type="datetime"/>
-            <column name="voided" type="tinyint(1)" defaultValueBoolean="false">
+            <column name="voided" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="voided_by" type="int(11)">
@@ -327,14 +331,17 @@
     </changeSet>
 
     <changeSet id="location_id_to_int" author="ibacher">
+        <validCheckSum>8:5f7112d12f32e484d14ed88cf5da012f</validCheckSum>
         <preConditions>
             <columnExists tableName="cohort" columnName="location_id"/>
         </preConditions>
+        <dropDefaultValue tableName="cohort" columnName="location_id"/>
         <modifyDataType tableName="cohort" columnName="location_id" newDataType="int(11)"/>
         <addForeignKeyConstraint baseTableName="cohort" baseColumnNames="location_id"
                                  referencedTableName="location" referencedColumnNames="location_id"
                                  constraintName="cohort_location_fk"/>
     </changeSet>
+
     <changeSet id="add_cohort_location_index" author="ibacher">
         <preConditions onFail="MARK_RAN">
             <not>
