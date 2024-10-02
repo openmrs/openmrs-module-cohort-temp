@@ -15,6 +15,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.properties.BooleanProperty;
+import io.swagger.models.properties.DateProperty;
+import io.swagger.models.properties.RefProperty;
+import io.swagger.models.properties.StringProperty;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.api.context.Context;
@@ -95,7 +101,48 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 		description.addProperty("voided");
 		return description;
 	}
-	
+
+	@Override
+	public Model getCREATEModel(Representation rep) {
+		return new ModelImpl()
+				.property("cohort", new RefProperty("#/definitions/CohortMCreate"))
+				.property("endDate", new DateProperty())
+				.property("patient", new RefProperty("#/definitions/PatientCreate"))
+				.property("startDate", new DateProperty())
+				.property("voided", new BooleanProperty())
+				.property("attributes", new RefProperty("#/definitions/CohortAttributeCreate"));
+	}
+
+	@Override
+	public Model getGETModel(Representation rep) {
+		ModelImpl model = (ModelImpl) super.getGETModel(rep);
+		if (rep instanceof DefaultRepresentation) {
+			model.property("patient", new RefProperty("#/definitions/PatientGetRef"));
+			model.property("startDate", new DateProperty());
+			model.property("endDate", new DateProperty());
+			model.property("uuid", new StringProperty());
+			model.property("voided", new BooleanProperty());
+		} else if (rep instanceof FullRepresentation) {
+			model.property("display", new StringProperty());
+			model.property("startDate", new DateProperty());
+			model.property("endDate", new DateProperty());
+			model.property("uuid", new StringProperty());
+			model.property("voided", new BooleanProperty());
+			model.property("patient", new RefProperty("#/definitions/PatientGetFull"));
+			model.property("auditInfo", new StringProperty());
+		}
+		return model;
+	}
+
+	@Override
+	public Model getUPDATEModel(Representation rep) {
+		ModelImpl model = (ModelImpl) super.getUPDATEModel(rep);
+		return 	model
+				.property("endDate", new DateProperty())
+				.property("startDate", new DateProperty())
+				.property("voided", new BooleanProperty());
+	}
+
 	@Override
 	public CohortMember newDelegate() {
 		return new CohortMember();
