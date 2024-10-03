@@ -15,12 +15,12 @@
     </description>
 
     <dependencies>
-        <!-- 
-        Add other dependencies from parent's pom: 
-        <dependency> 
-            <groupId>org.other.library</groupId> 
-            <artifactId>library-name</artifactId> 
-        </dependency> 
+        <!--
+        Add other dependencies from parent's pom:
+        <dependency>
+            <groupId>org.other.library</groupId>
+            <artifactId>library-name</artifactId>
+        </dependency>
         -->
 
         <!-- Begin OpenMRS modules -->
@@ -32,6 +32,11 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>webservices.rest-omod</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>webservices.rest-omod-1.8</artifactId>
+            <classifier>tests</classifier>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
@@ -73,14 +78,14 @@
             <scope>test</scope>
         </dependency>
         <!-- End OpenMRS core -->
-        
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.0.1</version>
             <scope>test</scope>
         </dependency>
-        
+
     </dependencies>
 
     <build>
@@ -121,7 +126,7 @@
                         <includeEmptyDirs>true</includeEmptyDirs>
                     </configuration>
                 </plugin>
-                <!--This plugin's configuration is used to store Eclipse m2e settings 
+                <!--This plugin's configuration is used to store Eclipse m2e settings
                     only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>

@@ -101,18 +101,15 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 		description.addProperty("voided");
 		return description;
 	}
-
+	
 	@Override
 	public Model getCREATEModel(Representation rep) {
-		return new ModelImpl()
-				.property("cohort", new RefProperty("#/definitions/CohortMCreate"))
-				.property("endDate", new DateProperty())
-				.property("patient", new RefProperty("#/definitions/PatientCreate"))
-				.property("startDate", new DateProperty())
-				.property("voided", new BooleanProperty())
-				.property("attributes", new RefProperty("#/definitions/CohortAttributeCreate"));
+		return new ModelImpl().property("cohort", new RefProperty("#/definitions/CohortCreate"))
+		        .property("endDate", new DateProperty()).property("patient", new RefProperty("#/definitions/PatientCreate"))
+		        .property("startDate", new DateProperty()).property("voided", new BooleanProperty())
+		        .property("attributes", new RefProperty("#/definitions/CohortmCohortmemberAttributeCreate"));
 	}
-
+	
 	@Override
 	public Model getGETModel(Representation rep) {
 		ModelImpl model = (ModelImpl) super.getGETModel(rep);
@@ -133,16 +130,14 @@ public class CohortMemberResource extends DataDelegatingCrudResource<CohortMembe
 		}
 		return model;
 	}
-
+	
 	@Override
 	public Model getUPDATEModel(Representation rep) {
 		ModelImpl model = (ModelImpl) super.getUPDATEModel(rep);
-		return 	model
-				.property("endDate", new DateProperty())
-				.property("startDate", new DateProperty())
-				.property("voided", new BooleanProperty());
+		return model.property("endDate", new DateProperty()).property("startDate", new DateProperty()).property("voided",
+		    new BooleanProperty());
 	}
-
+	
 	@Override
 	public CohortMember newDelegate() {
 		return new CohortMember();

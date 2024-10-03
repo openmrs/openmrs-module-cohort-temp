@@ -124,7 +124,7 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 		description.addProperty("attributes");
 		description.addProperty("cohortMembers");
 	}
-
+	
 	@Override
 	public Model getCREATEModel(Representation rep) {
 		ModelImpl model = new ModelImpl();
@@ -133,15 +133,15 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 		model.property("location", new RefProperty("#/definitions/LocationCreate"));
 		model.property("startDate", new DateProperty());
 		model.property("endDate", new DateProperty());
-		model.property("cohortType", new RefProperty("#/definitions/CohortTypeCreate"));
+		model.property("cohortType", new RefProperty("#/definitions/CohortmCohorttypeCreate"));
 		model.property("definitionHandlerClassname", new StringProperty());
-		model.property("attributes", new RefProperty("#/definitions/CohortAttributeCreate"));
-		model.addProperty("cohortMembers", new ArrayProperty(new RefProperty("#/definitions/CohortMembersCreate")));
+		model.property("attributes", new ArrayProperty(new RefProperty("#/definitions/CohortmCohortmemberAttributeCreate")));
+		model.addProperty("cohortMembers", new ArrayProperty(new RefProperty("#/definitions/CohortMembershipCreate")));
 		model.property("voided", new BooleanProperty());
 		model.property("groupCohort", new BooleanProperty());
 		return model;
 	}
-
+	
 	@Override
 	public Model getGETModel(Representation rep) {
 		ModelImpl model = (ModelImpl) super.getGETModel(rep);
@@ -153,8 +153,8 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 			model.property("groupCohort", new BooleanProperty());
 			model.property("uuid", new StringProperty().example("uuid"));
 			model.property("location", new RefProperty("#/definitions/LocationGetRef"));
-			model.property("cohortType", new RefProperty("#/definitions/CohortTypeGetRef"));
-			model.property("attributes", new RefProperty("#/definitions/CohortAttributeGetRef"));
+			model.property("cohortType", new RefProperty("#/definitions/CohortmCohorttypeGetRef"));
+			model.property("attributes", new RefProperty("#/definitions/CohortmCohortmemberAttributeGetRef"));
 			model.property("voided", new BooleanProperty());
 			model.property("voidReason", new StringProperty());
 			model.property("display", new StringProperty());
@@ -165,9 +165,9 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 			model.property("endDate", new DateProperty());
 			model.property("groupCohort", new BooleanProperty());
 			model.property("location", new RefProperty("#/definitions/LocationGetFull"));
-			model.addProperty("cohortMembers", new ArrayProperty(new RefProperty("#/definitions/CohortMembersGetFull")));
-			model.property("cohortType", new RefProperty("#/definitions/CohortTypeGetFull"));
-			model.property("attributes", new RefProperty("#/definitions/CohortAttributeGetFull"));
+			model.addProperty("cohortMembers", new ArrayProperty(new RefProperty("#/definitions/CohortMembershipGetFull")));
+			model.property("cohortType", new RefProperty("#/definitions/CohortmCohorttypeGetFull"));
+			model.property("attributes", new RefProperty("#/definitions/CohortmCohortmemberAttributeGetFull"));
 			model.property("voided", new BooleanProperty());
 			model.property("voidReason", new StringProperty());
 			model.property("display", new StringProperty());
@@ -176,14 +176,14 @@ public class CohortResource extends DataDelegatingCrudResource<CohortM> {
 		}
 		return model;
 	}
-
+	
 	@Override
 	public Model getUPDATEModel(Representation rep) {
 		ModelImpl model = (ModelImpl) getCREATEModel(rep);
 		model.property("voidReason", new StringProperty());
 		return model;
 	}
-
+	
 	@Override
 	public CohortM save(CohortM cohort) {
 		if (cohort.getVoided()) {

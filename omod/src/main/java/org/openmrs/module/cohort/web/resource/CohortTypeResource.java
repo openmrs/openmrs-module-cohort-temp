@@ -74,7 +74,7 @@ public class CohortTypeResource extends DataDelegatingCrudResource<CohortType> {
 	public DelegatingResourceDescription getUpdatableProperties() throws ResourceDoesNotSupportOperationException {
 		return getCreatableProperties();
 	}
-
+	
 	@Override
 	public Model getGETModel(Representation rep) {
 		ModelImpl model = (ModelImpl) super.getGETModel(rep);
@@ -92,17 +92,17 @@ public class CohortTypeResource extends DataDelegatingCrudResource<CohortType> {
 		}
 		return model;
 	}
-
+	
 	@Override
 	public Model getCREATEModel(Representation rep) {
 		return new ModelImpl().property("name", new StringProperty()).property("description", new StringProperty());
 	}
-
+	
 	@Override
 	public Model getUPDATEModel(Representation rep) {
 		return getCREATEModel(rep);
 	}
-
+	
 	@Override
 	public CohortType save(CohortType cohortType) {
 		return Context.getService(CohortTypeService.class).saveCohortType(cohortType);
