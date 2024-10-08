@@ -35,11 +35,6 @@
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>webservices.rest-omod-1.8</artifactId>
-            <classifier>tests</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
             <artifactId>webservices.rest-omod-common</artifactId>
         </dependency>
         <dependency>
