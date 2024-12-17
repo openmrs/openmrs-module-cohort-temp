@@ -19,6 +19,7 @@
 
     <changeSet id="cohorttype1065" author="sharon">
         <validCheckSum>8:f587179e90716bcda0e047348f2dc7b1</validCheckSum>
+        <validCheckSum>9:0eb2a437c8009f1b33c752ffcf930e08</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="cohort_type"/>
@@ -59,6 +60,7 @@
     <changeSet id="cohortattritype1065" author="sharon">
         <validCheckSum>3:438b0d7c1f87e1930fc8514e764a006c</validCheckSum>
         <validCheckSum>8:7e8d21d7716deb36429dafaa23d3d685</validCheckSum>
+        <validCheckSum>9:da802d9db20744dd90e1a9eba5a8036d</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="cohort_attribute_type"/>
@@ -139,6 +141,7 @@
     </changeSet>
     <changeSet id="cohortmodul1065_is_group_cohort" author="sharon">
         <validCheckSum>8:5d9f35d099b2a016695f3b49358446f1</validCheckSum>
+        <validCheckSum>9:0e37aa986011ef9af9bae45b756755c6</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="cohort" columnName="is_group_cohort"/>
@@ -165,6 +168,7 @@
     <changeSet id="cohortattribute1065" author="sharon">
         <validCheckSum>3:17c3a2138b042e7572bbcdb959ba225c</validCheckSum>
         <validCheckSum>8:a495f2c0c4e90e7c96e4f387cd4bc284</validCheckSum>
+        <validCheckSum>9:d63a12c5ed72f16fc8e72c619b0c2c16</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="cohort_attribute"/>
@@ -237,6 +241,7 @@
 
     <changeSet id="add_cohort_member_attribute_type_20210609" author="corneliouzbett">
         <validCheckSum>8:e1616c9385aaddae911e3659cc30b8e8</validCheckSum>
+        <validCheckSum>9:2e13b280dd9b7e419174b26ab6017af2</validCheckSum>
         <preConditions onFail="MARK_RAN" onError="WARN">
             <not>
                 <tableExists tableName="cohort_member_attribute_type"/>
@@ -284,6 +289,7 @@
     </changeSet>
     <changeSet id="add_cohort_member_attribute_20210607" author="corneliouzbett">
         <validCheckSum>8:61e50f3257e9a6afabbfd16ddb660e8b</validCheckSum>
+        <validCheckSum>9:1562f34ca548184e3691f30e38be8783</validCheckSum>
         <preConditions onFail="MARK_RAN" onError="WARN">
             <not>
                 <tableExists tableName="cohort_member_attribute"/>
@@ -332,6 +338,7 @@
 
     <changeSet id="location_id_to_int" author="ibacher">
         <validCheckSum>8:5f7112d12f32e484d14ed88cf5da012f</validCheckSum>
+        <validCheckSum>9:67ff342ddfaddbb66dcb087f1a76c5e0</validCheckSum>
         <preConditions>
             <columnExists tableName="cohort" columnName="location_id"/>
         </preConditions>
